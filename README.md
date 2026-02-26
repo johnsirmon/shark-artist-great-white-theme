@@ -63,7 +63,7 @@ code --install-extension thesharkartist-great-white-theme-x.x.x.vsix
 ## Local Development
 
 ```bash
-git clone https://github.com/thesharkartist/shark-artist-great-white-theme.git
+git clone https://github.com/johnsirmon/shark-artist-great-white-theme.git
 cd shark-artist-great-white-theme
 code .
 # Press F5 -> Extension Development Host opens
@@ -103,7 +103,7 @@ Before publishing, work through `docs/release-checklist.md`.
 ## Feedback and Issues
 
 Found a token that looks wrong in your language?
-[Open an issue](https://github.com/thesharkartist/shark-artist-great-white-theme/issues) with:
+[Open an issue](https://github.com/johnsirmon/shark-artist-great-white-theme/issues) with:
 - The language and file type
 - The token type that looks wrong (e.g., "parameter color is same as foreground in Rust")
 - A short code snippet that reproduces it

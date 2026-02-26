@@ -30,12 +30,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thesharkartist/shark-artist-great-white-theme.git"
+    "url": "https://github.com/johnsirmon/shark-artist-great-white-theme.git"
   },
   "bugs": {
-    "url": "https://github.com/thesharkartist/shark-artist-great-white-theme/issues"
+    "url": "https://github.com/johnsirmon/shark-artist-great-white-theme/issues"
   },
-  "homepage": "https://github.com/thesharkartist/shark-artist-great-white-theme#readme",
+  "homepage": "https://github.com/johnsirmon/shark-artist-great-white-theme#readme",
   "galleryBanner": {
     "color": "#0b1f2a",
     "theme": "dark"
