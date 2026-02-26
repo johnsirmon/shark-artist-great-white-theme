@@ -83,3 +83,30 @@ Accents and diagnostics are identical between variants. Only surfaces (backgroun
 - **Terminal ANSI values are identical** in both variants — keep them in sync.
 - **`.vsix` files are committed** to the repo root as release artifacts.
 - For palette and design rationale, see `prd.md`.
+
+## Self-Improvement
+
+The `.learnings/` directory is a living log of mistakes, patterns, and requests specific to building this theme. Use it every session.
+
+### When to write an entry
+
+| Situation | File |
+|---|---|
+| A wrong color was used, a scope was broken, a file was missed, or a convention was violated | `.learnings/ERRORS.md` |
+| A non-obvious pattern, rule, or insight is confirmed (e.g., a scope that behaves unexpectedly across languages) | `.learnings/LEARNINGS.md` |
+| The user asks for a look or capability that does not exist yet | `.learnings/FEATURE_REQUESTS.md` |
+
+### How to write an entry
+
+1. Copy the Template block from the top of the matching file.
+2. Assign the next ID for today: `LRN-YYYYMMDD-XXX`, `ERR-YYYYMMDD-XXX`, or `FEAT-YYYYMMDD-XXX` (zero-padded, sequential per day).
+3. Fill every field. Leave no field blank; write `n/a` if genuinely not applicable.
+4. Use **See Also** to cross-link related entries in any `.learnings/` file.
+5. If the same `Pattern-Key` already exists in LEARNINGS.md, do not add a duplicate -- find the existing entry, increment `Recurrence-Count`, and raise `Priority` one level.
+
+### When to promote
+
+If an entry is `Priority: high` or `Priority: critical`, or `Recurrence-Count` reaches 3 or more:
+- Add the rule or fix directly to this file or to `AGENTS.md` where it will be seen every session.
+- Set `Status: promoted` on the source entry.
+- Note the promotion target in `See Also`.
