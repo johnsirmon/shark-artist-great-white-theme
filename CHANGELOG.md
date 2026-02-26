@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.2] - 2026-02-25
+
+- Updated extension icon to use original shark artwork (`icon.png`) for Marketplace branding
+- Added author website link (`https://thesharkartist.com`) in extension metadata and README intro
+
 ## [0.3.1] - 2026-02-26
 
 - Fixed `workflow_dispatch` not registering in GitHub Actions — invalid YAML in `self-improve.yml` (unindented `run: |` block scalar content) prevented GitHub from parsing the file (#1, #2)
