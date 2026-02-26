@@ -1,6 +1,7 @@
 name: Self-Improve
 
 # Runs the theme audit and improve loop on a monthly schedule or on demand.
+# See: https://github.com/johnsirmon/shark-artist-great-white-theme/issues/1
 #
 # SAFETY RULES enforced by this workflow:
 #   - Never publishes to the Marketplace.
