@@ -1,0 +1,101 @@
+name: Self-Improve
+
+# Runs the theme audit and improve loop on a monthly schedule or on demand.
+#
+# SAFETY RULES enforced by this workflow:
+#   - Never publishes to the Marketplace.
+#   - Never pushes directly to main.
+#   - Creates a DRAFT pull request for human review.
+#   - The improve-loop only writes to .learnings/ -- not to theme files directly.
+#   - All theme changes require a separate, intentional PR.
+#   - workflow_dispatch defaults to dry-run=true so nothing is committed accidentally.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: report issues only, commit nothing"
+        type: boolean
+        default: true
+  schedule:
+    # Monthly on the 1st at 06:00 UTC
+    - cron: "0 6 1 * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  audit-and-improve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      # Always run the audit and surface its output in the Actions log
+      - name: Run audit
+        id: audit
+        run: |
+          node .scripts/audit.js --json | tee audit-report.json
+          HIGH=$(node -e "const r=require('./audit-report.json'); process.stdout.write(String(r.summary.high));")
+          echo "high_count=$HIGH" >> "$GITHUB_OUTPUT"
+
+      - name: Run improve loop (dry run)
+        if: inputs.dry_run == true || github.event_name == 'schedule'
+        run: node .scripts/improve-loop.js --dry-run --report audit-report.json
+
+      - name: Run improve loop (write learnings)
+        if: inputs.dry_run != true && github.event_name == 'workflow_dispatch'
+        run: node .scripts/improve-loop.js --report audit-report.json
+
+      # Validate that the package still builds cleanly regardless of dry-run mode
+      - name: Validate package
+        run: vsce package
+
+      # Only open a PR when explicitly requested and there are changes to log
+      - name: Create branch and draft PR for learnings
+        if: inputs.dry_run != true && github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="improve/$(date +%Y-%m-%d)"
+          git checkout -b "$BRANCH"
+          git add .learnings/
+
+          if git diff --cached --quiet; then
+            echo "No learnings changes to commit."
+          else
+            git commit -m "chore: self-improvement log $(date +%Y-%m-%d)
+
+Automated audit run. Review .learnings/ entries before merging.
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+            git push origin "$BRANCH"
+            gh pr create \
+              --title "Self-improvement log $(date +%Y-%m-%d)" \
+              --body "$(cat <<'EOF'
+Automated audit and improvement log.
+
+**What this PR contains:**
+- New entries appended to \`.learnings/\` based on today's audit.
+- No changes to theme files or package metadata.
+
+**Before merging:**
+- Review each entry in \`.learnings/\` for accuracy.
+- Address any \`Priority: high\` items in a separate theme-improvement PR.
+EOF
+)" \
+              --draft \
+              --base main
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

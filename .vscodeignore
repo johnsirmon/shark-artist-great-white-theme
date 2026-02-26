@@ -5,3 +5,6 @@
 **/Thumbs.db
 **/*.tmp
 **/*.log
+**/.scripts/**
+**/.learnings/**
+**/audit-report.json

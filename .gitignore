@@ -5,8 +5,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build and packaging output
-*.vsix
 *.tgz
+
 
 # OS/editor junk
 .DS_Store
