@@ -30,3 +30,20 @@ Metadata:
 ## Entries
 
 <!-- Add new entries below this line, newest first. -->
+
+<!--
+ID:                       FEAT-20260225-001
+Logged:                   2026-02-25
+Status:                   resolved
+Requested Capability:     Shift theme palette closer to great white shark photo tones.
+User Context:             >
+  User shared a shark reference image and asked for the active theme to feel closer to the photo's steel-blue, wet-slate, and icy-white look while retaining readability.
+Complexity:               small
+Suggested Implementation: >
+  Update both theme JSON files with subtle accent desaturation and cooler blue-gray substitutions across workbench colors, tokenColors, and semanticTokenColors. Keep diagnostic coral/amber unchanged and ensure terminal ANSI values remain identical across dark and light variants.
+
+Metadata:
+  Related Files:  ["themes/great-white-dark-color-theme.json", "themes/great-white-light-color-theme.json"]
+  See Also:       []
+  Tags:           ["palette", "reference-image", "readability"]
+-->
