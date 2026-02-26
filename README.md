@@ -1,6 +1,7 @@
 # Shark Artist: Great White Theme
 
 > A VS Code color theme built on the great white shark's world: cold ocean depth, sharp contrast, and the clean menace of something perfectly evolved.
+> Created by [The Shark Artist](https://thesharkartist.com).
 
 Two variants: **Great White (Dark)** and **Great White (Light)**.
 

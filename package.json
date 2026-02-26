@@ -5,6 +5,10 @@
   "icon": "icon.png",
   "version": "0.3.1",
   "publisher": "thesharkartist",
+  "author": {
+    "name": "The Shark Artist",
+    "url": "https://thesharkartist.com"
+  },
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "vscode": "^1.85.0"
