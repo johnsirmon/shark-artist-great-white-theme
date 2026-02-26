@@ -1,0 +1,52 @@
+{
+  "name": "thesharkartist-great-white-theme",
+  "displayName": "Shark Artist: Great White Theme",
+  "description": "A realistic ocean-inspired VS Code theme pack featuring Great White dark and light variants.",
+  "version": "0.1.0",
+  "publisher": "thesharkartist",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "shark",
+    "great white",
+    "ocean",
+    "dark theme",
+    "light theme",
+    "blue",
+    "marine",
+    "developer theme",
+    "vscode-theme"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thesharkartist/shark-artist-great-white-theme.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thesharkartist/shark-artist-great-white-theme/issues"
+  },
+  "homepage": "https://github.com/thesharkartist/shark-artist-great-white-theme#readme",
+  "galleryBanner": {
+    "color": "#0b1f2a",
+    "theme": "dark"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "Great White (Dark)",
+        "uiTheme": "vs-dark",
+        "path": "./themes/great-white-dark-color-theme.json"
+      },
+      {
+        "label": "Great White (Light)",
+        "uiTheme": "vs",
+        "path": "./themes/great-white-light-color-theme.json"
+      }
+    ]
+  }
+}

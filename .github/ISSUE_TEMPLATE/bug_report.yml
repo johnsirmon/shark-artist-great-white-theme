@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a problem with the theme
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please include screenshots when possible.
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Short description of the issue
+      placeholder: "Example: Comments are too dim in Python files"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps so we can reproduce the issue
+      placeholder: |
+        1. Open a Python file
+        2. Switch to Great White (Dark)
+        3. Observe comment color in line 12
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: vscode
+    attributes:
+      label: VS Code version
+      placeholder: "Example: 1.98.0"
+    validations:
+      required: true
+  - type: input
+    id: extension
+    attributes:
+      label: Theme version
+      placeholder: "Example: 0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Paste images or links if available

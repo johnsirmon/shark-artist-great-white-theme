@@ -1,0 +1,14 @@
+# Node and package manager artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and packaging output
+*.vsix
+*.tgz
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode-test/
