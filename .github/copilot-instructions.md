@@ -42,38 +42,63 @@ Each file has exactly three top-level sections, in this order:
 
 **`tokenColors`** — TextMate scopes in use:
 - `comment`, `punctuation.definition.comment`
-- `string`, `string.quoted`
+- `string`, `string.quoted`, `string.template`
+- `constant.character.escape`, `string.regexp`
 - `constant.numeric`, `constant.language`
-- `keyword`, `storage`, `keyword.operator`
+- `keyword`, `storage` (control flow and declarations)
+- `keyword.operator` (operators — separate color from keyword)
+- `punctuation.separator`, `punctuation.terminator`, `punctuation.accessor`
 - `entity.name.function`, `support.function`
-- `entity.name.type`, `support.type`, `entity.name.class`
+- `entity.name.type`, `entity.name.class`, `entity.name.namespace`, `entity.name.enum`, `support.class`, `support.type`
 - `variable`, `meta.definition.variable`
-- `constant`, `variable.other.constant`
+- `variable.language` (this, self, super)
+- `constant`, `variable.other.constant`, `support.constant`
+- `meta.decorator`, `punctuation.decorator`, `storage.type.decorator`, `entity.name.function.decorator`
+- `entity.name.tag`, `entity.other.attribute-name`
+- `punctuation.definition.tag.begin`, `punctuation.definition.tag.end`
+- `support.type.property-name.css`
+- `markup.heading`, `entity.name.section`, `markup.bold`, `markup.italic`
+- `markup.inline.raw`, `markup.fenced_code`, `markup.raw.block`
+- `markup.underline.link`, `string.other.link`, `markup.quote`
+- `invalid`, `invalid.illegal`
 
 **`semanticTokenColors`** — keys in use:
-`variable`, `parameter`, `property`, `function`, `method`, `class`, `type`, `enumMember`, `keyword`, `string`, `number`
+`variable`, `variable.readonly`, `parameter`, `property`, `property.readonly`,
+`function`, `method`, `class`, `interface`, `enum`, `enumMember`,
+`type`, `typeParameter`, `namespace`, `keyword`, `modifier`,
+`operator`, `decorator`, `string`, `number`, `regexp`
+
+## Audit and self-improvement loop
+
+```bash
+node .scripts/audit.js              # contrast + coverage check, exits 1 if high-severity
+node .scripts/audit.js --json       # machine-readable output
+node .scripts/improve-loop.js --dry-run   # report only, no writes
+node .scripts/improve-loop.js             # apply auto-fixes, validate, log to .learnings/
+```
+
+The GitHub Actions workflow `.github/workflows/self-improve.yml` runs monthly (and on demand) with `dry-run=true` by default. It creates a draft PR with any `.learnings/` updates but never touches theme files or publishes.
 
 ## Palette
 
-Accents and diagnostics are identical between variants. Only surfaces (background/foreground) differ.
+Accents and diagnostics are identical between variants. Only surfaces (background/foreground) differ. All token colors are WCAG AA verified (>=4.5:1) against their backgrounds.
 
 | Role | Dark | Light |
 |---|---|---|
 | Editor background | `#0e1a22` | `#f4f5f2` |
-| Editor foreground | `#e6ecef` | `#1f2b33` |
-| Comment | `#6d8290` | `#73848f` |
-| Keyword / ocean blue | `#2f6f8a` | `#2f6f8a` |
-| Function / spray highlight | `#8dc5de` | `#2f7fa1` |
-| String / sea teal | `#7fb7a6` | `#3e8875` |
-| Type / class | `#7aa1b8` | `#7aa1b8` |
-| Variable | `#e6ecef` | `#1f2b33` |
-| Number | `#d4b078` | `#b1842f` |
-| Constant / enum member | `#d9a441` | `#b5745e` |
-| Error / coral ⚠ | `#c44f5f` | `#c44f5f` |
-| Warning / amber ⚠ | `#d9a441` | `#d9a441` |
-| Info | `#2f6f8a` | `#2f6f8a` |
-
-⚠ Coral (`#c44f5f`) and amber (`#d9a441`) are **reserved for diagnostics and diff-removed only** — do not use them as syntax accents.
+| Editor foreground | `#d8e8ef` | `#182830` |
+| Comment | `#728fa0` | `#4e6b78` |
+| Keyword | `#4a9ec0` | `#2f6f8a` |
+| Operator | `#5b98b0` | `#3b7d9a` |
+| Function | `#8dd4f0` | `#1b6b8e` |
+| Type / Class | `#78b0c8` | `#2c5470` |
+| String | `#6ec4ac` | `#1e7860` |
+| Variable | `#d8e8ef` | `#182830` |
+| Number | `#d4a843` | `#7d5c18` |
+| Constant / enum member | `#d9a441` | `#7d4a38` |
+| Error / coral (diag only) | `#c44f5f` | `#c44f5f` |
+| Warning / amber (diag only) | `#d9a441` | `#d9a441` |
+| Info | `#4a9ec0` | `#2f6f8a` |
 
 ## Key conventions
 

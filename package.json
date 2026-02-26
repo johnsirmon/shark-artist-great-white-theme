@@ -1,7 +1,7 @@
 {
   "name": "thesharkartist-great-white-theme",
   "displayName": "Shark Artist: Great White Theme",
-  "description": "A realistic ocean-inspired VS Code theme pack featuring Great White dark and light variants.",
+  "description": "A contrast-verified, ocean-inspired VS Code theme with Great White dark and light variants. WCAG AA compliant syntax colors, full workbench coverage, semantic highlighting.",
   "version": "0.3.0",
   "publisher": "thesharkartist",
   "license": "SEE LICENSE IN LICENSE",
