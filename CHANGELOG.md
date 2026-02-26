@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [0.3.0] - 2026-02-26
+## [0.3.0] - 2026-02-25
 
 - Fixed WCAG AA contrast failures: dark keyword (3.16 -> 5.9:1), dark comment (4.41 -> 5.2:1), light string (3.85 -> 6.3:1), light number (3.09 -> 6.7:1), light function (4.11 -> 5.8:1), light comment (3.54 -> 6.4:1), light constant (3.41 -> 8.0:1)
 - Separated operator color from keyword in both variants for clearer visual hierarchy
