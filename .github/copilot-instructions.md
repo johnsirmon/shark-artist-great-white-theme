@@ -1,68 +1,85 @@
 # Copilot Instructions
 
-## What this repo is
+A VS Code color theme extension — two variants, no application code. All work happens in the two JSON theme files and `package.json`.
 
-A VS Code color theme extension with two variants — **Great White (Dark)** and **Great White (Light)** — inspired by great white shark and ocean depth imagery. There is no application code; all work happens in JSON theme files and extension metadata.
+## Commands
 
-## Build and package
+No npm scripts exist. Use `vsce` directly:
 
 ```bash
-# Install the packaging tool (one-time)
-npm install -g @vscode/vsce
-
-# Package the extension into a .vsix
-vsce package
-
-# Publish to Marketplace
+npm install -g @vscode/vsce   # one-time
+vsce package                  # produces a .vsix, same as CI
 vsce login thesharkartist
 vsce publish
 ```
 
-CI (`ci.yml`) runs `vsce package` on every push to `main` and every pull request to validate the extension packages without errors.
+CI runs `vsce package` on every push to `main` and every PR.
 
-## Local testing
+## Making changes
 
-Press **F5** in VS Code to launch an Extension Development Host, then run `Preferences: Color Theme` and select `Great White (Dark)` or `Great White (Light)`.
+**Token or color change:**
+1. Edit both `themes/great-white-dark-color-theme.json` and `themes/great-white-light-color-theme.json`.
+2. For any token type, update it in **both** `tokenColors` (TextMate) **and** `semanticTokenColors` — semantic rules take priority in language-server-supported files and will override TextMate silently if they disagree.
+3. Press **F5** → Extension Development Host → `Preferences: Color Theme` to preview.
+4. Spot-check in TypeScript, Python, JSON, and Markdown. Also check the diff editor and terminal for the affected color role.
 
-## Architecture
+**Release:**
+1. Bump `version` in `package.json` and add an entry to `CHANGELOG.md`.
+2. Run `vsce package` — commit the generated `.vsix` to the repo root.
+3. See `docs/release-checklist.md` before `vsce publish`.
 
-Both theme variants live entirely in:
-- `themes/great-white-dark-color-theme.json`
-- `themes/great-white-light-color-theme.json`
+## Theme file structure
 
-Each file has three sections in this order:
-1. `colors` — workbench UI (editor, sidebar, activity bar, tabs, status bar, terminal ANSI, diff, diagnostics)
-2. `tokenColors` — TextMate grammar scopes
-3. `semanticTokenColors` — semantic token overrides (takes priority over `tokenColors` in supported languages)
+Each file has exactly three top-level sections, in this order:
 
-`package.json` is the extension manifest; it declares both theme paths under `contributes.themes`.
+| Section | Covers |
+|---|---|
+| `colors` | Workbench UI: editor surfaces, sidebar, activity bar, tabs, status bar, terminal ANSI, diff, diagnostics |
+| `tokenColors` | TextMate grammar scopes (all languages) |
+| `semanticTokenColors` | Semantic token overrides (language-server languages; wins over TextMate) |
+
+### Scopes currently defined
+
+**`tokenColors`** — TextMate scopes in use:
+- `comment`, `punctuation.definition.comment`
+- `string`, `string.quoted`
+- `constant.numeric`, `constant.language`
+- `keyword`, `storage`, `keyword.operator`
+- `entity.name.function`, `support.function`
+- `entity.name.type`, `support.type`, `entity.name.class`
+- `variable`, `meta.definition.variable`
+- `constant`, `variable.other.constant`
+
+**`semanticTokenColors`** — keys in use:
+`variable`, `parameter`, `property`, `function`, `method`, `class`, `type`, `enumMember`, `keyword`, `string`, `number`
 
 ## Palette
 
-Both variants share the same accent and diagnostic hues. Only background/foreground surfaces differ between dark and light.
+Accents and diagnostics are identical between variants. Only surfaces (background/foreground) differ.
 
 | Role | Dark | Light |
 |---|---|---|
 | Editor background | `#0e1a22` | `#f4f5f2` |
 | Editor foreground | `#e6ecef` | `#1f2b33` |
+| Comment | `#6d8290` | `#73848f` |
 | Keyword / ocean blue | `#2f6f8a` | `#2f6f8a` |
 | Function / spray highlight | `#8dc5de` | `#2f7fa1` |
 | String / sea teal | `#7fb7a6` | `#3e8875` |
-| Number / amber | `#d4b078` | `#b1842f` |
-| Constant / amber | `#d9a441` | `#b5745e` |
-| Error / coral | `#c44f5f` | `#c44f5f` |
-| Warning / amber | `#d9a441` | `#d9a441` |
-| Info / ocean blue | `#2f6f8a` | `#2f6f8a` |
+| Type / class | `#7aa1b8` | `#7aa1b8` |
+| Variable | `#e6ecef` | `#1f2b33` |
+| Number | `#d4b078` | `#b1842f` |
+| Constant / enum member | `#d9a441` | `#b5745e` |
+| Error / coral ⚠ | `#c44f5f` | `#c44f5f` |
+| Warning / amber ⚠ | `#d9a441` | `#d9a441` |
+| Info | `#2f6f8a` | `#2f6f8a` |
+
+⚠ Coral (`#c44f5f`) and amber (`#d9a441`) are **reserved for diagnostics and diff-removed only** — do not use them as syntax accents.
 
 ## Key conventions
 
-- **Coral and amber are reserved for diagnostics** (`editorError`, `editorWarning`, diff removed). Do not use them as general-purpose syntax accents.
-- **`semanticHighlighting` is `true` in both files.** Semantic token rules override TextMate for supported language servers, so changes to a token type must be made in **both** `tokenColors` and `semanticTokenColors` to be consistent.
-- **Comments are italic** (`"fontStyle": "italic"`) in both variants — intentional, do not remove.
-- **The terminal ANSI palette is shared** between dark and light variants (same hex values) to keep a consistent terminal experience across both.
-- Version bumps go in both `package.json` (`version`) and `CHANGELOG.md` before packaging.
-- Generated `.vsix` files are committed to the repo root as release artifacts.
-
-## Pre-release checklist
-
-See `docs/release-checklist.md` for the full gate before running `vsce publish`.
+- **Edit both theme files** for every change — there is no shared base file.
+- **Token changes require both `tokenColors` and `semanticTokenColors`** to stay in sync.
+- **Comments are intentionally italic** (`"fontStyle": "italic"`) — do not remove.
+- **Terminal ANSI values are identical** in both variants — keep them in sync.
+- **`.vsix` files are committed** to the repo root as release artifacts.
+- For palette and design rationale, see `prd.md`.
