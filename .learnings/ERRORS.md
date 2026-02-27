@@ -31,6 +31,27 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               ERR-20260227-002
+Logged:           2026-02-27
+Summary:          VSIX package accidentally included local backup/work files.
+Error:            >
+  `vsce package` included `icon.bak`, `icon.png~`, and `.local-image-work/**`, increasing
+  package size and leaking local workspace artifacts into the release package.
+Context:          >
+  During the 0.3.4 icon release, local image-editing backups existed in the repo root and
+  image-work folder. `.vscodeignore` did not exclude them, so they were bundled automatically.
+Suggested Fix:    >
+  Maintain explicit exclusions in `.vscodeignore` for local/backup artifacts used during icon
+  editing (`.local-image-work/**`, `icon.bak`, `icon.png~`) and re-run `vsce package` to verify
+  final bundle contents before commit.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  [".vscodeignore"]
+  See Also:       []
+-->
+
+<!--
 ID:               ERR-20260227-001
 Logged:           2026-02-27
 Summary:          Release metadata and publish docs referenced the old publisher.

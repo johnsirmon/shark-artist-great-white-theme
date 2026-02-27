@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.4] - 2026-02-27
+
+- Re-exported Marketplace icon as optimized `256x256` PNG (`icon.png`) to reduce package size while preserving visual quality
+
 ## [0.3.3] - 2026-02-27
 
 - Switched publisher metadata from `thesharkartist` to `shark-labs` for first Marketplace publish under the new publisher account

@@ -7,6 +7,9 @@
 **/*.log
 **/.scripts/**
 **/.learnings/**
+**/.local-image-work/**
 **/audit-report.json
 great_white_shark_ascii_poster.txt
 icon2.png
+icon.bak
+icon.png~
