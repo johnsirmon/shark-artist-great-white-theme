@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.0] - 2026-02-27
+
+- Added four new theme variants: `Great White (Storm)`, `Great White (Frost)`, `Great White (High Contrast Dark)`, and `Great White (High Contrast Light)`
+- Updated `package.json` theme contributions to register all six available Great White variants
+- Introduced gray-red-white-blue complementary palette options while preserving semantic/token scope parity
+- Added dedicated high-contrast dark and light accessibility variants with stronger focus and boundary visibility
+- Expanded README documentation with color-theory guidance and VS Code theme best-practice rationale
+
 ## [0.3.4] - 2026-02-27
 
 - Re-exported Marketplace icon as optimized `256x256` PNG (`icon.png`) to reduce package size while preserving visual quality

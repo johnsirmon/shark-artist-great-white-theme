@@ -32,6 +32,23 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:                       FEAT-20260227-001
+Logged:                   2026-02-27
+Status:                   resolved
+Requested Capability:     Add more Great White variants with gray-red-white-blue contrast plus high-contrast accessibility options.
+User Context:             >
+  User wanted the original light/dark pair expanded into a broader family with pleasant complementary palettes and explicit accessibility-oriented options.
+Complexity:               medium
+Suggested Implementation: >
+  Add four theme JSON files (`Storm`, `Frost`, `High Contrast Dark`, `High Contrast Light`) by cloning the base dark/light themes, then retune key workbench anchors plus `tokenColors` and `semanticTokenColors` in each file. Register all variants in `package.json`, document palette and accessibility rationale in `README.md`, and package with `vsce package`.
+
+Metadata:
+  Related Files:  ["themes/great-white-storm-color-theme.json", "themes/great-white-frost-color-theme.json", "themes/great-white-hc-dark-color-theme.json", "themes/great-white-hc-light-color-theme.json", "package.json", "README.md", "CHANGELOG.md"]
+  See Also:       []
+  Tags:           ["palette", "accessibility", "high-contrast", "variants"]
+-->
+
+<!--
 ID:                       FEAT-20260225-001
 Logged:                   2026-02-25
 Status:                   resolved

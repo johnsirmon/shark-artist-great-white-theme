@@ -3,7 +3,7 @@
 > A VS Code color theme built on the great white shark's world: cold ocean depth, sharp contrast, and the clean menace of something perfectly evolved.
 > Created by [The Shark Artist](https://thesharkartist.com).
 
-Two variants: **Great White (Dark)** and **Great White (Light)**.
+Six variants: **Great White (Dark)**, **Great White (Light)**, **Great White (Storm)**, **Great White (Frost)**, **Great White (High Contrast Dark)**, and **Great White (High Contrast Light)**.
 
 ---
 
@@ -28,12 +28,33 @@ All syntax token colors meet WCAG AA contrast (4.5:1 minimum) against their resp
 
 > Coral (`#c44f5f`) and amber (`#d9a441`) appear **only** in diagnostics, diff-removed, and warnings. They are not used as general syntax accents.
 
+### Additional Great White Palettes
+
+The new variants extend the gray-red-white-blue design space while preserving token hierarchy and readability.
+
+| Variant | Background | Foreground | Primary Blue | Secondary Blue | Red Accent | Notes |
+|---|---|---|---|---|---|---|
+| Great White (Storm) | `#111820` | `#e7edf2` | `#4f7ea8` | `#6c92b3` | `#c26b73` | Deeper slate contrast, cooler surfaces, red used for readonly/constant accents |
+| Great White (Frost) | `#f7f8f7` | `#1a2630` | `#2f5f84` | `#3d7298` | `#8a4d5a` | Bright neutral surface with tighter blue-gray separation |
+| Great White (High Contrast Dark) | `#0b0f12` | `#f6fbff` | `#6eb8ff` | `#9cc6f3` | `#ff9aa7` | Maximum dark-mode legibility, stronger cursor/selection boundaries |
+| Great White (High Contrast Light) | `#ffffff` | `#12202a` | `#0f5f93` | `#266f9f` | `#8a3848` | Maximum light-mode legibility with strong focus outlines |
+
+## Color Theory and VS Code Best Practices
+
+- **Use luminance for hierarchy first**: code readability improves when semantic groups differ in lightness before hue.
+- **Reserve warm tones for urgency**: diagnostics keep the canonical coral/amber signal, while standard syntax remains primarily cool.
+- **Separate TextMate and semantic rules**: every token-family color change is mirrored in both `tokenColors` and `semanticTokenColors`.
+- **Maintain workbench/token parity**: cursor, selection, lists, tabs, and focus borders follow the same palette axis as syntax tokens.
+- **Support low-vision scenarios**: the high-contrast variants increase foreground-to-background separation and UI boundary visibility.
+
 ---
 
 ## Features
 
 - **Contrast-verified** -- all token colors computed against WCAG AA (4.5:1) before release.
 - **Two variants** -- Dark for deep-ocean focus sessions; Light for the clean, pale belly.
+- **Extended family** -- Storm and Frost provide gray-red-white-blue alternatives while keeping Great White identity.
+- **High-contrast options** -- dedicated dark and light high-contrast themes for accessibility-first sessions.
 - **Semantic highlighting** -- semantic token rules take priority over TextMate for TypeScript, Python, Rust, Go, and other language-server-supported files.
 - **Bracket pair colorization** -- six distinct ocean-derived colors for nested brackets.
 - **Full workbench coverage** -- 173 color keys: editor, sidebar, activity bar, tabs, status bar, title bar, input fields, buttons, lists, breadcrumbs, diff, peek view, minimap, git decorations, scrollbar, notifications, terminal.
@@ -51,7 +72,7 @@ All syntax token colors meet WCAG AA contrast (4.5:1 minimum) against their resp
 1. Open the Extensions panel (`Ctrl+Shift+X` / `Cmd+Shift+X`).
 2. Search **Shark Artist: Great White Theme**.
 3. Click **Install**.
-4. Press `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T` and select **Great White (Dark)** or **Great White (Light)**.
+4. Press `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T` and select any **Great White** variant.
 
 ### From a .vsix file
 
@@ -68,7 +89,7 @@ git clone https://github.com/johnsirmon/shark-artist-great-white-theme.git
 cd shark-artist-great-white-theme
 code .
 # Press F5 -> Extension Development Host opens
-# Run: Preferences: Color Theme -> Great White (Dark) or Great White (Light)
+# Run: Preferences: Color Theme -> choose any Great White variant
 ```
 
 **Test across:** TypeScript, Python, JSON, Markdown, HTML/JSX -- and check the diff editor and terminal too.
