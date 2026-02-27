@@ -13,7 +13,7 @@
 
 ## Publish
 
-- [ ] Authenticate: `vsce login thesharkartist`
+- [ ] Authenticate: `vsce login shark-labs`
 - [ ] Publish: `vsce publish`
 - [ ] Verify Marketplace page renders README and metadata correctly
 - [ ] Verify both variants appear in Theme Picker

@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.3] - 2026-02-27
+
+- Switched publisher metadata from `thesharkartist` to `shark-labs` for first Marketplace publish under the new publisher account
+- Renamed extension package ID from `thesharkartist-great-white-theme` to `shark-labs-great-white-theme` for cleaner Marketplace branding
+- Updated publishing documentation and checklist to use `vsce login shark-labs`
+
 ## [0.3.2] - 2026-02-25
 
 - Updated extension icon to use original shark artwork (`icon.png`) for Marketplace branding

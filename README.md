@@ -56,7 +56,7 @@ All syntax token colors meet WCAG AA contrast (4.5:1 minimum) against their resp
 ### From a .vsix file
 
 ```bash
-code --install-extension thesharkartist-great-white-theme-x.x.x.vsix
+code --install-extension shark-labs-great-white-theme-x.x.x.vsix
 ```
 
 ---
@@ -93,7 +93,7 @@ The dark background evokes pressure and depth -- light barely reaches here, so e
 ```bash
 npm install -g @vscode/vsce
 vsce package          # creates .vsix, also runs in CI on every push to main
-vsce login thesharkartist
+vsce login shark-labs
 vsce publish
 ```
 

@@ -29,3 +29,23 @@ Metadata:
 ## Entries
 
 <!-- Add new entries below this line, newest first. -->
+
+<!--
+ID:               ERR-20260227-001
+Logged:           2026-02-27
+Summary:          Release metadata and publish docs referenced the old publisher.
+Error:            >
+  `package.json` used `publisher: thesharkartist`, and publish instructions referenced
+  `vsce login thesharkartist` even though release was prepared under `shark-labs`.
+Context:          >
+  During first Marketplace publish setup, authentication succeeded for `shark-labs` but
+  extension metadata and operator docs were still tied to the previous publisher identity.
+Suggested Fix:    >
+  Keep `package.json` publisher aligned with active Marketplace publisher and update all
+  publish runbooks (`README.md`, `docs/release-checklist.md`) in the same change set.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  ["package.json", "README.md", "docs/release-checklist.md"]
+  See Also:       []
+-->
