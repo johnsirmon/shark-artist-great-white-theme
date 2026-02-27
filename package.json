@@ -1,7 +1,7 @@
 {
   "name": "shark-labs-great-white-theme",
   "displayName": "Shark Artist: Great White Theme",
-  "description": "A contrast-verified, ocean-inspired VS Code theme with Great White dark and light variants. WCAG AA compliant syntax colors, full workbench coverage, semantic highlighting.",
+  "description": "A contrast-verified, ocean-inspired VS Code theme with six Great White variants including Storm, Frost, and high-contrast dark/light. WCAG AA compliant syntax colors, full workbench coverage, semantic highlighting.",
   "icon": "icon.png",
   "version": "0.4.0",
   "publisher": "shark-labs",

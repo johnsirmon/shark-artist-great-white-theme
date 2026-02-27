@@ -52,7 +52,7 @@ The new variants extend the gray-red-white-blue design space while preserving to
 ## Features
 
 - **Contrast-verified** -- all token colors computed against WCAG AA (4.5:1) before release.
-- **Two variants** -- Dark for deep-ocean focus sessions; Light for the clean, pale belly.
+- **Six variants** -- Dark and Light foundations, plus Storm, Frost, High Contrast Dark, and High Contrast Light.
 - **Extended family** -- Storm and Frost provide gray-red-white-blue alternatives while keeping Great White identity.
 - **High-contrast options** -- dedicated dark and light high-contrast themes for accessibility-first sessions.
 - **Semantic highlighting** -- semantic token rules take priority over TextMate for TypeScript, Python, Rust, Go, and other language-server-supported files.
@@ -60,7 +60,7 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **Full workbench coverage** -- 173 color keys: editor, sidebar, activity bar, tabs, status bar, title bar, input fields, buttons, lists, breadcrumbs, diff, peek view, minimap, git decorations, scrollbar, notifications, terminal.
 - **HTML / JSX / CSS** -- tag names, attributes, and CSS properties explicitly styled.
 - **Markdown** -- headings (bold), italic, inline code, fenced blocks, links, blockquotes.
-- **Terminal ANSI** -- consistent 16-color ANSI palette shared across both variants.
+- **Terminal ANSI** -- consistent 16-color ANSI palette shared across all variants.
 - **Self-improving** -- includes an audit script and monthly GitHub Actions loop that checks contrast, key coverage, and symmetry between variants.
 
 ---
@@ -105,7 +105,7 @@ The palette is narrow on purpose. Visual hierarchy comes from luminance contrast
 Coral and amber are reserved exclusively for errors, warnings, and diff-removed highlights. When you see warm color in the editor, something needs your attention. Strings, functions, and types stay cool.
 
 **3. Dark is the ocean floor; Light is shark belly.**
-The dark background evokes pressure and depth -- light barely reaches here, so every lit token stands out sharply. The light background is the pale, smooth underside: cold, clean, and high-contrast in a different direction. Both variants use the same accent hues so switching feels like surfacing, not theme-switching.
+The dark background evokes pressure and depth -- light barely reaches here, so every lit token stands out sharply. The light background is the pale, smooth underside: cold, clean, and high-contrast in a different direction. All variants stay on the same shark-ocean accent axis so switching feels like surfacing, not abandoning the visual language.
 
 ---
 
