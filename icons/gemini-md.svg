@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <!-- Gemini instruction file: twin wave / dual-tone -->
+  <rect width="16" height="16" rx="1.5" fill="#1a2c3c"/>
+  <!-- Upper wave (lighter) -->
+  <path d="M2 5.5 Q5 3.5 8 5.5 Q11 7.5 14 5.5" stroke="#8dd4f0" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <!-- Lower wave (deeper) -->
+  <path d="M2 10.5 Q5 8.5 8 10.5 Q11 12.5 14 10.5" stroke="#4daaaa" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <!-- Dividing dot center -->
+  <circle cx="8" cy="8" r="1" fill="#78b0c8"/>
+</svg>

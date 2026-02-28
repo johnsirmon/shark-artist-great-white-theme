@@ -1,0 +1,78 @@
+{
+  "$schema": "vscode://schemas/textmate-grammar",
+  "name": "Agents Markdown",
+  "scopeName": "text.agents.markdown",
+  "fileTypes": [],
+  "patterns": [
+    { "include": "#critical_callout" },
+    { "include": "#warning_callout" },
+    { "include": "#note_callout" },
+    { "include": "#todo_callout" },
+    { "include": "#rule_heading" },
+    { "include": "#command_block" },
+    { "include": "#file_path" },
+    { "include": "#markdown_base" }
+  ],
+  "repository": {
+    "critical_callout": {
+      "comment": "CRITICAL: / IMPORTANT: prefixes get error-red styling",
+      "match": "^(CRITICAL|IMPORTANT|DANGER|NEVER|DO NOT)(:)(.*)$",
+      "captures": {
+        "1": { "name": "invalid.illegal.agents.keyword" },
+        "2": { "name": "punctuation.separator.agents" },
+        "3": { "name": "string.unquoted.agents.critical" }
+      }
+    },
+    "warning_callout": {
+      "comment": "WARNING: / CAUTION: get warning-amber styling",
+      "match": "^(WARNING|CAUTION|DEPRECATED|AVOID)(:)(.*)$",
+      "captures": {
+        "1": { "name": "variable.other.agents.warning" },
+        "2": { "name": "punctuation.separator.agents" },
+        "3": { "name": "string.unquoted.agents.warning" }
+      }
+    },
+    "note_callout": {
+      "comment": "NOTE: / TIP: get info-blue styling",
+      "match": "^(NOTE|TIP|INFO|SEE ALSO)(:)(.*)$",
+      "captures": {
+        "1": { "name": "comment.line.agents.note" },
+        "2": { "name": "punctuation.separator.agents" },
+        "3": { "name": "comment.block.documentation.agents" }
+      }
+    },
+    "todo_callout": {
+      "comment": "TODO: / FIXME: get constant styling",
+      "match": "^(TODO|FIXME|HACK)(:)(.*)$",
+      "captures": {
+        "1": { "name": "constant.language.agents.todo" },
+        "2": { "name": "punctuation.separator.agents" },
+        "3": { "name": "constant.other.agents.todo" }
+      }
+    },
+    "rule_heading": {
+      "comment": "## Section headings get entity.name.section for distinct color",
+      "match": "^(#{1,6})\\s+(.+)$",
+      "captures": {
+        "1": { "name": "punctuation.definition.heading.markdown" },
+        "2": { "name": "entity.name.section.agents" }
+      }
+    },
+    "command_block": {
+      "comment": "Inline code backtick spans",
+      "begin": "`",
+      "end": "`",
+      "name": "markup.inline.raw.agents",
+      "contentName": "string.other.agents.command"
+    },
+    "file_path": {
+      "comment": "Paths like src/foo.ts or ./file.json",
+      "match": "(?<![\\w])(\\.?/[\\w./\\-]+|[\\w]+/[\\w./\\-]+\\.\\w+)",
+      "name": "markup.underline.link.agents"
+    },
+    "markdown_base": {
+      "comment": "Fallback: delegate to standard markdown grammar",
+      "include": "text.html.markdown"
+    }
+  }
+}

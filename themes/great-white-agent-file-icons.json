@@ -1,0 +1,47 @@
+{
+  "information_for_contributors": "Great White Agent File Icons — custom icons for agentic instruction files. Only covers agent/AI-specific files; all other files use VS Code defaults.",
+  "fonts": [],
+  "iconDefinitions": {
+    "_agents_md": {
+      "iconPath": "../icons/agents-md.svg"
+    },
+    "_copilot_instructions": {
+      "iconPath": "../icons/copilot-instructions.svg"
+    },
+    "_claude_md": {
+      "iconPath": "../icons/claude-md.svg"
+    },
+    "_gemini_md": {
+      "iconPath": "../icons/gemini-md.svg"
+    },
+    "_plan_md": {
+      "iconPath": "../icons/plan-md.svg"
+    },
+    "_learnings_folder": {
+      "iconPath": "../icons/learnings-folder.svg"
+    },
+    "_copilot_folder": {
+      "iconPath": "../icons/copilot-folder.svg"
+    }
+  },
+  "fileNames": {
+    "AGENTS.md": "_agents_md",
+    "agents.md": "_agents_md",
+    "CLAUDE.md": "_claude_md",
+    "claude.md": "_claude_md",
+    "GEMINI.md": "_gemini_md",
+    "gemini.md": "_gemini_md",
+    "COPILOT.md": "_copilot_instructions",
+    "copilot.md": "_copilot_instructions",
+    "plan.md": "_plan_md",
+    "PLAN.md": "_plan_md"
+  },
+  "folderNames": {
+    ".learnings": "_learnings_folder",
+    ".copilot": "_copilot_folder"
+  },
+  "folderNamesExpanded": {
+    ".learnings": "_learnings_folder",
+    ".copilot": "_copilot_folder"
+  }
+}

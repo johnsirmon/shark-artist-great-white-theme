@@ -2,6 +2,37 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.0] - 2026-02-28
+
+### Agentic Workflow Visibility
+
+**Tier 1 — AI Surface Colors (all 6 variants)**
+- Added `editorGhostText.*` colors: Copilot ghost text now renders in muted teal (`#4daaaa90` dark / `#3b8a8090` light) clearly distinct from syntax keywords
+- Added `editor.inlineSuggest.*` colors: inline suggestion background, highlight, and selection states are fully on-palette
+- Added full `inlineChat.*` color group: background, border, focus, shadow, region highlight, and selected state — the Ctrl+I edit panel is now branded ocean-blue across all variants
+- Added `inlineChatDiff.*` and `inlineChatDiffLine.*`: AI-generated diffs use teal for insertions and coral for removals (consistent with diff editor)
+- Added `chat.*` colors: chat panel request background, borders, slash command styling, and avatar colors
+- Added `terminalCommandDecoration.*` colors: terminal command success/error/default decorations use ocean palette
+
+**Tier 2 — Agent File Icons (opt-in)**
+- Added `Great White: Agent File Icons` icon theme (opt-in via `Preferences: File Icon Theme`)
+- Custom SVG icons for: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `COPILOT.md`, `plan.md`, `.learnings/` folder, `.copilot/` folder
+- All icons use the ocean-blue/teal/amber palette; note this icon theme is standalone (VS Code icon themes are mutually exclusive)
+
+**Tier 3 — Agent Product Icons (opt-in)**
+- Added `Great White: Agent Product Icons` product icon theme (opt-in via `Preferences: Product Icon Theme`)
+- Custom shark-ocean SVG icons for: Copilot activity bar icon, chat discussion, sparkle/AI suggestion indicator
+- Uses `currentColor` so icons adapt automatically to all Great White variants
+
+**Tier 4a — AGENTS.md Syntax Grammar (auto)**
+- Added TextMate grammar (`text.agents.markdown`) injected into Markdown
+- `CRITICAL:` / `IMPORTANT:` / `NEVER:` prefixes highlighted in error-red
+- `WARNING:` / `CAUTION:` in amber
+- `NOTE:` / `TIP:` in comment blue
+- `TODO:` / `FIXME:` as constants
+- Section headings get `entity.name.section` styling
+- Inline code and file paths get distinct colors
+
 ## [0.4.0] - 2026-02-27
 
 - Added four new theme variants: `Great White (Storm)`, `Great White (Frost)`, `Great White (High Contrast Dark)`, and `Great White (High Contrast Light)`
