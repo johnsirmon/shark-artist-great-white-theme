@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <!-- Sparkle / AI suggestion: 4-point star with wave tail -->
+  <path d="M8 1 L8.8 6 L14 6.8 L8.8 7.6 L8 13 L7.2 7.6 L2 6.8 L7.2 6 Z" fill="currentColor"/>
+  <!-- Small dot accents -->
+  <circle cx="3.5" cy="3.5" r="0.7" fill="currentColor" opacity="0.5"/>
+  <circle cx="12.5" cy="12.5" r="0.7" fill="currentColor" opacity="0.5"/>
+</svg>

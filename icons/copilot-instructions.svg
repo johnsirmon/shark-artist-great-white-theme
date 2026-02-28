@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <!-- Copilot instruction file: teal star + wave on deep ocean bg -->
+  <rect width="16" height="16" rx="1.5" fill="#1c3d52"/>
+  <!-- Sparkle / star shape -->
+  <path d="M8 2 L8.6 5.4 L12 6 L8.6 6.6 L8 10 L7.4 6.6 L4 6 L7.4 5.4 Z" fill="#8dd4f0"/>
+  <!-- Subtle wave -->
+  <path d="M2 11.5 Q4.5 10.5 8 11.5 Q11.5 12.5 14 11.5 L14 12.5 Q11.5 13.5 8 12.5 Q4.5 11.5 2 12.5 Z" fill="#4daaaa" opacity="0.7"/>
+  <!-- Small dot accents -->
+  <circle cx="3.5" cy="8" r="0.8" fill="#6ec4ac" opacity="0.6"/>
+  <circle cx="12.5" cy="8" r="0.8" fill="#6ec4ac" opacity="0.6"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <!-- Chat / comment-discussion: speech bubble with wave -->
+  <path d="M2 3 C2 2.4 2.4 2 3 2 L13 2 C13.6 2 14 2.4 14 3 L14 9 C14 9.6 13.6 10 13 10 L6 10 L3 13 L3 10 L3 10 C2.4 10 2 9.6 2 9 Z" fill="currentColor" opacity="0.85"/>
+  <!-- Wave inside bubble -->
+  <path d="M4 6 Q6 5 8 6 Q10 7 12 6" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.4"/>
+</svg>

@@ -175,7 +175,40 @@
     "terminal.ansiBrightBlue": "#6ea6c0",
     "terminal.ansiBrightMagenta": "#d07d8c",
     "terminal.ansiBrightCyan": "#a4dff4",
-    "terminal.ansiBrightWhite": "#edf4f8"
+    "terminal.ansiBrightWhite": "#edf4f8",
+
+    "editorGhostText.foreground": "#1e7860c0",
+    "editorGhostText.border": "#00000000",
+    "editorGhostText.background": "#00000000",
+    "editor.inlineSuggest.foreground": "#1e7860c0",
+    "editor.inlineSuggest.background": "#ffffff20",
+    "editor.inlineSuggest.highlightBackground": "#d7eaf550",
+    "editor.inlineSuggest.selectedBackground": "#d7eaf580",
+
+    "inlineChat.background": "#e8f4fd",
+    "inlineChat.border": "#0f5f93",
+    "inlineChat.shadow": "#0000001a",
+    "inlineChat.regionHighlight": "#d7eaf555",
+    "inlineChat.selectedBackground": "#d7eaf570",
+    "inlineChatInput.background": "#ffffff",
+    "inlineChatInput.border": "#0f5f93",
+    "inlineChatInput.focusBorder": "#005784",
+    "inlineChatInput.placeholderForeground": "#627885",
+    "inlineChatDiff.inserted": "#1e786033",
+    "inlineChatDiff.removed": "#c44f5f33",
+    "inlineChatDiffLine.insertedBackground": "#1e786022",
+    "inlineChatDiffLine.removedBackground": "#c44f5f22",
+
+    "chat.requestBackground": "#dff0fa",
+    "chat.requestBorder": "#b8d4e8",
+    "chat.slashCommandBackground": "#d4e8f5",
+    "chat.slashCommandForeground": "#005784",
+    "chat.avatarBackground": "#c8e4f4",
+    "chat.avatarForeground": "#12202a",
+
+    "terminalCommandDecoration.defaultBackground": "#0f5f9366",
+    "terminalCommandDecoration.successBackground": "#1e7860",
+    "terminalCommandDecoration.errorBackground": "#c44f5f"
   },
   "tokenColors": [
     {

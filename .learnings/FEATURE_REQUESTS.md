@@ -32,6 +32,34 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:                       FEAT-20260227-002
+Logged:                   2026-02-27
+Status:                   in-progress
+Requested Capability:     Agentic workflow visibility — theme all AI/Copilot surfaces and add visual identity for agent instruction files.
+User Context:             >
+  User wants Great White variants to feel intentional and on-brand when using Copilot ghost text,
+  inline chat, chat panel, and when working with AGENTS.md / copilot-instructions.md files.
+  Currently these surfaces fall back to VS Code defaults and break the ocean aesthetic.
+Complexity:               large (4 tiers)
+Suggested Implementation: >
+  Tier 1 (v0.4.1): Add editorGhostText.*, editor.inlineSuggest.*, inlineChat.*, chat.* workbench
+  color keys to all 6 theme JSONs. Use muted teal for ghost text (not keyword blue). Also add
+  terminal command decoration and editorOverviewRuler.inlineChatInserted.
+  Tier 2 (v0.6.0): File icon theme (full coverage or document as user overrides — sparse icon
+  themes look broken since fileIconTheme is mutually exclusive with other icon themes).
+  Tier 3 (v0.5.0): Opt-in product icon theme (≤10 overrides, generic ocean aesthetics only —
+  no Copilot logos). Register as named contribution, never default.
+  Tier 4 (v1.0.0): Companion extension `great-white-agent-tools` — FileDecorationProvider,
+  status bar indicator, "Reveal Agentic Files" command, AGENTS.md TextMate grammar.
+  Full plan at session-state/fca61a24-e940-48a8-a762-519d7e42111d/plan.md.
+
+Metadata:
+  Related Files:  ["themes/great-white-dark-color-theme.json", "themes/great-white-light-color-theme.json", "themes/great-white-storm-color-theme.json", "themes/great-white-frost-color-theme.json", "themes/great-white-hc-dark-color-theme.json", "themes/great-white-hc-light-color-theme.json", "package.json"]
+  See Also:       []
+  Tags:           ["copilot", "agentic", "ghost-text", "inline-chat", "file-icons", "product-icons", "companion-extension"]
+-->
+
+<!--
 ID:                       FEAT-20260227-001
 Logged:                   2026-02-27
 Status:                   resolved
