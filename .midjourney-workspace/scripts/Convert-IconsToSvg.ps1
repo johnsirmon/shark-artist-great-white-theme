@@ -3,6 +3,7 @@ param(
     [string]$IncomingDir = ".midjourney-workspace/incoming",
     [string]$OutputDir = ".midjourney-workspace/output-svg",
     [string]$LogPath = ".midjourney-workspace/logs/conversion-log.json",
+    [string]$VtracerBin = ".midjourney-workspace/bin/vtracer.exe",
     [switch]$DryRun
 )
 
@@ -63,14 +64,14 @@ function Normalize-SvgCanvas {
 $incomingPath = Resolve-WorkspacePath -PathValue $IncomingDir
 $outputPath = Resolve-WorkspacePath -PathValue $OutputDir
 $logPath = Resolve-WorkspacePath -PathValue $LogPath
+$vtracerPath = Resolve-WorkspacePath -PathValue $VtracerBin
 
 Ensure-Directory -PathValue $incomingPath
 Ensure-Directory -PathValue $outputPath
 Ensure-Directory -PathValue ([System.IO.Path]::GetDirectoryName($logPath))
 
-$inkscape = Get-Command inkscape -ErrorAction SilentlyContinue
-if (-not $inkscape -and -not $DryRun) {
-    throw "Inkscape CLI not found. Install Inkscape and ensure 'inkscape' is available in PATH."
+if (-not $DryRun -and -not (Test-Path -LiteralPath $vtracerPath)) {
+    throw "vtracer not found at '$vtracerPath'. Download from https://github.com/visioncortex/vtracer/releases"
 }
 
 $inputFiles = Get-ChildItem -LiteralPath $incomingPath -File | Where-Object {
@@ -86,52 +87,37 @@ foreach ($file in $inputFiles) {
         source  = $file.FullName
         output  = $targetSvg
         status  = "pending"
-        mode    = "trace"
+        mode    = "vtracer"
         message = ""
     }
 
     if ($DryRun) {
         $entry.status = "dry-run"
-        if (-not $inkscape) {
-            $entry.message = "Conversion skipped due to -DryRun (Inkscape not required in dry-run)."
-        }
-        else {
-            $entry.message = "Conversion skipped due to -DryRun"
-        }
+        $entry.message = "Conversion skipped due to -DryRun"
         $results += [pscustomobject]$entry
         continue
     }
 
     try {
-        # Attempt vector trace flow first. If unavailable for this Inkscape build, fallback to export only.
-        & $inkscape.Source $file.FullName --actions "select-all;SelectionTraceBitmap;export-filename:$targetSvg;export-do;file-close" | Out-Null
+        & $vtracerPath --input $file.FullName --output $targetSvg `
+            --colormode color `
+            --hierarchical stacked `
+            --mode polygon `
+            --filter_speckle 4 `
+            --color_precision 6 `
+            --gradient_step 16 | Out-Null
 
         if (-not (Test-Path -LiteralPath $targetSvg)) {
-            throw "No SVG output produced by trace action."
+            throw "No SVG output produced by vtracer."
         }
 
         Normalize-SvgCanvas -SvgPath $targetSvg
         $entry.status = "converted"
-        $entry.message = "Trace conversion completed."
+        $entry.message = "vtracer conversion completed."
     }
     catch {
-        try {
-            & $inkscape.Source $file.FullName --export-type=svg --export-filename=$targetSvg | Out-Null
-
-            if (Test-Path -LiteralPath $targetSvg) {
-                Normalize-SvgCanvas -SvgPath $targetSvg
-                $entry.status = "fallback-export"
-                $entry.mode = "export"
-                $entry.message = "Trace action failed; exported SVG fallback produced."
-            }
-            else {
-                throw "Fallback export did not produce output."
-            }
-        }
-        catch {
-            $entry.status = "failed"
-            $entry.message = $_.Exception.Message
-        }
+        $entry.status = "failed"
+        $entry.message = $_.Exception.Message
     }
 
     $results += [pscustomobject]$entry

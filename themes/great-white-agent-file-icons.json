@@ -33,15 +33,18 @@
     "gemini.md": "_gemini_md",
     "COPILOT.md": "_copilot_instructions",
     "copilot.md": "_copilot_instructions",
+    "copilot-instructions.md": "_copilot_instructions",
     "plan.md": "_plan_md",
     "PLAN.md": "_plan_md"
   },
   "folderNames": {
     ".learnings": "_learnings_folder",
-    ".copilot": "_copilot_folder"
+    ".copilot": "_copilot_folder",
+    ".github": "_copilot_folder"
   },
   "folderNamesExpanded": {
     ".learnings": "_learnings_folder",
-    ".copilot": "_copilot_folder"
+    ".copilot": "_copilot_folder",
+    ".github": "_copilot_folder"
   }
 }

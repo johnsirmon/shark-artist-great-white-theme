@@ -19,7 +19,7 @@ if (-not (Test-Path -LiteralPath $validateScript)) { throw "Missing script: $val
 if (-not (Test-Path -LiteralPath $syncScript)) { throw "Missing script: $syncScript" }
 
 Write-Host "[1/3] Converting source images to SVG..."
-& $convertScript -IncomingDir $IncomingDir -OutputDir $OutputDir -DryRun:$DryRun
+& $convertScript -IncomingDir $IncomingDir -OutputDir $OutputDir -VtracerBin ".midjourney-workspace/bin/vtracer.exe" -DryRun:$DryRun
 
 Write-Host "[2/3] Validating SVG outputs..."
 & $validateScript -SvgDir $OutputDir -FailOnError

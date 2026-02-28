@@ -20,3 +20,5 @@ Thumbs.db
 !.midjourney-workspace/output-svg/.gitkeep
 .midjourney-workspace/logs/*
 !.midjourney-workspace/logs/.gitkeep
+.midjourney-workspace/bin/*
+!.midjourney-workspace/bin/.gitkeep

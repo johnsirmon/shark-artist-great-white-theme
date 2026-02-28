@@ -1,6 +1,6 @@
 # Copilot Instructions
 
-A VS Code color theme extension — two variants, no application code. All work happens in the two JSON theme files and `package.json`.
+A VS Code color theme extension — six variants plus a file icon theme, product icon theme, and an agents-markdown grammar. All work happens in the theme JSON files under `themes/` and `package.json`. There is no shared base file; each variant is fully self-contained.
 
 ## Commands
 
@@ -9,7 +9,7 @@ No npm scripts exist. Use `vsce` directly:
 ```bash
 npm install -g @vscode/vsce   # one-time
 vsce package                  # produces a .vsix, same as CI
-vsce login thesharkartist
+vsce login shark-labs
 vsce publish
 ```
 
@@ -18,10 +18,20 @@ CI runs `vsce package` on every push to `main` and every PR.
 ## Making changes
 
 **Token or color change:**
-1. Edit both `themes/great-white-dark-color-theme.json` and `themes/great-white-light-color-theme.json`.
+1. Identify which variants are affected. Universal token changes (syntax colors) must be applied to **all six** theme files:
+   - `great-white-dark-color-theme.json` · `great-white-light-color-theme.json`
+   - `great-white-storm-color-theme.json` · `great-white-frost-color-theme.json`
+   - `great-white-hc-dark-color-theme.json` · `great-white-hc-light-color-theme.json`
 2. For any token type, update it in **both** `tokenColors` (TextMate) **and** `semanticTokenColors` — semantic rules take priority in language-server-supported files and will override TextMate silently if they disagree.
 3. Press **F5** → Extension Development Host → `Preferences: Color Theme` to preview.
 4. Spot-check in TypeScript, Python, JSON, and Markdown. Also check the diff editor and terminal for the affected color role.
+
+**Variant relationships:**
+- **Dark / Light**: the reference pair; establishes canonical token colors.
+- **Storm**: a cooler, higher-contrast dark variant (editor bg `#111820`).
+- **Frost**: a colder, slightly muted light variant.
+- **HC Dark / HC Light**: high-contrast accessibility variants registered as `hc-black` / `hc-light` — push contrast further, no decorative accents.
+- Each file is fully self-contained — no inheritance, no shared base. When adding a new workbench key, add it to all applicable files.
 
 **Release:**
 1. Bump `version` in `package.json` and add an entry to `CHANGELOG.md`.
@@ -68,6 +78,22 @@ Each file has exactly three top-level sections, in this order:
 `type`, `typeParameter`, `namespace`, `keyword`, `modifier`,
 `operator`, `decorator`, `string`, `number`, `regexp`
 
+## Additional contributions
+
+Beyond color themes, the extension contributes:
+
+| Contribution | File | Notes |
+|---|---|---|
+| File icon theme | `themes/great-white-agent-file-icons.json` | Sparse — only overrides agent/config files |
+| Product icon theme | `themes/great-white-product-icons.json` | ≤10 overrides; generic ocean aesthetics only |
+| TextMate grammar (agents markdown) | `syntaxes/agents-md.tmLanguage.json` | Injected into `text.html.markdown`; highlights AGENTS.md / copilot-instructions.md structure |
+
+The file icon and product icon themes are registered contributions in `package.json`. Any new icon override file must also be listed in `.vscodeignore` exclusion rules to avoid packaging unrelated workspace artifacts.
+
+## Packaging note
+
+Before `vsce package`, confirm `.vscodeignore` excludes all local-work artifacts (`.local-image-work/**`, `icon.bak`, etc.). Run `vsce package --no-dependencies` and inspect the output file list to catch accidental inclusions.
+
 ## Audit and self-improvement loop
 
 ```bash
@@ -102,7 +128,7 @@ Accents and diagnostics are identical between variants. Only surfaces (backgroun
 
 ## Key conventions
 
-- **Edit both theme files** for every change — there is no shared base file.
+- **Edit all affected theme files** for every change — there is no shared base file. Token changes usually require all six files; workbench-only changes may target specific variants.
 - **Token changes require both `tokenColors` and `semanticTokenColors`** to stay in sync.
 - **Comments are intentionally italic** (`"fontStyle": "italic"`) — do not remove.
 - **Terminal ANSI values are identical** in both variants — keep them in sync.
