@@ -31,6 +31,26 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               ERR-20260228-001
+Logged:           2026-02-28
+Summary:          PowerShell pipeline scripts assumed filtered results always expose .Count.
+Error:            >
+  Initial run of the new icon pipeline failed with: "The property 'Count' cannot be found on this object"
+  because filtered results can be scalar or null in PowerShell.
+Context:          >
+  During implementation of `.midjourney-workspace` conversion/validation scripts, failure checks used
+  `$filtered.Count` directly after `Where-Object`, which breaks for scalar/null outputs.
+Suggested Fix:    >
+  Wrap filtered results with array subexpression before counting, e.g.
+  `$failed = @($results | Where-Object { ... })` and then check `$failed.Count`.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  [".midjourney-workspace/scripts/Convert-IconsToSvg.ps1", ".midjourney-workspace/scripts/Validate-SvgIcons.ps1"]
+  See Also:       []
+-->
+
+<!--
 ID:               ERR-20260227-002
 Logged:           2026-02-27
 Summary:          VSIX package accidentally included local backup/work files.

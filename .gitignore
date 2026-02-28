@@ -12,3 +12,11 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 .vscode-test/
+
+# Local Midjourney working artifacts
+.midjourney-workspace/incoming/*
+!.midjourney-workspace/incoming/.gitkeep
+.midjourney-workspace/output-svg/*
+!.midjourney-workspace/output-svg/.gitkeep
+.midjourney-workspace/logs/*
+!.midjourney-workspace/logs/.gitkeep
