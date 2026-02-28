@@ -45,11 +45,12 @@ foreach ($file in $files) {
 
     try {
         [xml]$xml = $raw
-    } catch {
+    }
+    catch {
         $issues += "Invalid XML"
         $results += [pscustomobject]@{
-            file = $file.FullName
-            valid = $false
+            file   = $file.FullName
+            valid  = $false
             issues = $issues
         }
         continue
@@ -90,17 +91,17 @@ foreach ($file in $files) {
     }
 
     $results += [pscustomobject]@{
-        file = $file.FullName
-        valid = ($issues.Count -eq 0)
+        file   = $file.FullName
+        valid  = ($issues.Count -eq 0)
         issues = $issues
     }
 }
 
 $payload = [ordered]@{
     generatedAt = (Get-Date).ToString("o")
-    svgDir = $svgPath
+    svgDir      = $svgPath
     resultCount = $results.Count
-    results = $results
+    results     = $results
 }
 
 $payload | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $logPath

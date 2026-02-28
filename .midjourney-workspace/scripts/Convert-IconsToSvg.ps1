@@ -35,19 +35,22 @@ function Normalize-SvgCanvas {
 
     if ($raw -match 'viewBox\s*=\s*"[^"]*"') {
         $raw = [System.Text.RegularExpressions.Regex]::Replace($raw, 'viewBox\s*=\s*"[^"]*"', 'viewBox="0 0 16 16"', 1)
-    } else {
+    }
+    else {
         $raw = $raw -replace '<svg\b', '<svg viewBox="0 0 16 16"'
     }
 
     if ($raw -match 'width\s*=\s*"[^"]*"') {
         $raw = [System.Text.RegularExpressions.Regex]::Replace($raw, 'width\s*=\s*"[^"]*"', 'width="16"', 1)
-    } else {
+    }
+    else {
         $raw = $raw -replace '<svg\b', '<svg width="16"'
     }
 
     if ($raw -match 'height\s*=\s*"[^"]*"') {
         $raw = [System.Text.RegularExpressions.Regex]::Replace($raw, 'height\s*=\s*"[^"]*"', 'height="16"', 1)
-    } else {
+    }
+    else {
         $raw = $raw -replace '<svg\b', '<svg height="16"'
     }
 
@@ -80,10 +83,10 @@ foreach ($file in $inputFiles) {
     $targetSvg = Join-Path $outputPath ("{0}.svg" -f $file.BaseName)
 
     $entry = [ordered]@{
-        source = $file.FullName
-        output = $targetSvg
-        status = "pending"
-        mode = "trace"
+        source  = $file.FullName
+        output  = $targetSvg
+        status  = "pending"
+        mode    = "trace"
         message = ""
     }
 
@@ -91,7 +94,8 @@ foreach ($file in $inputFiles) {
         $entry.status = "dry-run"
         if (-not $inkscape) {
             $entry.message = "Conversion skipped due to -DryRun (Inkscape not required in dry-run)."
-        } else {
+        }
+        else {
             $entry.message = "Conversion skipped due to -DryRun"
         }
         $results += [pscustomobject]$entry
@@ -109,7 +113,8 @@ foreach ($file in $inputFiles) {
         Normalize-SvgCanvas -SvgPath $targetSvg
         $entry.status = "converted"
         $entry.message = "Trace conversion completed."
-    } catch {
+    }
+    catch {
         try {
             & $inkscape.Source $file.FullName --export-type=svg --export-filename=$targetSvg | Out-Null
 
@@ -118,10 +123,12 @@ foreach ($file in $inputFiles) {
                 $entry.status = "fallback-export"
                 $entry.mode = "export"
                 $entry.message = "Trace action failed; exported SVG fallback produced."
-            } else {
+            }
+            else {
                 throw "Fallback export did not produce output."
             }
-        } catch {
+        }
+        catch {
             $entry.status = "failed"
             $entry.message = $_.Exception.Message
         }
@@ -132,11 +139,11 @@ foreach ($file in $inputFiles) {
 
 $payload = [ordered]@{
     generatedAt = (Get-Date).ToString("o")
-    incoming = $incomingPath
-    output = $outputPath
-    dryRun = [bool]$DryRun
+    incoming    = $incomingPath
+    output      = $outputPath
+    dryRun      = [bool]$DryRun
     resultCount = $results.Count
-    results = $results
+    results     = $results
 }
 
 $payload | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $logPath
