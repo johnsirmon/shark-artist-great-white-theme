@@ -8,6 +8,12 @@ Guidelines for any agent or automated session working in this repository.
 2. If any entries are `Priority: high` or `Priority: critical` and `Status: open`, either resolve them in this session or note a concrete next step in the entry.
 3. If a `Pattern-Key` has `Recurrence-Count: 3` or more, promote the pattern to `.github/copilot-instructions.md` or to this file, then set `Status: promoted` on the source entry.
 
+## Icon updates
+
+- The authoritative icon process is documented in `docs/icon-update-process.md`.
+- All 7 active icons live in `icons/` and are mapped in `themes/great-white-agent-file-icons.json`.
+- **`.midjourney-workspace/` is experimental and local-only — never merge it to `main`.**
+
 ## Theme-specific rules
 
 - Always edit both `themes/great-white-dark-color-theme.json` and `themes/great-white-light-color-theme.json` for every change.

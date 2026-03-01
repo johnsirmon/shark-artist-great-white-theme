@@ -31,7 +31,27 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
-ID:               ERR-20260228-001
+ID:               ERR-20260301-001
+Logged:           2026-03-01
+Summary:          .gitignore only excluded midjourney workspace subdirectories, not the root folder — main had no guard at all.
+Error:            >
+  .midjourney-workspace/ working dirs (incoming/, output-svg/, logs/, bin/) were gitignored
+  on the feature branch, but the root folder was not. Main's .gitignore had zero coverage for
+  the workspace. A merge to main would have committed scripts, prompts, README, and icon-reference.
+Context:          >
+  Discovered during icon process audit on feature/agentic-icon-workflow. The workspace is
+  explicitly intended as local-only and experimental — never to be in main.
+Suggested Fix:    >
+  Add the root `.midjourney-workspace/` to .gitignore with a comment. Done in this session.
+  Rule: always gitignore experimental workspace roots, not just their working subdirectories.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  [".gitignore", "AGENTS.md"]
+  See Also:       [LRN-20260301-001]
+-->
+
+
 Logged:           2026-02-28
 Summary:          PowerShell pipeline scripts assumed filtered results always expose .Count.
 Error:            >

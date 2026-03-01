@@ -13,12 +13,7 @@ yarn-error.log*
 Thumbs.db
 .vscode-test/
 
-# Local Midjourney working artifacts
-.midjourney-workspace/incoming/*
-!.midjourney-workspace/incoming/.gitkeep
-.midjourney-workspace/output-svg/*
-!.midjourney-workspace/output-svg/.gitkeep
-.midjourney-workspace/logs/*
-!.midjourney-workspace/logs/.gitkeep
-.midjourney-workspace/bin/*
-!.midjourney-workspace/bin/.gitkeep
+# Midjourney workspace — experimental, local-only, must NOT be merged to main
+# The entire folder is intentionally excluded from version control on main.
+# It lives only on feature/agentic-icon-workflow as a local working area.
+.midjourney-workspace/

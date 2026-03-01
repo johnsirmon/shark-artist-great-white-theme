@@ -33,3 +33,29 @@ Metadata:
 ## Entries
 
 <!-- Add new entries below this line, newest first. -->
+
+<!--
+ID:               LRN-20260301-001
+Logged:           2026-03-01
+Priority:         medium
+Status:           open
+Area:             conventions
+Summary:          Experimental local workspaces must be fully gitignored on main, not just partially excluded.
+Details:          >
+  .midjourney-workspace/ was added to .gitignore on the feature branch only for its working
+  subdirectories (incoming/, output-svg/, logs/, bin/). The scripts, prompts, and README were
+  tracked in git on the feature branch. Main had no gitignore guard at all, so a merge would
+  have silently pulled the entire workspace into main.
+Suggested Action: >
+  Any local experimental workspace folder must have its root path added to .gitignore (e.g.,
+  `.midjourney-workspace/`) so the entire folder is excluded from all branches. Partial exclusions
+  of only subdirectories are insufficient. Document the folder's local-only status in AGENTS.md.
+
+Metadata:
+  Source:           Session 2026-03-01
+  Related Files:    [".gitignore", "AGENTS.md", "docs/icon-update-process.md"]
+  Tags:             ["gitignore", "experimental", "workspace", "merge-guard"]
+  See Also:         []
+  Pattern-Key:      experimental-workspace-gitignore-guard
+  Recurrence-Count: 1
+-->
