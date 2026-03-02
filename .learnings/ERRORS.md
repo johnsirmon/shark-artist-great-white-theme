@@ -43,6 +43,52 @@ Suggested Fix:    >
   Product icon themes require font-based icons: `fonts` array with webfont entries and `iconDefinitions`
   with `fontCharacter` (Unicode) + `fontId`. SVG files cannot be referenced via `iconPath` in product
   icon themes. Fixed by stripping the broken definitions to a valid minimal stub (empty iconDefinitions
+  and icons) until a proper webfont is set up.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  [themes/great-white-product-icons.json]
+  See Also:       [ERR-20260302-002]
+  Status:         promoted → .github/copilot-instructions.md "Icon theme schema constraints"
+-->
+
+<!--
+ID:               ERR-20260302-002
+Logged:           2026-03-02
+Summary:          File icon theme had empty `fonts: []` array which caused VS Code to crash with "Cannot read properties of undefined (reading 'size')" when setting the file icon theme.
+Error:            >
+  VS Code's file icon theme loader reads fonts[0].size; with an empty array fonts[0] is undefined,
+  causing an unhandled crash.
+Context:          >
+  themes/great-white-agent-file-icons.json — a `"fonts": []` field was present even though all icons
+  use SVG `iconPath` and no font-based icons exist.
+Suggested Fix:    >
+  Remove the `fonts` field entirely from file icon themes that only use SVG `iconPath` definitions.
+  The `fonts` key is only needed when using font-glyph-based icon definitions.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  [themes/great-white-agent-file-icons.json]
+  See Also:       [ERR-20260302-001]
+  Status:         promoted → .github/copilot-instructions.md "Icon theme schema constraints"
+-->
+
+
+<!--
+ID:               ERR-20260302-001
+Logged:           2026-03-02
+Summary:          Product icon theme used file-icon-theme format (iconPath + fontCharacter with definition keys), causing VS Code to reject it with "Invalid format for product icons theme file: Must contain iconDefinitions and fonts."
+Error:            >
+  iconDefinitions used `iconPath` (valid only in file icon themes) and `icons[x].default.fontCharacter`
+  was set to definition keys (e.g. "gw-copilot") instead of Unicode characters. VS Code's product icon
+  theme parser rejected the file entirely.
+Context:          >
+  themes/great-white-product-icons.json — introduced SVG-based product icon overrides that mixed up the
+  file icon theme schema with the product icon theme schema.
+Suggested Fix:    >
+  Product icon themes require font-based icons: `fonts` array with webfont entries and `iconDefinitions`
+  with `fontCharacter` (Unicode) + `fontId`. SVG files cannot be referenced via `iconPath` in product
+  icon themes. Fixed by stripping the broken definitions to a valid minimal stub (empty iconDefinitions
   and icons) until a proper webfont is set up. See FEATURE_REQUESTS for font-based icon follow-up.
 
 Metadata:

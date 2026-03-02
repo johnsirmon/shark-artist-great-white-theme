@@ -90,6 +90,11 @@ Beyond color themes, the extension contributes:
 
 The file icon and product icon themes are registered contributions in `package.json`. Any new icon override file must also be listed in `.vscodeignore` exclusion rules to avoid packaging unrelated workspace artifacts.
 
+**Icon theme schema constraints** (violations crash VS Code or cause silent rejection):
+
+- **File icon themes** — use SVG `iconPath` in `iconDefinitions`. Do **not** include a `fonts` key at all (not even `"fonts": []`); VS Code reads `fonts[0].size` unconditionally and crashes if the array is empty.
+- **Product icon themes** — cannot reference SVG files via `iconPath`. They require font-based icons: a `fonts` array with a webfont entry and `iconDefinitions` using `fontCharacter` (Unicode codepoint) + `fontId`. Until a proper webfont is set up, keep `great-white-product-icons.json` as the minimal stub (`fonts: [], iconDefinitions: {}, icons: {}`).
+
 ## Packaging note
 
 Before `vsce package`, confirm `.vscodeignore` excludes all local-work artifacts (`.local-image-work/**`, `icon.bak`, etc.). Run `vsce package --no-dependencies` and inspect the output file list to catch accidental inclusions.
