@@ -7,6 +7,34 @@ Six variants: **Great White (Dark)**, **Great White (Light)**, **Great White (St
 
 ---
 
+## Screenshots
+
+### Great White (Dark)
+
+![Great White Dark](docs/screenshots/great-white-dark.png)
+
+### Great White (Light)
+
+![Great White Light](docs/screenshots/great-white-light.png)
+
+### Great White (Storm)
+
+![Great White Storm](docs/screenshots/great-white-storm.png)
+
+### Great White (Frost)
+
+![Great White Frost](docs/screenshots/great-white-frost.png)
+
+### Great White (High Contrast Dark)
+
+![Great White HC Dark](docs/screenshots/great-white-hc-dark.png)
+
+### Great White (High Contrast Light)
+
+![Great White HC Light](docs/screenshots/great-white-hc-light.png)
+
+---
+
 ## Color Palette
 
 All syntax token colors meet WCAG AA contrast (4.5:1 minimum) against their respective backgrounds.
