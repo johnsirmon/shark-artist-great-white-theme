@@ -13,13 +13,12 @@
     }
   ],
   "iconDefinitions": {
-    "git-merge": {
-      "fontCharacter": "\\uea98"
+    "git-merge-def": {
+      "fontCharacter": "\\uea98",
+      "fontId": "codicon"
     }
   },
   "icons": {
-    "git-merge": {
-      "fontCharacter": "\\uea98"
-    }
+    "git-merge": "git-merge-def"
   }
 }
