@@ -1,5 +1,25 @@
 {
-  "fonts": [],
-  "iconDefinitions": {},
-  "icons": {}
+  "fonts": [
+    {
+      "id": "codicon",
+      "src": [
+        {
+          "path": "../icons/codicon.ttf",
+          "format": "truetype"
+        }
+      ],
+      "weight": "normal",
+      "style": "normal"
+    }
+  ],
+  "iconDefinitions": {
+    "git-merge": {
+      "fontCharacter": "\\uea98"
+    }
+  },
+  "icons": {
+    "git-merge": {
+      "fontCharacter": "\\uea98"
+    }
+  }
 }
