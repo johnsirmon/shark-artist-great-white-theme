@@ -2,28 +2,38 @@
 
 Guidelines for any agent or automated session working in this repository.
 
-## After every task
+## Before starting
 
-1. Open `.learnings/ERRORS.md`, `.learnings/LEARNINGS.md`, and `.learnings/FEATURE_REQUESTS.md`.
-2. If any entries are `Priority: high` or `Priority: critical` and `Status: open`, either resolve them in this session or note a concrete next step in the entry.
-3. If a `Pattern-Key` has `Recurrence-Count: 3` or more, promote the pattern to `.github/copilot-instructions.md` or to this file, then set `Status: promoted` on the source entry.
+Read `.learnings/ERRORS.md`, `.learnings/LEARNINGS.md`, and `.learnings/FEATURE_REQUESTS.md`. If any entries are `Priority: high` or `Priority: critical` with `Status: open`, resolve them or note a concrete next step.
 
-## Icon updates
+## Theme rules
+
+- **All six theme files** must be edited for every token or scope change — there is no shared base:
+  - `great-white-dark-color-theme.json` · `great-white-light-color-theme.json`
+  - `great-white-storm-color-theme.json` · `great-white-frost-color-theme.json`
+  - `great-white-hc-dark-color-theme.json` · `great-white-hc-light-color-theme.json`
+- Any token type changed in `tokenColors` **must** also be updated in `semanticTokenColors`.
+- Coral (`#c44f5f`) and amber (`#d9a441`) are **reserved for diagnostics and diff-removed only** — never use as syntax accents.
+- Version bumps require both `package.json` and `CHANGELOG.md` before packaging.
+- Run `vsce package` to validate JSON before committing. Run `node .scripts/audit.js` to check contrast and coverage.
+
+## Icon rules
 
 - The authoritative icon process is documented in `docs/icon-update-process.md`.
-- All 7 active icons live in `icons/` and are mapped in `themes/great-white-agent-file-icons.json`.
+- Active icons live in `icons/` and are mapped in `themes/great-white-agent-file-icons.json`.
+- **File icon themes**: use SVG `iconPath` — do **not** include a `fonts` key (empty `fonts: []` crashes VS Code). Must include generic fallbacks (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`).
+- **Product icon themes**: require font-based `fontCharacter` + `fontId`, not SVG. Keep as a minimal stub until a webfont is set up.
 - **`.midjourney-workspace/` is experimental and local-only — never merge it to `main`.**
-
-## Theme-specific rules
-
-- Always edit both `themes/great-white-dark-color-theme.json` and `themes/great-white-light-color-theme.json` for every change.
-- Any token type changed in `tokenColors` must also be updated in `semanticTokenColors`.
-- Coral (`#c44f5f`) and amber (`#d9a441`) are reserved for diagnostics and diff-removed only.
-- Version bumps require both `package.json` and `CHANGELOG.md` to be updated before packaging.
-- Run `vsce package` to validate before committing.
 
 ## Logging
 
-If a mistake, correction, or feature request arises during a task, append an entry to the matching
-`.learnings/` file before closing the session. See `.github/copilot-instructions.md` Self-Improvement
-section for ID format and field requirements.
+If a mistake, learning, or feature request arises, append an entry to the matching `.learnings/` file before closing the session.
+
+**ID format**: `ERR-YYYYMMDD-XXX`, `LRN-YYYYMMDD-XXX`, or `FEAT-YYYYMMDD-XXX` (zero-padded, sequential per day).
+
+**Rules**:
+1. Copy the Template block from the top of the target file.
+2. Fill every field — write `n/a` if not applicable.
+3. If the same `Pattern-Key` already exists in `LEARNINGS.md`, increment `Recurrence-Count` and raise `Priority` one level instead of adding a duplicate.
+
+**Promotion**: If an entry reaches `Priority: high` / `Priority: critical` or `Recurrence-Count: 3`, add the rule to `.github/copilot-instructions.md` or this file, then set `Status: promoted` on the source entry.

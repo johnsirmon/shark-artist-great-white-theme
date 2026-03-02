@@ -37,147 +37,37 @@ For any token type, update it in **both** `tokenColors` (TextMate) **and** `sema
 
 ## Theme file structure
 
-Each file has exactly three top-level sections, in this order:
+Each theme JSON has exactly three top-level sections in this order:
 
-| Section | Covers |
-|---|---|
-| `colors` | Workbench UI: editor surfaces, sidebar, activity bar, tabs, status bar, terminal ANSI, diff, diagnostics |
-| `tokenColors` | TextMate grammar scopes (all languages) |
-| `semanticTokenColors` | Semantic token overrides (language-server languages; wins over TextMate) |
-
-### Scopes currently defined
-
-**`tokenColors`** — TextMate scopes in use:
-- `comment`, `punctuation.definition.comment`
-- `string`, `string.quoted`, `string.template`
-- `constant.character.escape`, `string.regexp`
-- `constant.numeric`, `constant.language`
-- `keyword`, `storage` (control flow and declarations)
-- `keyword.operator` (operators — separate color from keyword)
-- `punctuation.separator`, `punctuation.terminator`, `punctuation.accessor`
-- `entity.name.function`, `support.function`
-- `entity.name.type`, `entity.name.class`, `entity.name.namespace`, `entity.name.enum`, `support.class`, `support.type`
-- `variable`, `meta.definition.variable`
-- `variable.language` (this, self, super)
-- `constant`, `variable.other.constant`, `support.constant`
-- `meta.decorator`, `punctuation.decorator`, `storage.type.decorator`, `entity.name.function.decorator`
-- `entity.name.tag`, `entity.other.attribute-name`
-- `punctuation.definition.tag.begin`, `punctuation.definition.tag.end`
-- `support.type.property-name.css`
-- `markup.heading`, `entity.name.section`, `markup.bold`, `markup.italic`
-- `markup.inline.raw`, `markup.fenced_code`, `markup.raw.block`
-- `markup.underline.link`, `string.other.link`, `markup.quote`
-- `invalid`, `invalid.illegal`
-
-**`semanticTokenColors`** — keys in use:
-`variable`, `variable.readonly`, `parameter`, `property`, `property.readonly`,
-`function`, `method`, `class`, `interface`, `enum`, `enumMember`,
-`type`, `typeParameter`, `namespace`, `keyword`, `modifier`,
-`operator`, `decorator`, `string`, `number`, `regexp`
-
-## Additional contributions
-
-Beyond color themes, the extension contributes:
-
-| Contribution | File | Notes |
-|---|---|---|
-| File icon theme | `themes/great-white-agent-file-icons.json` | Sparse — only overrides agent/config files |
-| Product icon theme | `themes/great-white-product-icons.json` | ≤10 overrides; generic ocean aesthetics only |
-| TextMate grammar (agents markdown) | `syntaxes/agents-md.tmLanguage.json` | Injected into `text.html.markdown`; highlights AGENTS.md / copilot-instructions.md structure |
-
-The file icon and product icon themes are registered contributions in `package.json`. Any new icon override file must also be listed in `.vscodeignore` exclusion rules to avoid packaging unrelated workspace artifacts.
-
-**Icon theme schema constraints** (violations crash VS Code or cause silent rejection):
-
-- **File icon themes** — use SVG `iconPath` in `iconDefinitions`. Do **not** include a `fonts` key at all (not even `"fonts": []`); VS Code reads `fonts[0].size` unconditionally and crashes if the array is empty.
-- **Exclusivity** — VS Code only allows one file icon theme at a time. Your theme must include generic fallbacks (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`) or the user will see no icons for standard files.
-- **Product icon themes** — cannot reference SVG files via `iconPath`. They require font-based icons: a `fonts` array with a webfont entry and `iconDefinitions` using `fontCharacter` (Unicode codepoint) + `fontId`. Until a proper webfont is set up, keep `great-white-product-icons.json` as the minimal stub (`fonts: [], iconDefinitions: {}, icons: {}`).
-
-## Documentation and Grammar
-
-The repository includes a custom TextMate grammar (`syntaxes/agents-md.tmLanguage.json`) that injects into Markdown files. It highlights specific callout patterns used in `AGENTS.md` and `copilot-instructions.md`.
-
-**Use these prefixes** when writing documentation or rules to trigger the custom highlighting:
-- `CRITICAL:` / `IMPORTANT:` / `NEVER:` / `DO NOT:` (Error Red)
-- `WARNING:` / `CAUTION:` / `DEPRECATED:` (Warning Amber)
-- `NOTE:` / `TIP:` / `INFO:` / `SEE ALSO:` (Info Blue)
-- `TODO:` / `FIXME:` / `HACK:` (Constant Color)
-
-## Packaging note
-
-Before `vsce package`, confirm `.vscodeignore` excludes all local-work artifacts (`.local-image-work/**`, `icon.bak`, etc.). Run `vsce package --no-dependencies` and inspect the output file list to catch accidental inclusions.
-
-## Audit and self-improvement loop
-
-```bash
-node .scripts/audit.js              # contrast + coverage check, exits 1 if high-severity
-node .scripts/audit.js --json       # machine-readable output
-node .scripts/improve-loop.js --dry-run   # report only, no writes
-node .scripts/improve-loop.js             # apply auto-fixes, validate, log to .learnings/
-```
-
-The GitHub Actions workflow `.github/workflows/self-improve.yml` runs monthly (and on demand) with `dry-run=true` by default. It creates a draft PR with any `.learnings/` updates but never touches theme files or publishes.
-
-## MCP Servers
-
-This repository benefits from the following MCP servers:
-- **GitHub**: For checking CI status, managing releases, and updating issues.
-- **Brave Search**: For looking up VS Code theme keys and color definitions.
-
-## Palette
-
-Accents and diagnostics are identical between variants. Only surfaces (background/foreground) differ. All token colors are WCAG AA verified (>=4.5:1) against their backgrounds.
-
-| Role | Dark | Light |
-|---|---|---|
-| Editor background | `#0e1a22` | `#f4f5f2` |
-| Editor foreground | `#d8e8ef` | `#182830` |
-| Comment | `#728fa0` | `#4e6b78` |
-| Keyword | `#4a9ec0` | `#2f6f8a` |
-| Operator | `#5b98b0` | `#3b7d9a` |
-| Function | `#8dd4f0` | `#1b6b8e` |
-| Type / Class | `#78b0c8` | `#2c5470` |
-| String | `#6ec4ac` | `#1e7860` |
-| Variable | `#d8e8ef` | `#182830` |
-| Number | `#d4a843` | `#7d5c18` |
-| Constant / enum member | `#d9a441` | `#7d4a38` |
-| Error / coral (diag only) | `#c44f5f` | `#c44f5f` |
-| Warning / amber (diag only) | `#d9a441` | `#d9a441` |
-| Info | `#4a9ec0` | `#2f6f8a` |
+1. `colors` — Workbench UI (editor surfaces, sidebar, activity bar, tabs, status bar, terminal ANSI, diff, diagnostics)
+2. `tokenColors` — TextMate grammar scopes (all languages)
+3. `semanticTokenColors` — Semantic token overrides (language-server languages; wins over TextMate)
 
 ## Key conventions
 
-- **Edit all affected theme files** for every change — there is no shared base file. Token changes usually require all six files; workbench-only changes may target specific variants.
-- **Token changes require both `tokenColors` and `semanticTokenColors`** to stay in sync.
+- **All six files for token changes** — there is no shared base. Workbench-only changes may target specific variants.
+- **`tokenColors` and `semanticTokenColors` must stay in sync** for every token type.
+- **Reserved colors**: coral (`#c44f5f`) for errors/diagnostics, amber (`#d9a441`) for warnings/diff-removed — never use as general syntax accents.
 - **Comments are intentionally italic** (`"fontStyle": "italic"`) — do not remove.
-- **Terminal ANSI values are identical** in both variants — keep them in sync.
-- **Experimental workspaces** (e.g., `.midjourney-workspace/`) must be fully gitignored at the root level, not just their subdirectories.
+- **Terminal ANSI values are identical** across all variants — keep them in sync.
 - **`.vsix` files are committed** to the repo root as release artifacts.
-- For palette and design rationale, see `prd.md`.
+- **Version bumps** require both `package.json` and `CHANGELOG.md` before packaging.
+- All token colors must be WCAG AA verified (≥4.5:1) against their variant's background. See palette in `README.md` and rationale in `prd.md`.
 
-## Self-Improvement
+## Icon theme constraints
 
-The `.learnings/` directory is a living log of mistakes, patterns, and requests specific to building this theme. Use it every session.
+- **File icon themes** — use SVG `iconPath` in `iconDefinitions`. Do **not** include a `fonts` key (not even `"fonts": []`); VS Code crashes if the array is empty.
+- **File icon exclusivity** — VS Code allows only one file icon theme. Must include generic fallbacks (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`).
+- **Product icon themes** — require font-based icons (`fontCharacter` + `fontId`), not SVG. Keep `great-white-product-icons.json` as a minimal stub until a webfont is set up.
 
-### When to write an entry
+## Documentation grammar
 
-| Situation | File |
-|---|---|
-| A wrong color was used, a scope was broken, a file was missed, or a convention was violated | `.learnings/ERRORS.md` |
-| A non-obvious pattern, rule, or insight is confirmed (e.g., a scope that behaves unexpectedly across languages) | `.learnings/LEARNINGS.md` |
-| The user asks for a look or capability that does not exist yet | `.learnings/FEATURE_REQUESTS.md` |
+The TextMate grammar in `syntaxes/agents-md.tmLanguage.json` injects into Markdown and highlights callout prefixes:
+- **Error Red**: `CRITICAL:` / `IMPORTANT:` / `NEVER:` / `DO NOT:`
+- **Warning Amber**: `WARNING:` / `CAUTION:` / `DEPRECATED:`
+- **Info Blue**: `NOTE:` / `TIP:` / `INFO:` / `SEE ALSO:`
+- **Constant**: `TODO:` / `FIXME:` / `HACK:`
 
-### How to write an entry
+## Self-improvement
 
-1. Copy the Template block from the top of the matching file.
-2. Assign the next ID for today: `LRN-YYYYMMDD-XXX`, `ERR-YYYYMMDD-XXX`, or `FEAT-YYYYMMDD-XXX` (zero-padded, sequential per day).
-3. Fill every field. Leave no field blank; write `n/a` if genuinely not applicable.
-4. Use **See Also** to cross-link related entries in any `.learnings/` file.
-5. If the same `Pattern-Key` already exists in LEARNINGS.md, do not add a duplicate -- find the existing entry, increment `Recurrence-Count`, and raise `Priority` one level.
-
-### When to promote
-
-If an entry is `Priority: high` or `Priority: critical`, or `Recurrence-Count` reaches 3 or more:
-- Add the rule or fix directly to this file or to `AGENTS.md` where it will be seen every session.
-- Set `Status: promoted` on the source entry.
-- Note the promotion target in `See Also`.
+The `.learnings/` directory logs mistakes, patterns, and feature requests. Consult it at the start of each session. Log new entries before closing a session — see `AGENTS.md` for the full protocol and ID format (`LRN-YYYYMMDD-XXX`, `ERR-YYYYMMDD-XXX`, `FEAT-YYYYMMDD-XXX`).
