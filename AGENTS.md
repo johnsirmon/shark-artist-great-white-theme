@@ -37,3 +37,14 @@ If a mistake, learning, or feature request arises, append an entry to the matchi
 3. If the same `Pattern-Key` already exists in `LEARNINGS.md`, increment `Recurrence-Count` and raise `Priority` one level instead of adding a duplicate.
 
 **Promotion**: If an entry reaches `Priority: high` / `Priority: critical` or `Recurrence-Count: 3`, add the rule to `.github/copilot-instructions.md` or this file, then set `Status: promoted` on the source entry.
+
+## Custom agents
+
+Four specialist agents are available in `.github/agents/`. Use them via `@agent-name` in Copilot:
+
+| Agent | When to use |
+|---|---|
+| `@theme-editor` | Making any color or token change — enforces 6-file sync, reserved colors, WCAG contrast |
+| `@theme-auditor` | Auditing all six variants for contrast, coverage, symmetry (extends `audit.js` to all variants) |
+| `@learnings-clerk` | Logging to `.learnings/` or reviewing entries for promotion |
+| `@release-manager` | Preparing a release — walks the checklist, validates package |

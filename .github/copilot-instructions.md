@@ -71,3 +71,11 @@ The TextMate grammar in `syntaxes/agents-md.tmLanguage.json` injects into Markdo
 ## Self-improvement
 
 The `.learnings/` directory logs mistakes, patterns, and feature requests. Consult it at the start of each session. Log new entries before closing a session — see `AGENTS.md` for the full protocol and ID format (`LRN-YYYYMMDD-XXX`, `ERR-YYYYMMDD-XXX`, `FEAT-YYYYMMDD-XXX`).
+
+## Custom agents
+
+Four specialist agents in `.github/agents/` can be invoked via `@agent-name`:
+- **`@theme-editor`** — color/token changes across all six variants
+- **`@theme-auditor`** — audit all six variants for contrast, coverage, and symmetry
+- **`@learnings-clerk`** — manage `.learnings/` entries and promotions
+- **`@release-manager`** — walk the release checklist and validate packaging
