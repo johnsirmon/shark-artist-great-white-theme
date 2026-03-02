@@ -35,6 +35,31 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               LRN-20260302-001
+Logged:           2026-03-02
+Priority:         high
+Status:           resolved
+Area:             conventions
+Summary:          VS Code file icon themes are mutually exclusive and must provide generic fallbacks.
+Details:          >
+  The "Agent File Icons" theme was initially "sparse" (only defining icons for agent files).
+  Because VS Code only allows one file icon theme at a time, enabling this theme caused all other
+  files (js, ts, standard folders) to lose their icons entirely. "Partial" or "extension" icon themes
+  are not supported.
+Suggested Action: >
+  Always include generic fallback icons (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`)
+  in any custom file icon theme, even if it is specialized.
+
+Metadata:
+  Source:           Session 2026-03-02
+  Related Files:    ["themes/great-white-agent-file-icons.json"]
+  Tags:             ["file-icons", "exclusivity", "fallback"]
+  See Also:         []
+  Pattern-Key:      file-icon-theme-exclusivity
+  Recurrence-Count: 1
+-->
+
+<!--
 ID:               LRN-20260301-001
 Logged:           2026-03-01
 Priority:         medium

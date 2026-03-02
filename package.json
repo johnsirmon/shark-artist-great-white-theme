@@ -103,5 +103,8 @@
         "embeddedLanguages": {}
       }
     ]
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.44"
   }
 }
