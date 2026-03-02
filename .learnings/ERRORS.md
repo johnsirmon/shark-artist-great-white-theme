@@ -74,30 +74,6 @@ Metadata:
 -->
 
 
-<!--
-ID:               ERR-20260302-001
-Logged:           2026-03-02
-Summary:          Product icon theme used file-icon-theme format (iconPath + fontCharacter with definition keys), causing VS Code to reject it with "Invalid format for product icons theme file: Must contain iconDefinitions and fonts."
-Error:            >
-  iconDefinitions used `iconPath` (valid only in file icon themes) and `icons[x].default.fontCharacter`
-  was set to definition keys (e.g. "gw-copilot") instead of Unicode characters. VS Code's product icon
-  theme parser rejected the file entirely.
-Context:          >
-  themes/great-white-product-icons.json — introduced SVG-based product icon overrides that mixed up the
-  file icon theme schema with the product icon theme schema.
-Suggested Fix:    >
-  Product icon themes require font-based icons: `fonts` array with webfont entries and `iconDefinitions`
-  with `fontCharacter` (Unicode) + `fontId`. SVG files cannot be referenced via `iconPath` in product
-  icon themes. Fixed by stripping the broken definitions to a valid minimal stub (empty iconDefinitions
-  and icons) until a proper webfont is set up. See FEATURE_REQUESTS for font-based icon follow-up.
-
-Metadata:
-  Reproducible:   yes
-  Related Files:  [themes/great-white-product-icons.json]
-  See Also:       []
--->
-
-
 <!-- Add new entries below this line, newest first. -->
 
 <!--
@@ -141,6 +117,8 @@ Metadata:
 -->
 
 
+<!--
+ID:               ERR-20260228-001
 Logged:           2026-02-28
 Summary:          PowerShell pipeline scripts assumed filtered results always expose .Count.
 Error:            >

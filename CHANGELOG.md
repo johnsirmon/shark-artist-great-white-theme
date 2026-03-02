@@ -19,10 +19,10 @@ All notable changes to this project are documented in this file.
 - Custom SVG icons for: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `COPILOT.md`, `plan.md`, `.learnings/` folder, `.copilot/` folder
 - All icons use the ocean-blue/teal/amber palette; note this icon theme is standalone (VS Code icon themes are mutually exclusive)
 
-**Tier 3 — Agent Product Icons (opt-in)**
+**Tier 3 — Agent Product Icons (opt-in, foundation)**
 - Added `Great White: Agent Product Icons` product icon theme (opt-in via `Preferences: Product Icon Theme`)
-- Custom shark-ocean SVG icons for: Copilot activity bar icon, chat discussion, sparkle/AI suggestion indicator
-- Uses `currentColor` so icons adapt automatically to all Great White variants
+- Initial implementation using Codicon font with a `git-merge` icon override as proof-of-concept
+- Custom shark-ocean product icons planned for a future release (requires webfont generation)
 
 **Tier 4a — AGENTS.md Syntax Grammar (auto)**
 - Added TextMate grammar (`text.agents.markdown`) injected into Markdown
