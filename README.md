@@ -61,7 +61,7 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **HTML / JSX / CSS** -- tag names, attributes, and CSS properties explicitly styled.
 - **Markdown** -- headings (bold), italic, inline code, fenced blocks, links, blockquotes.
 - **Terminal ANSI** -- consistent 16-color ANSI palette shared across all variants.
-- **Self-improving** -- includes an audit script and monthly GitHub Actions loop that checks contrast, key coverage, and symmetry between variants.
+- **Self-improving** -- includes an audit script, monthly GitHub Actions loop, and four custom Copilot agents (`@theme-editor`, `@theme-auditor`, `@learnings-clerk`, `@release-manager`) that enforce theme rules during development.
 
 ---
 
@@ -93,6 +93,19 @@ code .
 ```
 
 **Test across:** TypeScript, Python, JSON, Markdown, HTML/JSX -- and check the diff editor and terminal too.
+
+### Custom Copilot Agents
+
+Four specialist agents in `.github/agents/` assist with development:
+
+| Agent | Purpose |
+|---|---|
+| `@theme-editor` | Make color/token changes correctly across all six theme variants |
+| `@theme-auditor` | Audit all six variants for contrast, coverage, and symmetry |
+| `@learnings-clerk` | Log mistakes and patterns to `.learnings/`, manage promotions |
+| `@release-manager` | Walk the release checklist and validate packaging |
+
+Invoke any agent with `@agent-name` in GitHub Copilot Chat.
 
 ---
 

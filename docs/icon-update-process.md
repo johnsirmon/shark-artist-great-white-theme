@@ -46,3 +46,7 @@ All seven icons below are referenced in `themes/great-white-agent-file-icons.jso
 `.midjourney-workspace/` is an experimental local-only working area on `feature/agentic-icon-workflow`.  
 It is excluded from packaging (`.vscodeignore`) and from version control on `main` (`.gitignore`).  
 **Do not include it in any merge or cherry-pick targeting `main`.**
+
+## Related agents
+
+Use `@theme-editor` in Copilot when making changes to `themes/great-white-agent-file-icons.json` — it enforces the icon theme constraints (no `fonts` key, generic fallbacks required) alongside the standard 6-file sync rules.
