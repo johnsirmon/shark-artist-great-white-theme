@@ -101,6 +101,25 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               ERR-20260302-003
+Logged:           2026-03-02
+Summary:          Product icon theme was broken due to missing font file.
+Error:            >
+  `great-white-product-icons.json` was a stub with `fonts: []`, which is valid JSON but functionally
+  incomplete for a product icon theme, as it requires at least one font definition to render icons.
+Context:          >
+  The repository contained no font files. The user requested to fix the functionality.
+Suggested Fix:    >
+  Acquired `codicon.ttf` via `npm install @vscode/codicons` (temporary), copied it to `icons/`,
+  and updated `great-white-product-icons.json` to reference it and map a sample icon.
+  
+Metadata:
+  Reproducible:   yes
+  Related Files:  [themes/great-white-product-icons.json, icons/codicon.ttf]
+  See Also:       []
+-->
+
+<!--
 ID:               ERR-20260301-001
 Logged:           2026-03-01
 Summary:          .gitignore only excluded midjourney workspace subdirectories, not the root folder — main had no guard at all.
