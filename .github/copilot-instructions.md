@@ -95,6 +95,16 @@ The file icon and product icon themes are registered contributions in `package.j
 - **File icon themes** — use SVG `iconPath` in `iconDefinitions`. Do **not** include a `fonts` key at all (not even `"fonts": []`); VS Code reads `fonts[0].size` unconditionally and crashes if the array is empty.
 - **Product icon themes** — cannot reference SVG files via `iconPath`. They require font-based icons: a `fonts` array with a webfont entry and `iconDefinitions` using `fontCharacter` (Unicode codepoint) + `fontId`. Until a proper webfont is set up, keep `great-white-product-icons.json` as the minimal stub (`fonts: [], iconDefinitions: {}, icons: {}`).
 
+## Documentation and Grammar
+
+The repository includes a custom TextMate grammar (`syntaxes/agents-md.tmLanguage.json`) that injects into Markdown files. It highlights specific callout patterns used in `AGENTS.md` and `copilot-instructions.md`.
+
+**Use these prefixes** when writing documentation or rules to trigger the custom highlighting:
+- `CRITICAL:` / `IMPORTANT:` / `NEVER:` / `DO NOT:` (Error Red)
+- `WARNING:` / `CAUTION:` / `DEPRECATED:` (Warning Amber)
+- `NOTE:` / `TIP:` / `INFO:` / `SEE ALSO:` (Info Blue)
+- `TODO:` / `FIXME:` / `HACK:` (Constant Color)
+
 ## Packaging note
 
 Before `vsce package`, confirm `.vscodeignore` excludes all local-work artifacts (`.local-image-work/**`, `icon.bak`, etc.). Run `vsce package --no-dependencies` and inspect the output file list to catch accidental inclusions.
@@ -109,6 +119,12 @@ node .scripts/improve-loop.js             # apply auto-fixes, validate, log to .
 ```
 
 The GitHub Actions workflow `.github/workflows/self-improve.yml` runs monthly (and on demand) with `dry-run=true` by default. It creates a draft PR with any `.learnings/` updates but never touches theme files or publishes.
+
+## MCP Servers
+
+This repository benefits from the following MCP servers:
+- **GitHub**: For checking CI status, managing releases, and updating issues.
+- **Brave Search**: For looking up VS Code theme keys and color definitions.
 
 ## Palette
 
@@ -137,6 +153,7 @@ Accents and diagnostics are identical between variants. Only surfaces (backgroun
 - **Token changes require both `tokenColors` and `semanticTokenColors`** to stay in sync.
 - **Comments are intentionally italic** (`"fontStyle": "italic"`) — do not remove.
 - **Terminal ANSI values are identical** in both variants — keep them in sync.
+- **Experimental workspaces** (e.g., `.midjourney-workspace/`) must be fully gitignored at the root level, not just their subdirectories.
 - **`.vsix` files are committed** to the repo root as release artifacts.
 - For palette and design rationale, see `prd.md`.
 
