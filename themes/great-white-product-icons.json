@@ -1,35 +1,5 @@
 {
-  "information_for_contributors": "Great White Agent Product Icons — opt-in product icon theme for Copilot and agent UI surfaces. Uses currentColor so it adapts to all Great White variants automatically.",
   "fonts": [],
-  "iconDefinitions": {
-    "gw-copilot": {
-      "iconPath": "../product-icons/shark-copilot.svg"
-    },
-    "gw-chat": {
-      "iconPath": "../product-icons/shark-chat.svg"
-    },
-    "gw-sparkle": {
-      "iconPath": "../product-icons/shark-sparkle.svg"
-    }
-  },
-  "icons": {
-    "copilot": {
-      "description": "Great White shark fin + sparkle Copilot icon",
-      "default": {
-        "fontCharacter": "gw-copilot"
-      }
-    },
-    "comment-discussion": {
-      "description": "Great White chat bubble with wave",
-      "default": {
-        "fontCharacter": "gw-chat"
-      }
-    },
-    "sparkle": {
-      "description": "Great White 4-point star sparkle",
-      "default": {
-        "fontCharacter": "gw-sparkle"
-      }
-    }
-  }
+  "iconDefinitions": {},
+  "icons": {}
 }
