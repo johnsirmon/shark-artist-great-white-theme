@@ -8,30 +8,27 @@ No npm scripts exist. Use `vsce` directly:
 
 ```bash
 npm install -g @vscode/vsce   # one-time
-vsce package                  # produces a .vsix, same as CI
-vsce login shark-labs
-vsce publish
+vsce package                  # produces a .vsix, validates JSON; same as CI
+node .scripts/audit.js        # contrast + coverage check (exits 1 on high-severity)
+node .scripts/audit.js --json # machine-readable audit output
 ```
 
 CI runs `vsce package` on every push to `main` and every PR.
 
 ## Making changes
 
-**Token or color change:**
-1. Identify which variants are affected. Universal token changes (syntax colors) must be applied to **all six** theme files:
-   - `great-white-dark-color-theme.json` · `great-white-light-color-theme.json`
-   - `great-white-storm-color-theme.json` · `great-white-frost-color-theme.json`
-   - `great-white-hc-dark-color-theme.json` · `great-white-hc-light-color-theme.json`
-2. For any token type, update it in **both** `tokenColors` (TextMate) **and** `semanticTokenColors` — semantic rules take priority in language-server-supported files and will override TextMate silently if they disagree.
-3. Press **F5** → Extension Development Host → `Preferences: Color Theme` to preview.
-4. Spot-check in TypeScript, Python, JSON, and Markdown. Also check the diff editor and terminal for the affected color role.
+**Token or color change** — must touch **all six** theme files:
+1. `great-white-dark-color-theme.json` · `great-white-light-color-theme.json`
+2. `great-white-storm-color-theme.json` · `great-white-frost-color-theme.json`
+3. `great-white-hc-dark-color-theme.json` · `great-white-hc-light-color-theme.json`
+
+For any token type, update it in **both** `tokenColors` (TextMate) **and** `semanticTokenColors` — semantic rules silently override TextMate in language-server-supported files.
 
 **Variant relationships:**
-- **Dark / Light**: the reference pair; establishes canonical token colors.
-- **Storm**: a cooler, higher-contrast dark variant (editor bg `#111820`).
-- **Frost**: a colder, slightly muted light variant.
-- **HC Dark / HC Light**: high-contrast accessibility variants registered as `hc-black` / `hc-light` — push contrast further, no decorative accents.
-- Each file is fully self-contained — no inheritance, no shared base. When adding a new workbench key, add it to all applicable files.
+- **Dark / Light**: the reference pair; canonical token colors.
+- **Storm**: cooler, higher-contrast dark (editor bg `#111820`).
+- **Frost**: colder, slightly muted light.
+- **HC Dark / HC Light**: high-contrast accessibility (`hc-black` / `hc-light`) — push contrast further, no decorative accents.
 
 **Release:**
 1. Bump `version` in `package.json` and add an entry to `CHANGELOG.md`.
@@ -93,6 +90,7 @@ The file icon and product icon themes are registered contributions in `package.j
 **Icon theme schema constraints** (violations crash VS Code or cause silent rejection):
 
 - **File icon themes** — use SVG `iconPath` in `iconDefinitions`. Do **not** include a `fonts` key at all (not even `"fonts": []`); VS Code reads `fonts[0].size` unconditionally and crashes if the array is empty.
+- **Exclusivity** — VS Code only allows one file icon theme at a time. Your theme must include generic fallbacks (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`) or the user will see no icons for standard files.
 - **Product icon themes** — cannot reference SVG files via `iconPath`. They require font-based icons: a `fonts` array with a webfont entry and `iconDefinitions` using `fontCharacter` (Unicode codepoint) + `fontId`. Until a proper webfont is set up, keep `great-white-product-icons.json` as the minimal stub (`fonts: [], iconDefinitions: {}, icons: {}`).
 
 ## Documentation and Grammar
