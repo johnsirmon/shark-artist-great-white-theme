@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    {
+      "name": "github",
+      "description": "Essential for managing releases, CI workflows, and self-improvement loops in this repository.",
+      "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/github"
+    },
+    {
+      "name": "brave-search",
+      "description": "Recommended for looking up obscure VS Code theme keys and workbench color definitions.",
+      "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search"
+    }
+  ]
+}

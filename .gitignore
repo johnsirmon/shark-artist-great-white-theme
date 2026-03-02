@@ -12,3 +12,8 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 .vscode-test/
+
+# Midjourney workspace — experimental, local-only, must NOT be merged to main
+# The entire folder is intentionally excluded from version control on main.
+# It lives only on feature/agentic-icon-workflow as a local working area.
+.midjourney-workspace/

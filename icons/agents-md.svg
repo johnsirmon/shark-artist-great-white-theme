@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
-  <!-- Shark fin silhouette on ocean-blue tinted markdown file -->
   <rect width="16" height="16" rx="1.5" fill="#4a9ec0"/>
-  <!-- Document lines -->
-  <rect x="3" y="10" width="10" height="1.2" rx="0.6" fill="#d8e8ef" opacity="0.7"/>
-  <rect x="3" y="12.2" width="7" height="1.2" rx="0.6" fill="#d8e8ef" opacity="0.5"/>
-  <!-- Shark fin -->
-  <path d="M5.5 8.5 C5.5 8.5 6.5 3.5 8 3 C8 3 9 5 9.5 8.5 Z" fill="#d8e8ef"/>
-  <!-- Ocean wave base -->
-  <path d="M3 8.5 Q5 7.5 8 8.5 Q11 9.5 13 8.5 L13 9.2 Q11 10.2 8 9.2 Q5 8.2 3 9.2 Z" fill="#8dd4f0" opacity="0.6"/>
+  <!-- Shark fin: flipped — steep right edge, sweeping left curve -->
+  <path d="M11.5 9 L9 2.5 C7 4 5 7 4 9 Z" fill="#d8e8ef"/>
+  <!-- Doc lines: descending length -->
+  <rect x="3" y="9.3" width="10" height="1" rx="0.5" fill="#d8e8ef" opacity="0.8"/>
+  <rect x="3" y="10.6" width="8.5" height="1" rx="0.5" fill="#d8e8ef" opacity="0.65"/>
+  <rect x="3" y="11.9" width="7" height="1" rx="0.5" fill="#d8e8ef" opacity="0.5"/>
+  <rect x="3" y="13.2" width="5" height="1" rx="0.5" fill="#d8e8ef" opacity="0.35"/>
 </svg>
