@@ -1,5 +1,5 @@
 {
-  "information_for_contributors": "Great White Agent File Icons — custom icons for agentic instruction files. Only covers agent/AI-specific files; all other files use VS Code defaults.",
+  "information_for_contributors": "Great White Agent File Icons — custom icons for agentic instruction files and common file types, using the ocean palette.",
   "iconDefinitions": {
     "_file": {
       "iconPath": "../icons/file.svg"
@@ -36,6 +36,24 @@
     },
     "_copilot_folder": {
       "iconPath": "../icons/copilot-folder.svg"
+    },
+    "_markdown": {
+      "iconPath": "../icons/markdown.svg"
+    },
+    "_json": {
+      "iconPath": "../icons/json.svg"
+    },
+    "_image": {
+      "iconPath": "../icons/image.svg"
+    },
+    "_config": {
+      "iconPath": "../icons/config.svg"
+    },
+    "_package": {
+      "iconPath": "../icons/package.svg"
+    },
+    "_yaml": {
+      "iconPath": "../icons/yaml.svg"
     }
   },
   "file": "_file",
@@ -43,6 +61,26 @@
   "folderExpanded": "_folder_open",
   "rootFolder": "_root_folder",
   "rootFolderExpanded": "_root_folder_open",
+  "fileExtensions": {
+    "md": "_markdown",
+    "json": "_json",
+    "svg": "_image",
+    "png": "_image",
+    "jpg": "_image",
+    "jpeg": "_image",
+    "gif": "_image",
+    "ico": "_image",
+    "webp": "_image",
+    "yml": "_yaml",
+    "yaml": "_yaml",
+    "toml": "_yaml",
+    "vsix": "_package",
+    "ttf": "_config",
+    "gitignore": "_config",
+    "vscodeignore": "_config",
+    "editorconfig": "_config",
+    "env": "_config"
+  },
   "fileNames": {
     "AGENTS.md": "_agents_md",
     "agents.md": "_agents_md",
@@ -54,7 +92,11 @@
     "copilot.md": "_copilot_instructions",
     "copilot-instructions.md": "_copilot_instructions",
     "plan.md": "_plan_md",
-    "PLAN.md": "_plan_md"
+    "PLAN.md": "_plan_md",
+    "package.json": "_package",
+    "package-lock.json": "_package",
+    "LICENSE": "_config",
+    "LICENSE.txt": "_config"
   },
   "folderNames": {
     ".learnings": "_learnings_folder",

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <rect x="1" y="1" width="14" height="14" rx="1.5" fill="#5b98b0"/>
+  <!-- Gear shape -->
+  <circle cx="8" cy="8" r="2.2" stroke="#d8e8ef" stroke-width="1.2" fill="none"/>
+  <circle cx="8" cy="8" r="0.8" fill="#d8e8ef"/>
+  <!-- Gear teeth (small rectangles at compass points) -->
+  <rect x="7.3" y="3" width="1.4" height="2" rx="0.4" fill="#d8e8ef"/>
+  <rect x="7.3" y="11" width="1.4" height="2" rx="0.4" fill="#d8e8ef"/>
+  <rect x="3" y="7.3" width="2" height="1.4" rx="0.4" fill="#d8e8ef"/>
+  <rect x="11" y="7.3" width="2" height="1.4" rx="0.4" fill="#d8e8ef"/>
+</svg>
