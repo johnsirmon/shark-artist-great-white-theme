@@ -1,6 +1,5 @@
 {
   "information_for_contributors": "Great White Agent File Icons — custom icons for agentic instruction files. Only covers agent/AI-specific files; all other files use VS Code defaults.",
-  "fonts": [],
   "iconDefinitions": {
     "_agents_md": {
       "iconPath": "../icons/agents-md.svg"
