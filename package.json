@@ -10,11 +10,16 @@
     "url": "https://thesharkartist.com"
   },
   "license": "SEE LICENSE IN LICENSE",
+  "main": "./extension.js",
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.93.0"
   },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "categories": [
-    "Themes"
+    "Themes",
+    "Other"
   ],
   "keywords": [
     "theme",
@@ -46,6 +51,26 @@
     "theme": "dark"
   },
   "contributes": {
+    "commands": [
+      {
+        "command": "great-white.toggleChime",
+        "title": "Great White: Toggle Pentatonic Chime",
+        "icon": "$(music)"
+      },
+      {
+        "command": "great-white.playNote",
+        "title": "Great White: Play Next Pentatonic Note"
+      }
+    ],
+    "chatParticipants": [
+      {
+        "id": "great-white.shark",
+        "name": "shark",
+        "fullName": "Great White Shark",
+        "description": "Ocean-inspired AI assistant — plays a pentatonic chime 🎵 after every response",
+        "isSticky": false
+      }
+    ],
     "themes": [
       {
         "label": "Great White (Dark)",

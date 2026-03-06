@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.1] - 2026-03-06  *(experimental)*
+
+### Pentatonic Chime — experimental chat feature
+
+**How to use**
+
+1. Open the VS Code Chat panel and type `@shark <your question>`.
+2. After each response a soft sine-wave note plays from the **A minor pentatonic scale** (A3 → C4 → D4 → E4 → G4 → A4 → C5 → D5 → E5 → G5, cycling).
+3. A **Chime** status-bar button (bottom right) shows the current state. Click it, or run **Great White: Toggle Pentatonic Chime** from the Command Palette (`⇧⌘P`), to enable or disable the chime at any time.
+4. The enabled/disabled state is **persisted across sessions** via `globalState`.
+
+**Technical notes**
+- Added `extension.js` — first JavaScript entrypoint for the extension (previously declarative-only).
+- Audio is rendered in a lightweight hidden WebviewPanel using the Web Audio API (`OscillatorNode` + soft attack/decay envelope). No native binaries or npm dependencies required.
+- Chat participant `@shark` proxies requests to the best available GitHub Copilot language model (`gpt-4o` family).
+- Requires VS Code ≥ 1.93 (stable `vscode.chat.createChatParticipant` API). Chat participant is silently skipped on older builds.
+
 ## [0.5.0] - 2026-02-28
 
 ### Agentic Workflow Visibility

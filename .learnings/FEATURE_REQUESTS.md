@@ -32,6 +32,31 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:                       FEAT-20260306-001
+Logged:                   2026-03-06
+Status:                   resolved
+Requested Capability:     Play a minor-pentatonic-scale chime note after every VS Code chat call, with an easy on/off toggle.
+User Context:             >
+  User wants a musical/ambient feedback loop tied to AI chat interactions in VS Code.
+  Each completed @shark chat response should advance one note through the A minor pentatonic
+  scale (cycling), creating a gentle audio signature. The feature must be trivially togglable
+  (status bar click or command palette) and persist its state across sessions.
+Complexity:               medium
+Suggested Implementation: >
+  Added extension.js as the first JS entrypoint. Registers a @great-white.shark chat participant
+  that proxies requests to the Copilot gpt-4o model and plays a chime after each response.
+  Audio uses a hidden WebviewPanel with the Web Audio API (OscillatorNode, sine wave, soft envelope).
+  Toggle command great-white.toggleChime + status bar item. State persisted via globalState.
+  Also registered great-white.playNote command for manual/test trigger.
+  Requires VS Code ≥ 1.93 for stable chat participant API; guard prevents crash on older builds.
+
+Metadata:
+  Related Files:  ["extension.js", "package.json", "CHANGELOG.md"]
+  See Also:       ["FEAT-20260227-002"]
+  Tags:           ["audio", "chat", "pentatonic", "experimental", "companion-extension"]
+-->
+
+<!--
 ID:                       FEAT-20260227-002
 Logged:                   2026-02-27
 Status:                   in-progress
