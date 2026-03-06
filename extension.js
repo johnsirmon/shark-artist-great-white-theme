@@ -3,9 +3,22 @@
 
 const vscode = require('vscode');
 
+/** @typedef {'sine' | 'square' | 'sawtooth' | 'triangle'} Waveform */
+/** @typedef {'simple' | 'workflow'} AudioMode */
+/**
+ * @typedef {object} ToneStep
+ * @property {number} frequency
+ * @property {number} duration
+ * @property {number} volume
+ * @property {number} [gap]
+ * @property {Waveform} [waveform]
+ */
+
 // ─── Audio constants ──────────────────────────────────────────────────────────
 const CHIME_DURATION = 0.45;  // seconds per note (includes decay tail)
 const CHIME_VOLUME   = 0.14;  // peak gain (0 – 1); quiet enough not to startle
+const AUDIO_MODE_SIMPLE = 'simple';
+const AUDIO_MODE_WORKFLOW = 'workflow';
 
 // ─── Minor pentatonic scale — A minor, two octaves (A3 … G5) ─────────────────
 // Intervals: root, ♭3, 4, 5, ♭7  (×2 octaves = 10 notes)
@@ -22,11 +35,35 @@ const PENTATONIC_HZ = [
   783.99,  // G5
 ];
 
+/** @type {Record<string, ToneStep[]>} */
+const WORKFLOW_PATTERNS = {
+  requestStart: [
+    { frequency: PENTATONIC_HZ[0], duration: 0.12, volume: 0.09, waveform: 'sine' },
+  ],
+  successComplete: [
+    { frequency: PENTATONIC_HZ[5], duration: 0.10, volume: 0.10, gap: 0.03, waveform: 'sine' },
+    { frequency: PENTATONIC_HZ[6], duration: 0.11, volume: 0.11, gap: 0.03, waveform: 'sine' },
+    { frequency: PENTATONIC_HZ[8], duration: 0.18, volume: 0.12, waveform: 'triangle' },
+  ],
+  canceledComplete: [
+    { frequency: PENTATONIC_HZ[3], duration: 0.10, volume: 0.08, gap: 0.03, waveform: 'sine' },
+    { frequency: PENTATONIC_HZ[1], duration: 0.14, volume: 0.08, waveform: 'sine' },
+  ],
+  errorComplete: [
+    { frequency: PENTATONIC_HZ[4], duration: 0.10, volume: 0.10, gap: 0.03, waveform: 'triangle' },
+    { frequency: PENTATONIC_HZ[2], duration: 0.11, volume: 0.10, gap: 0.03, waveform: 'triangle' },
+    { frequency: PENTATONIC_HZ[0], duration: 0.18, volume: 0.11, waveform: 'triangle' },
+  ],
+};
+
 /** @type {number} */
 let _noteIndex = 0;
 
 /** @type {boolean} */
 let _chimeEnabled = true;
+
+/** @type {AudioMode} */
+let _audioMode = AUDIO_MODE_SIMPLE;
 
 /** @type {vscode.StatusBarItem | null} */
 let _statusBarItem = null;
@@ -49,6 +86,11 @@ function activate(context) {
   _chimeEnabled = /** @type {boolean} */ (
     context.globalState.get('great-white.chimeEnabled', true)
   );
+  _audioMode = _normalizeAudioMode(
+    /** @type {AudioMode | undefined} */ (
+      context.globalState.get('great-white.audioMode', AUDIO_MODE_SIMPLE)
+    )
+  );
 
   // ── Status bar item (right side) ──────────────────────────────────────────
   _statusBarItem = vscode.window.createStatusBarItem(
@@ -63,6 +105,7 @@ function activate(context) {
   // ── Commands ──────────────────────────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('great-white.toggleChime', _toggleChime),
+    vscode.commands.registerCommand('great-white.toggleAudioMode', _toggleAudioMode),
     vscode.commands.registerCommand('great-white.playNote', _playNextNote)
   );
 
@@ -84,7 +127,7 @@ function activate(context) {
 
 /**
  * Proxy the user's message to a GitHub Copilot language model, stream the
- * response, then play one pentatonic chime note when done.
+ * response, then play simple or workflow-mode pentatonic cues around the run.
  *
  * @param {vscode.ChatRequest} request
  * @param {vscode.ChatContext} _chatContext
@@ -92,6 +135,13 @@ function activate(context) {
  * @param {vscode.CancellationToken} token
  */
 async function _handleChatRequest(request, _chatContext, response, token) {
+  /** @type {'success' | 'canceled' | 'error'} */
+  let outcome = 'success';
+
+  if (_chimeEnabled && _audioMode === AUDIO_MODE_WORKFLOW) {
+    _playWorkflowPattern('requestStart');
+  }
+
   try {
     // Select the best available Copilot model
     const models = await vscode.lm.selectChatModels({
@@ -100,6 +150,7 @@ async function _handleChatRequest(request, _chatContext, response, token) {
     });
 
     if (models.length === 0) {
+      outcome = 'error';
       response.markdown(
         '🦈 *No language model found. Please ensure GitHub Copilot Chat is installed and signed in.*'
       );
@@ -114,14 +165,16 @@ async function _handleChatRequest(request, _chatContext, response, token) {
       }
     }
   } catch (err) {
-    if (/** @type {any} */ (err).code !== 'Canceled') {
+    if (/** @type {any} */ (err).code === 'Canceled') {
+      outcome = 'canceled';
+    } else {
+      outcome = 'error';
       response.markdown(`🦈 *Error: ${/** @type {Error} */ (err).message}*`);
     }
-  }
-
-  // Play a chime note after the response completes (or errors)
-  if (_chimeEnabled) {
-    _playNextNote();
+  } finally {
+    if (_chimeEnabled) {
+      _playCompletionCue(outcome);
+    }
   }
 }
 
@@ -142,10 +195,43 @@ function _playNextNote() {
  * @param {number} frequency   Frequency in Hz
  * @param {number} duration    Duration in seconds
  * @param {number} volume      Peak gain (0 – 1)
+ * @param {Waveform} [waveform]
  */
-function _playTone(frequency, duration, volume) {
+function _playTone(frequency, duration, volume, waveform = 'sine') {
   const panel = _getOrCreateAudioPanel();
-  panel.webview.postMessage({ type: 'play', frequency, duration, volume });
+  panel.webview.postMessage({ type: 'play', frequency, duration, volume, waveform });
+}
+
+/**
+ * @param {ToneStep[]} tones
+ */
+function _playSequence(tones) {
+  const panel = _getOrCreateAudioPanel();
+  panel.webview.postMessage({ type: 'play-sequence', tones });
+}
+
+/**
+ * @param {'success' | 'canceled' | 'error'} outcome
+ */
+function _playCompletionCue(outcome) {
+  if (_audioMode === AUDIO_MODE_WORKFLOW) {
+    const patternName = outcome === 'success'
+      ? 'successComplete'
+      : outcome === 'canceled'
+        ? 'canceledComplete'
+        : 'errorComplete';
+    _playWorkflowPattern(patternName);
+    return;
+  }
+
+  _playNextNote();
+}
+
+/**
+ * @param {keyof typeof WORKFLOW_PATTERNS} patternName
+ */
+function _playWorkflowPattern(patternName) {
+  _playSequence(WORKFLOW_PATTERNS[patternName]);
 }
 
 /**
@@ -161,7 +247,7 @@ function _getOrCreateAudioPanel() {
 
   _audioPanel = vscode.window.createWebviewPanel(
     'great-white-audio',
-    '🎵 Great White Chime',
+    '🎵 Great White Audio',
     { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
     { enableScripts: true, retainContextWhenHidden: true }
   );
@@ -200,11 +286,12 @@ function _buildAudioHtml() {
   </style>
 </head>
 <body>
-  <div>🦈 Great White Pentatonic Chime — audio engine</div>
+  <div>🦈 Great White Pentatonic Audio — engine</div>
   <div id="log">Waiting for first note…</div>
   <script>
     const logEl = document.getElementById('log');
     let ctx = null;
+    const VALID_WAVEFORMS = new Set(['sine', 'square', 'sawtooth', 'triangle']);
 
     function getAudioContext() {
       if (!ctx) { ctx = new AudioContext(); }
@@ -213,7 +300,11 @@ function _buildAudioHtml() {
       return ctx;
     }
 
-    function playTone(frequency, duration, volume) {
+    function normalizeWaveform(waveform) {
+      return VALID_WAVEFORMS.has(waveform) ? waveform : 'sine';
+    }
+
+    function playTone(frequency, duration, volume, waveform) {
       const ac = getAudioContext();
       const osc  = ac.createOscillator();
       const gain = ac.createGain();
@@ -221,7 +312,7 @@ function _buildAudioHtml() {
       osc.connect(gain);
       gain.connect(ac.destination);
 
-      osc.type = 'sine';
+      osc.type = normalizeWaveform(waveform);
       osc.frequency.setValueAtTime(frequency, ac.currentTime);
 
       // Soft attack, natural exponential decay
@@ -237,14 +328,33 @@ function _buildAudioHtml() {
         new Date().toLocaleTimeString();
     }
 
+    function playSequence(tones) {
+      let delayMs = 0;
+      for (const tone of Array.isArray(tones) ? tones : []) {
+        const startAfter = delayMs;
+        setTimeout(() => {
+          playTone(
+            tone.frequency || 440,
+            tone.duration || 0.12,
+            tone.volume || 0.1,
+            tone.waveform
+          );
+        }, startAfter);
+        delayMs += ((tone.duration || 0.12) + (tone.gap || 0)) * 1000;
+      }
+    }
+
     window.addEventListener('message', event => {
       const msg = event.data;
       if (msg && msg.type === 'play') {
         playTone(
           msg.frequency || 440,
           msg.duration  || 0.45,
-          msg.volume    || 0.14
+          msg.volume    || 0.14,
+          msg.waveform
         );
+      } else if (msg && msg.type === 'play-sequence') {
+        playSequence(msg.tones);
       }
     });
   </script>
@@ -262,20 +372,56 @@ function _toggleChime() {
   _refreshStatusBar();
   vscode.window.showInformationMessage(
     _chimeEnabled
-      ? 'Great White Chime enabled 🎵'
-      : 'Great White Chime disabled 🔇'
+      ? `Great White audio enabled (${_getAudioModeLabel()}) 🎵`
+      : 'Great White audio disabled 🔇'
+  );
+}
+
+function _toggleAudioMode() {
+  _audioMode = _audioMode === AUDIO_MODE_SIMPLE
+    ? AUDIO_MODE_WORKFLOW
+    : AUDIO_MODE_SIMPLE;
+
+  if (_ctx) {
+    _ctx.globalState.update('great-white.audioMode', _audioMode);
+  }
+
+  _refreshStatusBar();
+  vscode.window.showInformationMessage(
+    _audioMode === AUDIO_MODE_WORKFLOW
+      ? 'Great White workflow audio enabled 🎼'
+      : 'Great White simple chime enabled 🎵'
   );
 }
 
 function _refreshStatusBar() {
   if (!_statusBarItem) { return; }
-  _statusBarItem.text    = _chimeEnabled ? '$(music) Chime' : '$(mute) Chime';
+  const modeLabel = _getAudioModeLabel();
+  _statusBarItem.text = _chimeEnabled
+    ? (_audioMode === AUDIO_MODE_WORKFLOW ? '$(music) Flow' : '$(music) Chime')
+    : '$(mute) Audio';
   _statusBarItem.tooltip = _chimeEnabled
-    ? 'Great White: Pentatonic chime ON — click to disable'
-    : 'Great White: Pentatonic chime OFF — click to enable';
+    ? `Great White audio ON — ${modeLabel}. Click to disable. Run "Great White: Toggle Audio Mode" to switch modes.`
+    : `Great White audio OFF — ${modeLabel}. Click to enable. Run "Great White: Toggle Audio Mode" to switch modes.`;
   _statusBarItem.backgroundColor = _chimeEnabled
     ? undefined
     : new vscode.ThemeColor('statusBarItem.warningBackground');
+}
+
+/**
+ * @param {AudioMode | undefined} mode
+ * @returns {AudioMode}
+ */
+function _normalizeAudioMode(mode) {
+  return mode === AUDIO_MODE_WORKFLOW
+    ? AUDIO_MODE_WORKFLOW
+    : AUDIO_MODE_SIMPLE;
+}
+
+function _getAudioModeLabel() {
+  return _audioMode === AUDIO_MODE_WORKFLOW
+    ? 'workflow mode'
+    : 'simple chime mode';
 }
 
 // ─── Deactivation ─────────────────────────────────────────────────────────────

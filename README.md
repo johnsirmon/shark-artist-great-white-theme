@@ -89,6 +89,7 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **HTML / JSX / CSS** -- tag names, attributes, and CSS properties explicitly styled.
 - **Markdown** -- headings (bold), italic, inline code, fenced blocks, links, blockquotes.
 - **Terminal ANSI** -- consistent 16-color ANSI palette shared across all variants.
+- **Pentatonic agent audio** -- the custom `@shark` participant can play either a simple completion chime or workflow-style start/success/non-success cues.
 - **Self-improving** -- includes an audit script, monthly GitHub Actions loop, and four custom Copilot agents (`@theme-editor`, `@theme-auditor`, `@learnings-clerk`, `@release-manager`) that enforce theme rules during development.
 
 ---
@@ -121,6 +122,11 @@ code .
 ```
 
 **Test across:** TypeScript, Python, JSON, Markdown, HTML/JSX -- and check the diff editor and terminal too.
+
+To exercise the agent audio workflow:
+1. Open the Chat panel and run `@shark <your question>`.
+2. Use **Great White: Toggle Audio Mode (Chime / Workflow)** to switch between a single completion note and workflow-mode cues.
+3. Use **Great White: Toggle Audio Feedback** to mute or re-enable the audio layer.
 
 ### Custom Copilot Agents
 

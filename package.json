@@ -54,8 +54,12 @@
     "commands": [
       {
         "command": "great-white.toggleChime",
-        "title": "Great White: Toggle Pentatonic Chime",
+        "title": "Great White: Toggle Audio Feedback",
         "icon": "$(music)"
+      },
+      {
+        "command": "great-white.toggleAudioMode",
+        "title": "Great White: Toggle Audio Mode (Chime / Workflow)"
       },
       {
         "command": "great-white.playNote",
@@ -67,7 +71,7 @@
         "id": "great-white.shark",
         "name": "shark",
         "fullName": "Great White Shark",
-        "description": "Ocean-inspired AI assistant — plays a pentatonic chime 🎵 after every response",
+        "description": "Ocean-inspired AI assistant — optional pentatonic workflow audio cues",
         "isSticky": false
       }
     ],

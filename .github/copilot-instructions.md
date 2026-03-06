@@ -1,81 +1,71 @@
 # Copilot Instructions
 
-A VS Code color theme extension — six variants plus a file icon theme, product icon theme, and an agents-markdown grammar. All work happens in the theme JSON files under `themes/` and `package.json`. There is no shared base file; each variant is fully self-contained.
+This repository is a VS Code theme extension with six color variants plus a companion file icon theme, product icon theme, Markdown injection grammar, and a small runtime extension for a Copilot chat participant + pentatonic chime.
 
-## Commands
+## Build, test, and validation commands
 
-No npm scripts exist. Use `vsce` directly:
+There are no npm scripts. Use the repo tools directly:
 
 ```bash
 npm install -g @vscode/vsce   # one-time
-vsce package                  # produces a .vsix, validates JSON; same as CI
-node .scripts/audit.js        # contrast + coverage check (exits 1 on high-severity)
-node .scripts/audit.js --json # machine-readable audit output
+node .scripts/audit.js        # audits the reference dark/light pair for required keys, scopes, ANSI parity, and WCAG token contrast
+node .scripts/audit.js --json # same audit in machine-readable form
+vsce package                  # packages the extension and validates manifest/theme JSON; same gate CI runs
 ```
 
-CI runs `vsce package` on every push to `main` and every PR.
+Manual validation is part of normal development:
 
-## Making changes
+```bash
+code .
+# Press F5 in VS Code to open an Extension Development Host
+```
 
-**Token or color change** — must touch **all six** theme files:
-1. `great-white-dark-color-theme.json` · `great-white-light-color-theme.json`
-2. `great-white-storm-color-theme.json` · `great-white-frost-color-theme.json`
-3. `great-white-hc-dark-color-theme.json` · `great-white-hc-light-color-theme.json`
+In the Extension Development Host, switch across all six variants and spot-check TypeScript, Python, JSON, Markdown, the diff editor, and the integrated terminal. There is no automated single-test or per-file test command; targeted checks are manual in the Extension Development Host.
 
-For any token type, update it in **both** `tokenColors` (TextMate) **and** `semanticTokenColors` — semantic rules silently override TextMate in language-server-supported files.
+CI in `.github/workflows/ci.yml` only runs `vsce package`. The monthly/on-demand self-improve workflow runs `node .scripts/audit.js --json`, then `node .scripts/improve-loop.js`, and finishes with `vsce package`.
 
-**Variant relationships:**
-- **Dark / Light**: the reference pair; canonical token colors.
-- **Storm**: cooler, higher-contrast dark (editor bg `#111820`).
-- **Frost**: colder, slightly muted light.
-- **HC Dark / HC Light**: high-contrast accessibility (`hc-black` / `hc-light`) — push contrast further, no decorative accents.
+## High-level architecture
 
-**Release:**
-1. Bump `version` in `package.json` and add an entry to `CHANGELOG.md`.
-2. Run `vsce package` — commit the generated `.vsix` to the repo root.
-3. See `docs/release-checklist.md` before `vsce publish`.
+- `package.json` is the extension manifest and routing layer. It registers six theme contributions, one file icon theme, one product icon theme, the Markdown injection grammar, two commands, and the `great-white.shark` chat participant. Activation is `onStartupFinished`, and `main` points to `extension.js`.
+- `extension.js` is the only runtime code. It restores `great-white.chimeEnabled` from `globalState`, adds a status bar toggle, registers `great-white.toggleChime` and `great-white.playNote`, creates the `great-white.shark` participant, forwards chat prompts to the first available Copilot `gpt-4o` model, then plays audio after each response.
+- Audio playback is handled through a retained `WebviewPanel` created in `extension.js`. The extension posts `{ type: 'play', frequency, duration, volume }` messages into the webview; the webview uses the Web Audio API to synthesize the note. Changes to commands, chat behavior, command IDs, or participant IDs must stay aligned between `package.json` and `extension.js`.
+- `themes/*.json` are the source of truth for all visual styling. Each of the six theme files is fully self-contained and keeps the same structure: `semanticHighlighting`, `colors`, `tokenColors`, `semanticTokenColors`. Dark and Light are the canonical reference pair; Storm, Frost, and the two HC variants are hand-maintained sibling variants, not derived from a shared base.
+- `themes/great-white-agent-file-icons.json` maps SVG assets in `icons/`, while `themes/great-white-product-icons.json` maps font glyphs from `icons/codicon.ttf`. `syntaxes/agents-md.tmLanguage.json` injects into Markdown to style callout prefixes like `CRITICAL:`, `WARNING:`, and `TODO:`.
+- `.scripts/audit.js` only reads the dark and light theme JSON files. It checks required workbench keys, required TextMate scopes, required semantic token entries, WCAG token contrast, and identical terminal ANSI values between those reference themes. `.scripts/improve-loop.js` can auto-fix `semanticHighlighting` for that pair, validates with `vsce package`, and logs findings to `.learnings/`; the GitHub workflow is intentionally limited to `.learnings/` writebacks.
 
-## Theme file structure
+## Theme and release conventions
 
-Each theme JSON has exactly three top-level sections in this order:
+- **All six theme files must be edited for token/color changes** — there is no shared base file:
+  - `great-white-dark-color-theme.json` / `great-white-light-color-theme.json`
+  - `great-white-storm-color-theme.json` / `great-white-frost-color-theme.json`
+  - `great-white-hc-dark-color-theme.json` / `great-white-hc-light-color-theme.json`
+- **Keep `tokenColors` and `semanticTokenColors` in sync** for every token family. Semantic rules override TextMate in language-server-backed files.
+- **Keep `semanticHighlighting` enabled** in every theme. The audit/improve scripts assume this.
+- **Variant relationships matter**:
+  - **Dark / Light**: canonical token hierarchy and palette anchors.
+  - **Storm**: cooler, higher-contrast dark (`editor.background` `#111820`).
+  - **Frost**: colder, slightly muted light.
+  - **HC Dark / HC Light**: accessibility-first variants (`hc-black` / `hc-light`) with stronger contrast and fewer decorative accents.
+- **Reserved colors**: coral (`#c44f5f`) is for errors/diagnostics, amber (`#d9a441`) is for warnings and diff-removed. Do not reuse them as general syntax accents.
+- **Comments are intentionally italic** (`fontStyle: "italic"`). Do not remove that styling.
+- **Terminal ANSI values stay identical across all variants**. The audit enforces parity for the dark/light reference pair; keep the other four aligned manually too.
+- **Release changes are coupled**: bump `package.json` version, add the matching `CHANGELOG.md` entry, run `vsce package`, and commit the generated `.vsix` in the repo root. Follow `docs/release-checklist.md` before `vsce publish`.
+- **Token colors are contrast-verified**: keep syntax colors at WCAG AA (4.5:1 or better) against each variant's editor background. Use the palette in `README.md` and rationale in `prd.md`.
 
-1. `colors` — Workbench UI (editor surfaces, sidebar, activity bar, tabs, status bar, terminal ANSI, diff, diagnostics)
-2. `tokenColors` — TextMate grammar scopes (all languages)
-3. `semanticTokenColors` — Semantic token overrides (language-server languages; wins over TextMate)
+## Icon and grammar conventions
 
-## Key conventions
+- **File icon themes use SVG `iconPath` definitions** and must include generic fallbacks (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`) because VS Code only allows one active file icon theme.
+- **Do not add a `fonts` key to the file icon theme**. An empty `fonts: []` crashes VS Code's file icon theme loader.
+- **Product icon themes are font-based only**. Use `fontCharacter` + `fontId`; do not try to point product icons at SVG files.
+- **Icon updates are two-part changes**: add or replace the SVG in `icons\`, then wire it in `themes/great-white-agent-file-icons.json`. Preview through the Extension Development Host.
+- The Markdown grammar in `syntaxes/agents-md.tmLanguage.json` injects into standard Markdown and adds dedicated scopes for critical/warning/info/todo callout prefixes; theme changes that affect those scopes should be tested in Markdown files.
 
-- **All six files for token changes** — there is no shared base. Workbench-only changes may target specific variants.
-- **`tokenColors` and `semanticTokenColors` must stay in sync** for every token type.
-- **Reserved colors**: coral (`#c44f5f`) for errors/diagnostics, amber (`#d9a441`) for warnings/diff-removed — never use as general syntax accents.
-- **Comments are intentionally italic** (`"fontStyle": "italic"`) — do not remove.
-- **Terminal ANSI values are identical** across all variants — keep them in sync.
-- **`.vsix` files are committed** to the repo root as release artifacts.
-- **Version bumps** require both `package.json` and `CHANGELOG.md` before packaging.
-- All token colors must be WCAG AA verified (≥4.5:1) against their variant's background. See palette in `README.md` and rationale in `prd.md`.
+## Repository-specific workflow conventions
 
-## Icon theme constraints
-
-- **File icon themes** — use SVG `iconPath` in `iconDefinitions`. Do **not** include a `fonts` key (not even `"fonts": []`); VS Code crashes if the array is empty.
-- **File icon exclusivity** — VS Code allows only one file icon theme. Must include generic fallbacks (`_file`, `_folder`, `_folder_open`, `_root_folder`, `_root_folder_open`).
-- **Product icon themes** — require font-based icons (`fontCharacter` + `fontId`), not SVG. Keep `great-white-product-icons.json` as a minimal stub until a webfont is set up.
-
-## Documentation grammar
-
-The TextMate grammar in `syntaxes/agents-md.tmLanguage.json` injects into Markdown and highlights callout prefixes:
-- **Error Red**: `CRITICAL:` / `IMPORTANT:` / `NEVER:` / `DO NOT:`
-- **Warning Amber**: `WARNING:` / `CAUTION:` / `DEPRECATED:`
-- **Info Blue**: `NOTE:` / `TIP:` / `INFO:` / `SEE ALSO:`
-- **Constant**: `TODO:` / `FIXME:` / `HACK:`
-
-## Self-improvement
-
-The `.learnings/` directory logs mistakes, patterns, and feature requests. Consult it at the start of each session. Log new entries before closing a session — see `AGENTS.md` for the full protocol and ID format (`LRN-YYYYMMDD-XXX`, `ERR-YYYYMMDD-XXX`, `FEAT-YYYYMMDD-XXX`).
-
-## Custom agents
-
-Four specialist agents in `.github/agents/` can be invoked via `@agent-name`:
-- **`@theme-editor`** — color/token changes across all six variants
-- **`@theme-auditor`** — audit all six variants for contrast, coverage, and symmetry
-- **`@learnings-clerk`** — manage `.learnings/` entries and promotions
-- **`@release-manager`** — walk the release checklist and validate packaging
+- Read `.learnings/ERRORS.md`, `.learnings/LEARNINGS.md`, and `.learnings/FEATURE_REQUESTS.md` at the start of a session. Log new entries before closing the session, and promote repeated or high-priority rules into `AGENTS.md` or this file.
+- `.midjourney-workspace/` is experimental and local-only. Do not merge it to `main`.
+- Use the custom agents in `.github/agents/` when they match the work:
+  - `@theme-editor` — token/color edits across all six variants
+  - `@theme-auditor` — contrast, coverage, and symmetry audits across all variants
+  - `@learnings-clerk` — `.learnings/` updates and promotion checks
+  - `@release-manager` — release checklist and packaging flow
