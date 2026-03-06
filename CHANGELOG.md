@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.1] - 2026-03-06  *(experimental)*
+
+### Pentatonic Audio — experimental chat feature
+
+**How to use**
+
+1. Open the VS Code Chat panel and type `@shark <your question>`.
+2. In **Chime** mode, each response ends with a soft sine-wave note from the **A minor pentatonic scale** (A3 → C4 → D4 → E4 → G4 → A4 → C5 → D5 → E5 → G5, cycling).
+3. Run **Great White: Toggle Audio Mode (Chime / Workflow)** to switch to **Workflow** mode, which uses a start cue, an ascending success phrase, and softer descending non-success cues.
+4. A status-bar button (bottom right) shows whether audio is enabled and which mode is active. Click it, or run **Great White: Toggle Audio Feedback** from the Command Palette (`⇧⌘P`), to enable or disable audio at any time.
+5. The enabled/disabled state and selected mode are **persisted across sessions** via `globalState`.
+
+**Technical notes**
+- Added `extension.js` — first JavaScript entrypoint for the extension (previously declarative-only).
+- Audio is rendered in a lightweight hidden WebviewPanel using the Web Audio API (`OscillatorNode` + soft attack/decay envelope). No native binaries or npm dependencies required.
+- Chat participant `@shark` proxies requests to the best available GitHub Copilot language model (`gpt-4o` family).
+- Added a workflow-audio mode for the custom participant without changing the underlying Web Audio transport.
+- Requires VS Code ≥ 1.93 (stable `vscode.chat.createChatParticipant` API). Chat participant is silently skipped on older builds.
+
 ## [0.5.0] - 2026-02-28
 
 ### Agentic Workflow Visibility
