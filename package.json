@@ -71,6 +71,21 @@
         "command": "greatWhite.resetFileNesting",
         "title": "Great White: Reset File Nesting Patterns to Defaults",
         "category": "Theme"
+      },
+      {
+        "command": "greatWhite.dismissStatusBar",
+        "title": "Great White: Snooze Context Alert",
+        "category": "Theme"
+      },
+      {
+        "command": "greatWhite.disableBloodloss",
+        "title": "Great White: Disable Context Tracking",
+        "category": "Theme"
+      },
+      {
+        "command": "greatWhite.enableBloodloss",
+        "title": "Great White: Enable Context Tracking",
+        "category": "Theme"
       }
     ],
     "themes": [
@@ -193,6 +208,23 @@
           "minimum": 10,
           "maximum": 99,
           "description": "Combined severity score (0–100) at which the Bloodloss alarm activates. The alarm clears when severity drops below (triggerSeverity − 20). Default: 75."
+        },
+        "greatWhite.bloodloss.warningSeverity": {
+          "type": "number",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 98,
+          "description": "Severity score at which a one-time warning toast fires before the Bloodloss alarm activates. Set to 0 to disable the early warning. Default: 50."
+        },
+        "greatWhite.statusBar.alwaysShow": {
+          "type": "boolean",
+          "default": true,
+          "description": "Always show the Great White context indicator in the status bar. When enabled, shows a green score (🦈 0 →) when healthy and changes color as context complexity grows. When disabled, the bar only appears once severity crosses 10."
+        },
+        "greatWhite.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Master toggle for the context tracking status bar indicator. Disable to hide all Great White status bar items. Re-enable via the command palette ('Great White: Enable Context Tracking')."
         }
       }
     },

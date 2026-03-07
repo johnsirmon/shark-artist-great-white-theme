@@ -54,6 +54,19 @@ export class GenerationTracker {
         return this.currentSeverity;
     }
 
+    public getHottestFile(): { label: string; chars: number } | undefined {
+        let hottest: { label: string; chars: number } | undefined;
+        for (const [uriStr, stat] of this.docStats) {
+            if (!hottest || stat.lastSize > hottest.chars) {
+                const parsed = vscode.Uri.parse(uriStr);
+                const segments = parsed.fsPath.replace(/\\/g, '/').split('/');
+                const label = segments[segments.length - 1] || parsed.fsPath;
+                hottest = { label, chars: stat.lastSize };
+            }
+        }
+        return hottest;
+    }
+
     public decaySeverity() {
         if (this.currentSeverity > 0) {
             this.currentSeverity = Math.max(0, this.currentSeverity - 2);
