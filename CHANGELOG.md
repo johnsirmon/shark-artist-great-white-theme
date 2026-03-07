@@ -2,6 +2,37 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.3] - 2026-03-07
+
+### Status Bar — Persistent Context Indicator
+
+**Always-visible status bar gauge** (bottom-right, three-item group)
+- Status bar is now always visible by default (`greatWhite.statusBar.alwaysShow: true`); shows `🦈 0 →` in green when context is healthy — no more hiding until score hits 10
+- Four visual zones with color coding: healthy (green), building (neutral), warning (yellow), bloodloss (amber background)
+- Trend arrow in the label (`↑` rising / `↓` falling / `→` steady) derived from delta between the last two updates
+- Tooltips now include: exact score / 100, estimated % of context window used, hottest file name + size, and (during Bloodloss) cleanse count for the session
+
+**Two companion action buttons**
+- `$(close)` — **Snooze**: hides the group until severity climbs another 10 points or resets below 10; snooze level is persisted in `workspaceState` across window reloads
+- `$(bell-slash)` — **Disable**: writes `greatWhite.statusBar.enabled: false` to Global settings; recoverable via command palette **Great White: Enable Context Tracking**
+
+**Early-warning toast**
+- A one-time `showWarningMessage` fires the first time severity crosses `greatWhite.bloodloss.warningSeverity` (default: 50) — gives a checkpoint prompt before Bloodloss activates
+- Resets automatically when score falls back below 10 so the next spike re-triggers it
+
+**New configuration keys**
+- `greatWhite.statusBar.alwaysShow` (boolean, default `true`)
+- `greatWhite.statusBar.enabled` (boolean, default `true`) — master kill switch
+- `greatWhite.bloodloss.warningSeverity` (number, default `50`, set `0` to silence)
+
+**New commands**
+- `Great White: Snooze Context Alert` (`greatWhite.dismissStatusBar`)
+- `Great White: Disable Context Tracking` (`greatWhite.disableBloodloss`)
+- `Great White: Enable Context Tracking` (`greatWhite.enableBloodloss`)
+
+**Tracker enhancement**
+- Added `getHottestFile()` to `GenerationTracker` — returns the basename and character count of the largest currently-tracked file for display in tooltips
+
 ## [0.6.2] - 2026-03-07
 
 ### Maintenance
