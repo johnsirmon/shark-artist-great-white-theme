@@ -35,6 +35,36 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               LRN-20260307-001
+Logged:           2026-03-07
+Priority:         medium
+Status:           open
+Area:             release
+Summary:          vsce Marketplace PAT is separate from AZDO_PAT and must be renewed independently; use VSCE_PAT env var, not AZDO_PAT.
+Details:          >
+  The repo's AZDO_PAT environment variable is a general Azure DevOps PAT used for other tooling.
+  It is not the same as the Marketplace publish credential. When it expires, `vsce publish --pat $env:AZDO_PAT`
+  fails. The correct Marketplace PAT must be scoped to Marketplace → Manage and stored either via
+  `vsce login shark-labs` (updates Windows Credential Manager: vscode-vsce/shark-labs) or as $env:VSCE_PAT.
+  vsce 3.7.1 also offers `--azure-credential` (Entra ID) but requires explicit Marketplace Manage permissions
+  on the identity, which a standard work account may not have.
+Suggested Action: >
+  Update `docs/release-checklist.md` Publish section to note:
+  - Use `vsce login shark-labs` with a Marketplace-scoped PAT (not AZDO_PAT)
+  - PAT scope required: Marketplace → Manage
+  - Recommended expiry: 1 year, calendar reminder to renew
+  - Fallback: `vsce publish --pat <token>` with a fresh token pasted inline
+
+Metadata:
+  Source:           Session 2026-03-07
+  Related Files:    ["docs/release-checklist.md"]
+  Tags:             ["release", "publish", "PAT", "vsce"]
+  See Also:         [ERR-20260307-001]
+  Pattern-Key:      vsce-marketplace-pat-separate-from-azdo-pat
+  Recurrence-Count: 1
+-->
+
+<!--
 ID:               LRN-20260302-001
 Logged:           2026-03-02
 Priority:         high

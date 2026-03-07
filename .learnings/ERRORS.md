@@ -77,6 +77,34 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               ERR-20260307-001
+Logged:           2026-03-07
+Summary:          AZDO_PAT environment variable holds a general Azure DevOps PAT, not the Marketplace publish PAT — it expires independently of vsce stored credentials.
+Error:            >
+  `vsce publish --pat $env:AZDO_PAT` failed with "Access Denied: The Personal Access Token used has expired."
+  The AZDO_PAT env var is a general-purpose Azure DevOps PAT, not scoped for Marketplace → Manage.
+  The stored Windows credential `vscode-vsce/shark-labs` (from `vsce login`) also contained the same
+  expired PAT, so `vsce login shark-labs` would have failed equally.
+Context:          >
+  During v0.6.3 publish attempt on 2026-03-07. The extension was already live (published earlier the
+  same day via unknown path), but the workflow confusion led to failed re-publish attempts.
+Suggested Fix:    >
+  The Marketplace PAT is separate from general AZDO_PAT. To refresh:
+  1. Go to https://marketplace.visualstudio.com/manage/publishers/shark-labs
+  2. Click avatar → Personal access tokens → New Token
+  3. Scope: Marketplace → Manage, set a long expiry (1 year)
+  4. Run: vsce login shark-labs  (updates vscode-vsce/shark-labs Windows credential)
+  5. Optionally set $env:VSCE_PAT (not AZDO_PAT) for non-interactive use
+  Note: `vsce publish --azure-credential` exists in vsce 3.7.1 but requires the Entra identity
+  to have Marketplace Manage permissions — not guaranteed for standard work accounts.
+
+Metadata:
+  Reproducible:   yes
+  Related Files:  ["docs/release-checklist.md"]
+  See Also:       [ERR-20260227-001, LRN-20260307-001]
+-->
+
+<!--
 ID:               ERR-20260302-003
 Logged:           2026-03-02
 Summary:          Product icon theme was broken due to missing font file.
@@ -88,7 +116,7 @@ Context:          >
 Suggested Fix:    >
   Acquired `codicon.ttf` via `npm install @vscode/codicons` (temporary), copied it to `icons/`,
   and updated `great-white-product-icons.json` to reference it and map a sample icon.
-  
+
 Metadata:
   Reproducible:   yes
   Related Files:  [themes/great-white-product-icons.json, icons/codicon.ttf]
