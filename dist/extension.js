@@ -140,9 +140,20 @@ var ENTRY_FILENAMES = /* @__PURE__ */ new Set([
   "setup.ps1",
   "activate.ps1",
   "install.ps1",
-  "main.ps1"
+  "main.ps1",
+  // Shell
+  "install.sh",
+  "setup.sh",
+  "bootstrap.sh",
+  "entrypoint.sh",
+  "run.sh",
+  "start.sh",
+  "main.sh",
+  // Python
+  "main.py",
+  "__main__.py"
 ]);
-var CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props)$/i;
+var CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props|.*\.spec|.*\.ini|.*\.conf|.*\.service|.*\.timer|.*\.logrotate|.*\.init|.*\.default)$/i;
 var EntryPointDecorationProvider = class {
   _onDidChangeFileDecorations = new vscode2.EventEmitter();
   onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;

@@ -170,7 +170,10 @@
         "*.c": "${capture}.h",
         "CMakeLists.txt": "CMakePresets.json, CMakeUserPresets.json",
         "requirements.txt": "requirements-dev.txt, requirements-test.txt, Pipfile, Pipfile.lock, pyproject.toml",
-        "setup.ps1": "validate.ps1, verify.ps1, requirements.txt, .gitmessage"
+        "setup.ps1": "validate.ps1, verify.ps1, requirements.txt, .gitmessage",
+        "control": "compat, conffiles, lintian-overrides",
+        "postinst": "postrm, preinst, prerm",
+        "*.service": "*.timer"
       }
     }
   },

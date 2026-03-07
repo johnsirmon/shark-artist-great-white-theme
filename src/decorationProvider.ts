@@ -7,10 +7,14 @@ const ENTRY_FILENAMES = new Set([
     // C / C++
     'main.c', 'main.cc', 'main.cpp',
     // PowerShell
-    'setup.ps1', 'activate.ps1', 'install.ps1', 'main.ps1'
+    'setup.ps1', 'activate.ps1', 'install.ps1', 'main.ps1',
+    // Shell
+    'install.sh', 'setup.sh', 'bootstrap.sh', 'entrypoint.sh', 'run.sh', 'start.sh', 'main.sh',
+    // Python
+    'main.py', '__main__.py'
 ]);
 
-const CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props)$/i;
+const CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props|.*\.spec|.*\.ini|.*\.conf|.*\.service|.*\.timer|.*\.logrotate|.*\.init|.*\.default)$/i;
 
 export class EntryPointDecorationProvider implements vscode.FileDecorationProvider, vscode.Disposable {
     private readonly _onDidChangeFileDecorations =
