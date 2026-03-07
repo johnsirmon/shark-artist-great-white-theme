@@ -2,6 +2,26 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.0] - 2026-03-07
+
+### Explorer Enhancements
+
+**File Nesting Patterns**
+- Contributed `explorer.fileNesting.enabled: true` and `explorer.fileNesting.patterns` defaults so the Explorer automatically collapses noisy sibling files under their logical parent
+- Patterns cover: `package.json` lockfiles/rc files, `tsconfig.json` variants, `*.ts` test/declaration siblings, `vite.config.*` + `vitest.config.*`, `.env` variants, and `README.md` companion docs
+- Users can override or disable nesting per workspace/user settings as normal
+
+**Entry Point & Config FileDecorationProvider**
+- Added `EntryPointDecorationProvider` (new `src/decorationProvider.ts`) that badges files in the Explorer:
+  - `E` badge + amber tint (`greatWhite.entryPointForeground` `#FFB347` dark / `#CC7700` light) on entry point files; `propagate: true` so parent folders also tint
+  - `C` badge + sky-blue tint (`greatWhite.configFileForeground` `#87CEEB` dark / `#2980B9` light) on config/build files; `propagate: false`
+- Entry points are resolved from `package.json` `main`, `module`, `exports`, and `bin` fields (all string leaf values extracted recursively) and cached per workspace folder
+- Fallback heuristics: well-known filenames (`index.ts`, `index.js`, `main.ts`, `app.ts`, `server.ts`, `cli.ts`) within 2 directory levels of the workspace root receive the `E` badge even without a `package.json` match
+- Config file heuristic: filenames matching `*.config.ts/js/mjs`, `*.rc.js`, `.eslintrc*`, `jest.config*`, `vitest.config*`, `next.config*`, `vite.config*` receive the `C` badge
+- Cache is invalidated when any `package.json` in the workspace changes, is created, or is deleted
+- New `package.json` contributions: `colors` (`greatWhite.entryPointForeground`, `greatWhite.configFileForeground` with dark/light/HC/HC-light defaults), `configuration` (`greatWhite.showEntryPointDecorations` boolean, default `true`)
+- Decorations can be disabled entirely via `greatWhite.showEntryPointDecorations: false`; change is reflected immediately with no reload required
+
 ## [0.5.0] - 2026-02-28
 
 ### Agentic Workflow Visibility

@@ -89,6 +89,8 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **HTML / JSX / CSS** -- tag names, attributes, and CSS properties explicitly styled.
 - **Markdown** -- headings (bold), italic, inline code, fenced blocks, links, blockquotes.
 - **Terminal ANSI** -- consistent 16-color ANSI palette shared across all variants.
+- **Explorer file nesting** -- smart nesting patterns that group `package.json`, `tsconfig.json`, `.env`, `README.md`, `vite.config.*`, and `*.ts` siblings under their parent nodes automatically.
+- **Entry point + config decorations** -- the Explorer badges entry point files with `E` (amber) and config/build files with `C` (sky blue); parent folders tint amber when they contain an entry point.
 - **Self-improving** -- includes an audit script, monthly GitHub Actions loop, and four custom Copilot agents (`@theme-editor`, `@theme-auditor`, `@learnings-clerk`, `@release-manager`) that enforce theme rules during development.
 
 ---
@@ -134,6 +136,50 @@ Four specialist agents in `.github/agents/` assist with development:
 | `@release-manager` | Walk the release checklist and validate packaging |
 
 Invoke any agent with `@agent-name` in GitHub Copilot Chat.
+
+---
+
+## Explorer Enhancements
+
+### File Nesting
+
+Great White contributes smart `explorer.fileNesting.patterns` defaults so the Explorer collapses noisy sibling files under their logical parent. File nesting is **enabled by default** when the theme is active; you can disable it per workspace via the standard setting:
+
+```jsonc
+// .vscode/settings.json  — turn off nesting for this workspace
+{ "explorer.fileNesting.enabled": false }
+```
+
+| Parent | Nested children |
+|---|---|
+| `package.json` | `yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `.npmrc`, `.nvmrc`, `.node-version` |
+| `tsconfig.json` | `tsconfig.*.json`, `jsconfig.json` |
+| `*.ts` | `${capture}.test.ts`, `${capture}.spec.ts`, `${capture}.d.ts` |
+| `vite.config.*` | `vite.config.*.ts`, `vitest.config.*` |
+| `.env` | `.env.*`, `.env.local`, `.env.production`, `.env.development` |
+| `README.md` | `CHANGELOG.md`, `CONTRIBUTING.md`, `LICENSE`, `LICENSE.txt`, `SECURITY.md` |
+
+### Entry Point & Config Decorations
+
+The extension registers a `FileDecorationProvider` that visually highlights important files in the Explorer:
+
+| Badge | Color | Meaning | `propagate` |
+|---|---|---|---|
+| `E` | Amber `#FFB347` | Entry point — resolved from `package.json` `main`/`module`/`exports`/`bin`, or a well-known filename (`index.ts`, `main.ts`, `app.ts`, etc.) within 2 directory levels of the root | ✅ parent folders also tint |
+| `C` | Sky blue `#87CEEB` | Config / build file — matches `*.config.ts/js/mjs`, `*.rc.js`, `.eslintrc*`, `jest.config*`, `vitest.config*`, `next.config*`, `vite.config*` | ❌ folders stay undecorated |
+
+The `E` badge uses `propagate: true`, so the folder containing an entry point also receives the amber tint — making the path to an entry point visible at a glance even when folders are collapsed.
+
+Entry points are resolved by reading the workspace's `package.json` once per folder (cached). The cache is invalidated automatically whenever `package.json` changes on disk.
+
+**To opt out**, toggle the setting:
+
+```jsonc
+// User or workspace settings
+{ "greatWhite.showEntryPointDecorations": false }
+```
+
+Or search for **Great White: Show Entry Point Decorations** in Settings UI.
 
 ---
 
