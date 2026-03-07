@@ -86,11 +86,13 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function evaluateSeverity(severity: number) {
-    // If severity goes above 50, switch directly to the Bloodloss Theme
-    if (severity > 50) {
+    const cfg = vscode.workspace.getConfiguration('greatWhite');
+    const triggerAt = cfg.get<number>('bloodloss.triggerSeverity', 75);
+    const restoreAt = triggerAt - 20;
+
+    if (severity > triggerAt) {
         switcher.switchToBloodloss();
-    } else if (severity < 30) {
-        // If it drops back down significantly, restore normal theme
+    } else if (severity < restoreAt) {
         switcher.restoreOriginalTheme();
     }
 }

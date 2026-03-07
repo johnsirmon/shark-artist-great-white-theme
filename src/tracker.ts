@@ -70,16 +70,15 @@ export class GenerationTracker {
     }
 
     private calculateSeverity(size: number, velocity: number): number {
-        // Assume > 10,000 characters is getting large
-        // Assume velocity > 50 chars/sec is starting to spew (AI typing)
+        const cfg = vscode.workspace.getConfiguration('greatWhite');
+        const sizeThreshold = cfg.get<number>('bloodloss.sizeThreshold', 500000);
+        const velocityThreshold = cfg.get<number>('bloodloss.velocityThreshold', 5000);
 
-        // Bloat factor from size (0 to 50)
-        // Let's say 100k chars is max bloat
-        let bloatScore = Math.min(50, (size / 100000) * 50);
+        // Bloat factor from file size (0–50 pts); maxes at sizeThreshold chars
+        const bloatScore = Math.min(50, (size / sizeThreshold) * 50);
 
-        // Velocity score (0 to 50)
-        // Let's say 1000 chars/sec is max velocity
-        let velocityScore = Math.min(50, (velocity / 1000) * 50);
+        // Velocity score (0–50 pts); maxes at velocityThreshold chars/sec
+        const velocityScore = Math.min(50, (velocity / velocityThreshold) * 50);
 
         return Math.min(100, bloatScore + velocityScore);
     }

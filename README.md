@@ -222,12 +222,33 @@ Great White ships a passive runtime monitor that watches document size and AI ty
 
 Each keystroke updates two sub-scores (both 0–50):
 
-| Factor | Max score | Threshold for max |
+| Factor | Max score | Default threshold for max |
 |---|---|---|
-| **File size** (chars) | 50 | ≥ 100 000 characters |
-| **Typing velocity** (chars/sec, smoothed) | 50 | ≥ 1 000 chars/sec |
+| **File size** (chars) | 50 | ≥ 500 000 characters (~500 KB) |
+| **Typing velocity** (chars/sec, smoothed EMA) | 50 | ≥ 5 000 chars/sec |
 
-The two scores are summed (max 100). Once the combined score crosses the internal threshold, Bloodloss activates. Velocity decays when output slows or content is deleted, and the theme restores automatically when severity drops back below threshold.
+The two scores are summed (max 100). Once the combined score exceeds `triggerSeverity` (default **75**), Bloodloss activates. Velocity decays when output slows or content is deleted, and the theme restores automatically when severity drops below `triggerSeverity − 20` (default **55**).
+
+At the defaults a file has to be simultaneously large **and** arriving fast to trip the alarm. Human typing (~100 chars/sec) in even a 500 KB file only scores ~10/50 on velocity — not enough alone.
+
+### Configuring the thresholds
+
+Three settings let you tune sensitivity:
+
+| Setting | Default | Description |
+|---|---|---|
+| `greatWhite.bloodloss.sizeThreshold` | `500000` | Chars at which size score maxes out (50 pts) |
+| `greatWhite.bloodloss.velocityThreshold` | `5000` | Chars/sec at which velocity score maxes out (50 pts) |
+| `greatWhite.bloodloss.triggerSeverity` | `75` | Combined score (0–100) that activates Bloodloss; clears at this value minus 20 |
+
+```jsonc
+// Example: only alarm on truly massive AI dumps
+{
+  "greatWhite.bloodloss.sizeThreshold": 1000000,
+  "greatWhite.bloodloss.velocityThreshold": 8000,
+  "greatWhite.bloodloss.triggerSeverity": 85
+}
+```
 
 ### Resetting manually
 
