@@ -5,10 +5,16 @@ import { EntryPointDecorationProvider } from './decorationProvider';
 
 let tracker: GenerationTracker;
 let switcher: ThemeSwitcher;
+let statusBar: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
     tracker = new GenerationTracker();
     switcher = new ThemeSwitcher();
+
+    // Status bar item — live severity indicator, click to cleanse
+    statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    statusBar.command = 'greatWhite.cleanseBloodloss';
+    context.subscriptions.push(statusBar);
 
     // Re-evaluate on document change
     let changeDisposable = vscode.workspace.onDidChangeTextDocument(event => {
@@ -34,6 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     let cleanseCommand = vscode.commands.registerCommand('greatWhite.cleanseBloodloss', () => {
         tracker.reset();
         switcher.restoreOriginalTheme();
+        updateStatusBar(0, false);
         vscode.window.showInformationMessage("Bloodloss cleansed. The theme has been restored.");
     });
 
@@ -95,6 +102,26 @@ function evaluateSeverity(severity: number) {
     } else if (severity < restoreAt) {
         switcher.restoreOriginalTheme();
     }
+
+    updateStatusBar(severity, switcher.isActive);
+}
+
+function updateStatusBar(severity: number, bloodlossActive: boolean) {
+    if (severity < 10) {
+        statusBar.hide();
+        return;
+    }
+    const score = Math.round(severity);
+    if (bloodlossActive) {
+        statusBar.text = `🩸 ${score}`;
+        statusBar.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+        statusBar.tooltip = `Great White: Context bloat alarm active — score ${score}/100. Click to cleanse.`;
+    } else {
+        statusBar.text = `🦈 ${score}`;
+        statusBar.backgroundColor = undefined;
+        statusBar.tooltip = `Great White: Context complexity climbing — score ${score}/100. Click to reset.`;
+    }
+    statusBar.show();
 }
 
 export function deactivate() {

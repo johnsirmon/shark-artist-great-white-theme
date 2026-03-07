@@ -6,6 +6,10 @@ export class ThemeSwitcher {
 
     constructor() {}
 
+    get isActive(): boolean {
+        return this.isBloodlossActive;
+    }
+
     public async switchToBloodloss() {
         if (this.isBloodlossActive) return;
         this.isBloodlossActive = true;
@@ -15,11 +19,8 @@ export class ThemeSwitcher {
         // Save the theme the user was currently using so we can restore it
         this.originalTheme = config.get<string>('colorTheme');
 
-        // Force switch to Bloodloss
+        // Theme switch is the alarm — no popup needed
         await config.update('colorTheme', 'Great White (Bloodloss)', vscode.ConfigurationTarget.Workspace);
-
-        // Also show a warning message
-        vscode.window.showWarningMessage('🩸 File complexity threshold exceeded. Context bloat detected.', 'Acknowledge');
     }
 
     public async restoreOriginalTheme() {
