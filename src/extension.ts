@@ -293,12 +293,6 @@ export function deactivate() {
 }
 
 
-// Re-evaluate on document change
-let changeDisposable = vscode.workspace.onDidChangeTextDocument(event => {
-    const severity = tracker.trackChange(event);
-    evaluateSeverity(severity);
-});
-
 // Re-evaluate when switching files
 let editorDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
     if (editor) {
