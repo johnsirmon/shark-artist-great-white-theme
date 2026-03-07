@@ -15,3 +15,6 @@ icon2.png
 icon.bak
 icon.png~
 docs/screenshots/**
+
+src/**
+tsconfig.json

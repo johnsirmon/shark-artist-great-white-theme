@@ -13,6 +13,16 @@
   "engines": {
     "vscode": "^1.85.0"
   },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "build": "npm run esbuild-base -- --sourcemap",
+    "watch": "npm run esbuild-base -- --sourcemap --watch",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node"
+  },
   "categories": [
     "Themes"
   ],
@@ -46,6 +56,13 @@
     "theme": "dark"
   },
   "contributes": {
+    "commands": [
+      {
+        "command": "greatWhite.cleanseBloodloss",
+        "title": "Great White: Cleanse Bloodloss (Reset Context Bloat)",
+        "category": "Theme"
+      }
+    ],
     "themes": [
       {
         "label": "Great White (Dark)",
@@ -56,6 +73,11 @@
         "label": "Great White (Light)",
         "uiTheme": "vs",
         "path": "./themes/great-white-light-color-theme.json"
+      },
+      {
+        "label": "Great White (Bloodloss)",
+        "uiTheme": "vs-dark",
+        "path": "./themes/great-white-bloodloss-color-theme.json"
       },
       {
         "label": "Great White (Storm)",
@@ -103,5 +125,10 @@
         "embeddedLanguages": {}
       }
     ]
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.109.0",
+    "esbuild": "^0.27.3",
+    "typescript": "^5.9.3"
   }
 }
