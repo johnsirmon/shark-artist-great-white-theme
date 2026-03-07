@@ -4,7 +4,7 @@ export class ThemeSwitcher {
     private isBloodlossActive: boolean = false;
     private originalTheme: string | undefined;
 
-    constructor() {}
+    constructor() { }
 
     get isActive(): boolean {
         return this.isBloodlossActive;

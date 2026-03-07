@@ -4,13 +4,22 @@ All notable changes to this project are documented in this file.
 
 ## [0.6.1] - 2026-03-07
 
-### Bloodloss Threshold Tuning
+### Bloodloss Threshold Tuning & UX Redesign
 
-- Raised default size threshold from 100 000 → **500 000 chars** (~500 KB / ~12 500 lines) so normal large files don't trigger the alarm
-- Raised default velocity threshold from 1 000 → **5 000 chars/sec** to target clear AI streaming rather than fast human typing
-- Raised default trigger severity from >50 → **>75** (combined score out of 100); alarm now clears at `triggerSeverity − 20`
-- All three thresholds are now configurable: `greatWhite.bloodloss.sizeThreshold`, `greatWhite.bloodloss.velocityThreshold`, `greatWhite.bloodloss.triggerSeverity`
-- Updated README Bloodloss section with real-world equivalents (KB, lines, token-window comparisons, chars/sec benchmarks)
+**Status bar indicator (replaces popup)**
+- Removed the blocking `showWarningMessage` popup — the theme switch is the alarm signal; no acknowledgement required
+- Added a persistent status bar item (right-aligned, clickable) that shows live severity:
+  - Hidden when severity < 10 (idle)
+  - `🦈 42` when complexity is climbing (neutral background)
+  - `🩸 82` when Bloodloss is active (warning amber background)
+- Tooltip shows the exact score and context; clicking runs **Great White: Cleanse Bloodloss** instantly
+
+**Threshold tuning**
+- Raised default size threshold 100 000 → **500 000 chars** (~500 KB / ~12 500 lines)
+- Raised default velocity threshold 1 000 → **5 000 chars/sec** (targets AI streaming, not fast typing)
+- Raised default trigger severity >50 → **>75**; alarm auto-clears at `triggerSeverity − 20`
+- All three thresholds now configurable: `greatWhite.bloodloss.sizeThreshold`, `greatWhite.bloodloss.velocityThreshold`, `greatWhite.bloodloss.triggerSeverity`
+- Updated README with real-world size/velocity equivalents (KB, lines, token-window comparisons)
 
 ## [0.6.0] - 2026-03-07
 

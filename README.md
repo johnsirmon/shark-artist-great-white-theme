@@ -218,6 +218,16 @@ All commands are available via the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+
 
 Great White ships a passive runtime monitor that watches document size and AI typing velocity. When a file grows large and content is arriving fast (as happens during unconstrained AI generation), the severity score climbs. Once it crosses the threshold the theme switches to `Great White (Bloodloss)` — a high-saturation dark red variant that acts as a visual alarm.
 
+There are **no popups**. The theme switch is the alarm. A small status bar item at the bottom right provides a live readout:
+
+| Status bar | Meaning |
+|---|---|
+| _(hidden)_ | Severity < 10 — idle, nothing to report |
+| `🦈 42` | Complexity climbing — watching |
+| `🩸 82` _(amber background)_ | Bloodloss active — context bloat threshold crossed |
+
+Click the status bar item at any time to run **Cleanse Bloodloss** immediately.
+
 ### How severity is calculated
 
 Each keystroke updates two sub-scores (both 0–50):

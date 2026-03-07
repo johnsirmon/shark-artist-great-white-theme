@@ -1,4 +1,5 @@
 {
     "workbench.iconTheme": "great-white-agent-file-icons",
-    "workbench.productIconTheme": "great-white-product-icons"
+    "workbench.productIconTheme": "great-white-product-icons",
+    "workbench.colorTheme": "Great White (Frost)"
 }
