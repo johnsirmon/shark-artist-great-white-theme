@@ -89,8 +89,13 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **HTML / JSX / CSS** -- tag names, attributes, and CSS properties explicitly styled.
 - **Markdown** -- headings (bold), italic, inline code, fenced blocks, links, blockquotes.
 - **Terminal ANSI** -- consistent 16-color ANSI palette shared across all variants.
-- **Explorer file nesting** -- smart nesting patterns that group `package.json`, `tsconfig.json`, `.env`, `README.md`, `vite.config.*`, and `*.ts` siblings under their parent nodes automatically.
-- **Entry point + config decorations** -- the Explorer badges entry point files with `E` (amber) and config/build files with `C` (sky blue); parent folders tint amber when they contain an entry point.
+- **Explorer file nesting** -- smart nesting patterns that group `package.json`, `tsconfig.json`, `.env`, `README.md`, `vite.config.*`, `*.ts`, C/C++ headers, Python lockfiles, CMake presets, PowerShell scripts, and systemd units under their logical parent nodes automatically.
+- **Entry point + config decorations** -- the Explorer badges entry point files with `E` (amber) and config/build files with `C` (sky blue); parent folders tint amber when they contain an entry point. Individual badge types can be toggled independently.
+- **Bloodloss alarm** -- a runtime alarm mode that auto-switches to `Great White (Bloodloss)` when file size and AI typing velocity cross a complexity threshold; restores your previous theme when severity drops or on manual reset.
+- **AI-aware colors** -- `editorGhostText`, `editor.inlineSuggest`, `inlineChat`, `inlineChatDiff`, `chat`, and `terminalCommandDecoration` color groups tuned for Copilot ghost text, the Ctrl+I inline chat panel, AI-generated diffs, and terminal command decorations.
+- **Agent file icons (opt-in)** -- `Great White: Agent File Icons` icon theme provides custom SVG icons for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `COPILOT.md`, `plan.md`, `.learnings/`, and `.copilot/` in the ocean-blue palette.
+- **Agent product icons (opt-in, foundation)** -- `Great White: Agent Product Icons` product icon theme stub; full custom icon font planned for a future release.
+- **AGENTS.md syntax callouts (auto)** -- a Markdown-injected TextMate grammar highlights agent-instruction prefixes (`CRITICAL:`, `WARNING:`, `TODO:`, `NOTE:`, etc.) in semantic colors automatically in every Markdown file.
 - **Self-improving** -- includes an audit script, monthly GitHub Actions loop, and four custom Copilot agents (`@theme-editor`, `@theme-auditor`, `@learnings-clerk`, `@release-manager`) that enforce theme rules during development.
 
 ---
@@ -157,7 +162,15 @@ Great White contributes smart `explorer.fileNesting.patterns` defaults so the Ex
 | `*.ts` | `${capture}.test.ts`, `${capture}.spec.ts`, `${capture}.d.ts` |
 | `vite.config.*` | `vite.config.*.ts`, `vitest.config.*` |
 | `.env` | `.env.*`, `.env.local`, `.env.production`, `.env.development` |
-| `README.md` | `CHANGELOG.md`, `CONTRIBUTING.md`, `LICENSE`, `LICENSE.txt`, `SECURITY.md` |
+| `README.md` | `CHANGELOG.md`, `CONTRIBUTING.md`, `LICENSE`, `LICENSE.txt`, `SECURITY.md`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `KNOWN-ISSUES.md` |
+| `*.cc` | `${capture}.hh` |
+| `*.c` | `${capture}.h` |
+| `CMakeLists.txt` | `CMakePresets.json`, `CMakeUserPresets.json` |
+| `requirements.txt` | `requirements-dev.txt`, `requirements-test.txt`, `Pipfile`, `Pipfile.lock`, `pyproject.toml` |
+| `setup.ps1` | `validate.ps1`, `verify.ps1`, `requirements.txt`, `.gitmessage` |
+| `control` _(Debian)_ | `compat`, `conffiles`, `lintian-overrides` |
+| `postinst` _(Debian)_ | `postrm`, `preinst`, `prerm` |
+| `*.service` _(systemd)_ | `*.timer` |
 
 ### Entry Point & Config Decorations
 
@@ -165,21 +178,116 @@ The extension registers a `FileDecorationProvider` that visually highlights impo
 
 | Badge | Color | Meaning | `propagate` |
 |---|---|---|---|
-| `E` | Amber `#FFB347` | Entry point — resolved from `package.json` `main`/`module`/`exports`/`bin`, or a well-known filename (`index.ts`, `main.ts`, `app.ts`, etc.) within 2 directory levels of the root | ✅ parent folders also tint |
-| `C` | Sky blue `#87CEEB` | Config / build file — matches `*.config.ts/js/mjs`, `*.rc.js`, `.eslintrc*`, `jest.config*`, `vitest.config*`, `next.config*`, `vite.config*` | ❌ folders stay undecorated |
+| `E` | Amber `#FFB347` (dark) / `#CC7700` (light) | Entry point — resolved from `package.json` `main`/`module`/`exports`/`bin` fields, or a well-known filename within 2 directory levels of the root: `index.ts/js`, `main.ts/py/__main__.py`, `app.ts`, `server.ts`, `cli.ts`, `main.c/cc/cpp`, `setup.ps1`, `activate.ps1`, `install.sh`, `start.sh`, `entrypoint.sh` | ✅ parent folders also tint |
+| `C` | Sky blue `#87CEEB` (dark) / `#2980B9` (light) | Config / build file — matches `*.config.ts/js/mjs`, `*.rc.js`, `.eslintrc*`, `jest.config*`, `vitest.config*`, `next.config*`, `vite.config*`, `CMakeLists.txt`, `Makefile`, `GNUmakefile`, `vcpkg.json`, `requirements.txt`, `*.props`, `*.cmake`, `Directory.*.props`, `*.ini`, `*.conf`, `*.service`, `*.timer` | ❌ folders stay undecorated |
 
 The `E` badge uses `propagate: true`, so the folder containing an entry point also receives the amber tint — making the path to an entry point visible at a glance even when folders are collapsed.
 
 Entry points are resolved by reading the workspace's `package.json` once per folder (cached). The cache is invalidated automatically whenever `package.json` changes on disk.
 
-**To opt out**, toggle the setting:
+**Settings** — three knobs are available:
+
+| Setting | Default | Description |
+|---|---|---|
+| `greatWhite.showEntryPointDecorations` | `true` | Master toggle — hides all badges immediately when disabled |
+| `greatWhite.showEntryPointBadges` | `true` | Show/hide the `E` badge independently (master must be on) |
+| `greatWhite.showConfigFileBadges` | `true` | Show/hide the `C` badge independently (master must be on) |
 
 ```jsonc
-// User or workspace settings
-{ "greatWhite.showEntryPointDecorations": false }
+// User or workspace settings — hide only config badges
+{
+  "greatWhite.showConfigFileBadges": false
+}
 ```
 
-Or search for **Great White: Show Entry Point Decorations** in Settings UI.
+All three settings take effect immediately with no reload required.
+
+### Commands
+
+All commands are available via the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`). Search **Great White**.
+
+| Command | Description |
+|---|---|
+| `Great White: Cleanse Bloodloss (Reset Context Bloat)` | Clears the context-bloat severity counter and restores your previous color theme |
+| `Great White: Reset Explorer Decorations to Defaults` | Clears all three `greatWhite.show*` settings back to their defaults |
+| `Great White: Reset File Nesting Patterns to Defaults` | Removes workspace-level `explorer.fileNesting.*` overrides, restoring contributed defaults |
+
+---
+
+## Bloodloss — Context Bloat Alarm
+
+Great White ships a passive runtime monitor that watches document size and AI typing velocity. When a file grows large and content is arriving fast (as happens during unconstrained AI generation), the severity score climbs. Once it crosses the threshold the theme switches to `Great White (Bloodloss)` — a high-saturation dark red variant that acts as a visual alarm.
+
+### How severity is calculated
+
+Each keystroke updates two sub-scores (both 0–50):
+
+| Factor | Max score | Threshold for max |
+|---|---|---|
+| **File size** (chars) | 50 | ≥ 100 000 characters |
+| **Typing velocity** (chars/sec, smoothed) | 50 | ≥ 1 000 chars/sec |
+
+The two scores are summed (max 100). Once the combined score crosses the internal threshold, Bloodloss activates. Velocity decays when output slows or content is deleted, and the theme restores automatically when severity drops back below threshold.
+
+### Resetting manually
+
+Run **Great White: Cleanse Bloodloss** from the Command Palette, or use the keyboard shortcut if you've bound it. This zeroes the severity counter and restores whatever theme you had active before.
+
+> **Note:** `Great White (Bloodloss)` is listed in the theme picker but is intended as an alarm state, not a daily theme. Selecting it manually works, but the extension will still monitor severity and potentially switch away from it when severity drops.
+
+---
+
+## Agentic Workflow Visibility
+
+Starting in `v0.5.0`, Great White extends its palette into AI/agent surfaces so Copilot interactions feel native to the theme rather than using VS Code defaults.
+
+### AI surface colors (all six variants)
+
+| Area | Color behavior |
+|---|---|
+| `editorGhostText.*` | Copilot inline ghost text renders in muted teal (`#4daaaa90` dark / `#3b8a8090` light) — distinctly different from active syntax |
+| `editor.inlineSuggest.*` | Background, highlight, and selection states for inline suggestions are on-palette |
+| `inlineChat.*` | The Ctrl+I edit panel background, border, focus ring, shadow, region highlight, and selected state are ocean-blue across all variants |
+| `inlineChatDiff.*` / `inlineChatDiffLine.*` | AI-generated diff insertions use teal; removals use coral — matching the standard diff editor |
+| `chat.*` | Chat panel request background, borders, slash command styling, and avatar colors |
+| `terminalCommandDecoration.*` | Terminal prompt success/error/default decorations use the ocean palette |
+
+### Agent File Icons (opt-in)
+
+Activate via **Preferences: File Icon Theme → Great White: Agent File Icons**.
+
+Custom SVG icons for agent-workflow files, all in the ocean-blue/teal/amber palette:
+
+| File / folder | Icon |
+|---|---|
+| `AGENTS.md` | Shark-fin agent icon |
+| `CLAUDE.md` | Agent variant |
+| `GEMINI.md` | Agent variant |
+| `COPILOT.md` | Agent variant |
+| `plan.md` | Planning icon |
+| `.learnings/` | Knowledge folder |
+| `.copilot/` | Copilot folder |
+
+> VS Code only allows one active file icon theme. Selecting **Great White: Agent File Icons** replaces any previously active icon theme.
+
+### Agent Product Icons (opt-in, foundation)
+
+Activate via **Preferences: Product Icon Theme → Great White: Agent Product Icons**.
+
+Currently a minimal stub using the built-in Codicon font. A full custom shark-ocean icon font is planned for a future release.
+
+### AGENTS.md Syntax Callouts (automatic)
+
+A TextMate grammar (`text.agents.markdown`) is injected into all Markdown files automatically. It highlights agent-instruction prefixes in semantic colors wherever they appear:
+
+| Prefix | Color |
+|---|---|
+| `CRITICAL:` / `IMPORTANT:` / `NEVER:` | Error red |
+| `WARNING:` / `CAUTION:` | Amber |
+| `NOTE:` / `TIP:` | Comment blue |
+| `TODO:` / `FIXME:` | Constant color |
+
+Section headings, inline code, and file paths within these callouts also receive distinct styling.
 
 ---
 
