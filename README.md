@@ -222,27 +222,29 @@ Great White ships a passive runtime monitor that watches document size and AI ty
 
 Each keystroke updates two sub-scores (both 0–50):
 
-| Factor | Max score | Default threshold for max |
-|---|---|---|
-| **File size** (chars) | 50 | ≥ 500 000 characters (~500 KB) |
-| **Typing velocity** (chars/sec, smoothed EMA) | 50 | ≥ 5 000 chars/sec |
+| Factor | Max score | Default threshold for max | Real-world equivalent |
+|---|---|---|---|
+| **File size** | 50 | 500 000 chars | ~500 KB · ~12 500 lines · roughly 375 000 tokens (GPT-4 context window is ~768 000 tokens / 1M) |
+| **Typing velocity** | 50 | 5 000 chars/sec | Sustained AI streaming — human typing peaks around 100 chars/sec; Copilot inline generation typically runs 500–3 000 chars/sec |
 
 The two scores are summed (max 100). Once the combined score exceeds `triggerSeverity` (default **75**), Bloodloss activates. Velocity decays when output slows or content is deleted, and the theme restores automatically when severity drops below `triggerSeverity − 20` (default **55**).
 
-At the defaults a file has to be simultaneously large **and** arriving fast to trip the alarm. Human typing (~100 chars/sec) in even a 500 KB file only scores ~10/50 on velocity — not enough alone.
+At the defaults a file has to be simultaneously large **and** arriving fast to trip the alarm. Human typing (~100 chars/sec) in even a 500 KB file scores only ~10/50 on velocity — not enough on its own.
+
+To give a sense of scale: a typical large source file is 500–2 000 lines (~5–20 KB). The 500 KB default threshold is roughly **250× a typical source file** or about the size of a full GPT-4 context dump written to disk.
 
 ### Configuring the thresholds
 
 Three settings let you tune sensitivity:
 
-| Setting | Default | Description |
+| Setting | Default | Equivalent |
 |---|---|---|
-| `greatWhite.bloodloss.sizeThreshold` | `500000` | Chars at which size score maxes out (50 pts) |
-| `greatWhite.bloodloss.velocityThreshold` | `5000` | Chars/sec at which velocity score maxes out (50 pts) |
-| `greatWhite.bloodloss.triggerSeverity` | `75` | Combined score (0–100) that activates Bloodloss; clears at this value minus 20 |
+| `greatWhite.bloodloss.sizeThreshold` | `500000` | ~500 KB / ~12 500 lines — size at which size score maxes out |
+| `greatWhite.bloodloss.velocityThreshold` | `5000` | ~5 000 chars/sec sustained — velocity at which velocity score maxes out |
+| `greatWhite.bloodloss.triggerSeverity` | `75` | Combined score (0–100) that activates alarm; auto-clears at this value minus 20 |
 
 ```jsonc
-// Example: only alarm on truly massive AI dumps
+// Example: only alarm on truly massive AI dumps (1 MB / very fast generation)
 {
   "greatWhite.bloodloss.sizeThreshold": 1000000,
   "greatWhite.bloodloss.velocityThreshold": 8000,

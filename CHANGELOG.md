@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.1] - 2026-03-07
+
+### Bloodloss Threshold Tuning
+
+- Raised default size threshold from 100 000 → **500 000 chars** (~500 KB / ~12 500 lines) so normal large files don't trigger the alarm
+- Raised default velocity threshold from 1 000 → **5 000 chars/sec** to target clear AI streaming rather than fast human typing
+- Raised default trigger severity from >50 → **>75** (combined score out of 100); alarm now clears at `triggerSeverity − 20`
+- All three thresholds are now configurable: `greatWhite.bloodloss.sizeThreshold`, `greatWhite.bloodloss.velocityThreshold`, `greatWhite.bloodloss.triggerSeverity`
+- Updated README Bloodloss section with real-world equivalents (KB, lines, token-window comparisons, chars/sec benchmarks)
+
 ## [0.6.0] - 2026-03-07
 
 ### Explorer Enhancements
