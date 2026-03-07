@@ -164,13 +164,18 @@ var EntryPointDecorationProvider = class {
     if (!config.get("showEntryPointDecorations", true)) {
       return void 0;
     }
+    const showEntryBadges = config.get("showEntryPointBadges", true);
+    const showConfigBadges = config.get("showConfigFileBadges", true);
+    if (!showEntryBadges && !showConfigBadges) {
+      return void 0;
+    }
     const folder = vscode2.workspace.getWorkspaceFolder(uri);
     if (!folder) {
       return void 0;
     }
     const entryPoints = await this._getEntryPoints(folder);
     const basename2 = path.basename(uri.fsPath);
-    if (entryPoints.has(uri.fsPath)) {
+    if (showEntryBadges && entryPoints.has(uri.fsPath)) {
       return {
         badge: "E",
         tooltip: "Entry Point",
@@ -178,7 +183,7 @@ var EntryPointDecorationProvider = class {
         propagate: true
       };
     }
-    if (ENTRY_FILENAMES.has(basename2)) {
+    if (showEntryBadges && ENTRY_FILENAMES.has(basename2)) {
       const relative2 = path.relative(folder.uri.fsPath, uri.fsPath);
       const depth = relative2.split(path.sep).length - 1;
       if (depth <= 2) {
@@ -190,7 +195,7 @@ var EntryPointDecorationProvider = class {
         };
       }
     }
-    if (CONFIG_PATTERN.test(basename2)) {
+    if (showConfigBadges && CONFIG_PATTERN.test(basename2)) {
       return {
         badge: "C",
         tooltip: "Config / Build File",
@@ -305,9 +310,23 @@ function activate(context) {
   pkgWatcher.onDidCreate(invalidateAndRefresh);
   pkgWatcher.onDidDelete(invalidateAndRefresh);
   const configChangeDisposable = vscode3.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration("greatWhite.showEntryPointDecorations")) {
+    if (e.affectsConfiguration("greatWhite.showEntryPointDecorations") || e.affectsConfiguration("greatWhite.showEntryPointBadges") || e.affectsConfiguration("greatWhite.showConfigFileBadges")) {
       decorationProvider.fireAll();
     }
+  });
+  const resetDecorationsCmd = vscode3.commands.registerCommand("greatWhite.resetDecorations", async () => {
+    const config = vscode3.workspace.getConfiguration("greatWhite");
+    await config.update("showEntryPointDecorations", void 0, vscode3.ConfigurationTarget.Global);
+    await config.update("showEntryPointBadges", void 0, vscode3.ConfigurationTarget.Global);
+    await config.update("showConfigFileBadges", void 0, vscode3.ConfigurationTarget.Global);
+    decorationProvider.fireAll();
+    vscode3.window.showInformationMessage("Great White: Explorer decorations reset to defaults.");
+  });
+  const resetFileNestingCmd = vscode3.commands.registerCommand("greatWhite.resetFileNesting", async () => {
+    const config = vscode3.workspace.getConfiguration();
+    await config.update("explorer.fileNesting.enabled", void 0, vscode3.ConfigurationTarget.Workspace);
+    await config.update("explorer.fileNesting.patterns", void 0, vscode3.ConfigurationTarget.Workspace);
+    vscode3.window.showInformationMessage("Great White: File nesting patterns reset to defaults.");
   });
   context.subscriptions.push(
     changeDisposable,
@@ -316,7 +335,9 @@ function activate(context) {
     decorationRegistration,
     decorationProvider,
     pkgWatcher,
-    configChangeDisposable
+    configChangeDisposable,
+    resetDecorationsCmd,
+    resetFileNestingCmd
   );
 }
 function evaluateSeverity(severity) {

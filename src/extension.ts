@@ -52,15 +52,36 @@ export function activate(context: vscode.ExtensionContext) {
     pkgWatcher.onDidDelete(invalidateAndRefresh);
 
     const configChangeDisposable = vscode.workspace.onDidChangeConfiguration(e => {
-        if (e.affectsConfiguration('greatWhite.showEntryPointDecorations')) {
+        if (
+            e.affectsConfiguration('greatWhite.showEntryPointDecorations') ||
+            e.affectsConfiguration('greatWhite.showEntryPointBadges') ||
+            e.affectsConfiguration('greatWhite.showConfigFileBadges')
+        ) {
             decorationProvider.fireAll();
         }
+    });
+
+    const resetDecorationsCmd = vscode.commands.registerCommand('greatWhite.resetDecorations', async () => {
+        const config = vscode.workspace.getConfiguration('greatWhite');
+        await config.update('showEntryPointDecorations', undefined, vscode.ConfigurationTarget.Global);
+        await config.update('showEntryPointBadges', undefined, vscode.ConfigurationTarget.Global);
+        await config.update('showConfigFileBadges', undefined, vscode.ConfigurationTarget.Global);
+        decorationProvider.fireAll();
+        vscode.window.showInformationMessage('Great White: Explorer decorations reset to defaults.');
+    });
+
+    const resetFileNestingCmd = vscode.commands.registerCommand('greatWhite.resetFileNesting', async () => {
+        const config = vscode.workspace.getConfiguration();
+        await config.update('explorer.fileNesting.enabled', undefined, vscode.ConfigurationTarget.Workspace);
+        await config.update('explorer.fileNesting.patterns', undefined, vscode.ConfigurationTarget.Workspace);
+        vscode.window.showInformationMessage('Great White: File nesting patterns reset to defaults.');
     });
 
     context.subscriptions.push(
         changeDisposable, editorDisposable, cleanseCommand,
         decorationRegistration, decorationProvider,
-        pkgWatcher, configChangeDisposable
+        pkgWatcher, configChangeDisposable,
+        resetDecorationsCmd, resetFileNestingCmd
     );
 }
 

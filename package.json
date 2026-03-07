@@ -61,6 +61,16 @@
         "command": "greatWhite.cleanseBloodloss",
         "title": "Great White: Cleanse Bloodloss (Reset Context Bloat)",
         "category": "Theme"
+      },
+      {
+        "command": "greatWhite.resetDecorations",
+        "title": "Great White: Reset Explorer Decorations to Defaults",
+        "category": "Theme"
+      },
+      {
+        "command": "greatWhite.resetFileNesting",
+        "title": "Great White: Reset File Nesting Patterns to Defaults",
+        "category": "Theme"
       }
     ],
     "themes": [
@@ -153,7 +163,17 @@
         "greatWhite.showEntryPointDecorations": {
           "type": "boolean",
           "default": true,
-          "description": "Highlight entry points and config files in the Explorer"
+          "description": "Master toggle: enable Explorer badge decorations (entry points and config files). Disable to hide all badges."
+        },
+        "greatWhite.showEntryPointBadges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show 'E' badge on entry-point files in the Explorer (requires showEntryPointDecorations to be enabled)."
+        },
+        "greatWhite.showConfigFileBadges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show 'C' badge on config/build files in the Explorer (requires showEntryPointDecorations to be enabled)."
         }
       }
     },

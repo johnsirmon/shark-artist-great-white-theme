@@ -33,6 +33,12 @@ export class EntryPointDecorationProvider implements vscode.FileDecorationProvid
             return undefined;
         }
 
+        const showEntryBadges = config.get<boolean>('showEntryPointBadges', true);
+        const showConfigBadges = config.get<boolean>('showConfigFileBadges', true);
+        if (!showEntryBadges && !showConfigBadges) {
+            return undefined;
+        }
+
         const folder = vscode.workspace.getWorkspaceFolder(uri);
         if (!folder) {
             return undefined;
@@ -42,7 +48,7 @@ export class EntryPointDecorationProvider implements vscode.FileDecorationProvid
         const basename = path.basename(uri.fsPath);
 
         // Match against package.json-derived entry points
-        if (entryPoints.has(uri.fsPath)) {
+        if (showEntryBadges && entryPoints.has(uri.fsPath)) {
             return {
                 badge: 'E',
                 tooltip: 'Entry Point',
@@ -52,7 +58,7 @@ export class EntryPointDecorationProvider implements vscode.FileDecorationProvid
         }
 
         // Fallback: well-known entry filenames within 2 directory levels of the workspace root
-        if (ENTRY_FILENAMES.has(basename)) {
+        if (showEntryBadges && ENTRY_FILENAMES.has(basename)) {
             const relative = path.relative(folder.uri.fsPath, uri.fsPath);
             const depth = relative.split(path.sep).length - 1;
             if (depth <= 2) {
@@ -66,7 +72,7 @@ export class EntryPointDecorationProvider implements vscode.FileDecorationProvid
         }
 
         // Config / build file heuristic
-        if (CONFIG_PATTERN.test(basename)) {
+        if (showConfigBadges && CONFIG_PATTERN.test(basename)) {
             return {
                 badge: 'C',
                 tooltip: 'Config / Build File',
