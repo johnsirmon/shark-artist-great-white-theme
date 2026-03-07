@@ -1,0 +1,129 @@
+[       5ms] [ERROR] %c  ERR color: #f33 [lifecycle] Long running operations during shutdown are unsupported in the web (id: join.disconnectRemote) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[       5ms] [ERROR] %c  ERR color: #f33 [lifecycle] Long running operations during shutdown are unsupported in the web (id: join.chatSessionStore) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[       6ms] [ERROR] %c  ERR color: #f33 [lifecycle] Long running operations during shutdown are unsupported in the web (id: join.chatEditingSession) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[     489ms] [WARNING] Did not receive a define call from script http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/node_modules/vsda/rust/web/vsda.js @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:965
+[     585ms] [WARNING] The web worker extension host is started in a same-origin iframe! @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4947
+[     675ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html?&vscodeWebWorkerExtHostId=13327bf5-abe4-4423-affd-60a568f5adaf:0
+[  335415ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/thehedgefrog.vscode-unpkg.net/thehedgefrog/greatwhite/1.0.0/extension/package.json:0
+[  335416ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 0)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335416ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/Henriquehnnm.vscode-unpkg.net/Henriquehnnm/abissal/1.2.1/extension/package.json:0
+[  335416ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 2)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335416ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/shark-labs.vscode-unpkg.net/shark-labs/shark-labs-great-white-theme/0.6.3/extension/package.json:0
+[  335417ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 1)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335418ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/moondevaa.vscode-unpkg.net/moondevaa/DarkPlusChocolate/0.5.4/extension/package.json:0
+[  335419ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 3)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335419ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/emmanuelbeziat.vscode-unpkg.net/emmanuelbeziat/vscode-great-icons/2.1.120/extension/package.json:0
+[  335419ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 4)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335420ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/arthurdiegoo.vscode-unpkg.net/arthurdiegoo/great-dreamer/1.0.2/extension/package.json:0
+[  335420ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 5)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335420ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/NickSmith.vscode-unpkg.net/NickSmith/not-that-great/0.0.1/extension/package.json:0
+[  335420ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 6)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335426ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/arthurwhite.vscode-unpkg.net/arthurwhite/white/1.3.6/extension/package.json:0
+[  335427ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 7)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335427ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/CoreNeonVillage.vscode-unpkg.net/CoreNeonVillage/great-and-powerful-theme---trixie/3.1.0/extension/package.json:0
+[  335427ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 8)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335428ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/sean0717.vscode-unpkg.net/sean0717/great-dark-icons/1.0.0/extension/package.json:0
+[  335428ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 9)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335428ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/aarav-agarwal.vscode-unpkg.net/aarav-agarwal/monokai-greatness/0.0.1/extension/package.json:0
+[  335429ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 10)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335429ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/Greative.vscode-unpkg.net/Greative/greative/1.0.11/extension/package.json:0
+[  335429ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 11)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335429ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/EugeneLipsky.vscode-unpkg.net/EugeneLipsky/greatest-grey-theme/0.0.5/extension/package.json:0
+[  335429ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 12)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335435ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/davidbabel.vscode-unpkg.net/davidbabel/vscode-simpler-icons/1.6.14/extension/package.json:0
+[  335436ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 13)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335436ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/MajorBreakfast.vscode-unpkg.net/MajorBreakfast/ultimate-white/1.0.2/extension/package.json:0
+[  335436ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 16)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335437ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/sveggiani.vscode-unpkg.net/sveggiani/vscode-field-lights/0.0.11/extension/package.json:0
+[  335437ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 15)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335437ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/saviorisdead.vscode-unpkg.net/saviorisdead/Theme-GitHubCleanWhite/0.0.3/extension/package.json:0
+[  335437ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 14)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335437ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/jker.vscode-unpkg.net/jker/white-winter/1.0.1/extension/package.json:0
+[  335437ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 17)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335438ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/okon3.vscode-unpkg.net/okon3/ayu-miragemod/0.0.1/extension/package.json:0
+[  335438ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 18)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  335441ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/web-extension-resource/pontus.vscode-unpkg.net/pontus/black-on-white/0.0.2/extension/package.json:0
+[  335442ms] [ERROR] %c  ERR color: #f33 Problem loading themes from marketplace Error: Forbidden
+    at ylt.readExtensionResource (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4983:40835)
+    at async t7e.getMarketplaceColorThemes (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:1751:8501)
+    at async Promise.all (index 19)
+    at async p1e.doSearch (http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:4111:18237) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  354868ms] [ERROR] %c  ERR color: #f33 [lifecycle] Long running operations during shutdown are unsupported in the web (id: join.disconnectRemote) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  354869ms] [ERROR] %c  ERR color: #f33 [lifecycle] Long running operations during shutdown are unsupported in the web (id: join.chatEditingSession) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
+[  354869ms] [ERROR] %c  ERR color: #f33 [lifecycle] Long running operations during shutdown are unsupported in the web (id: join.chatSessionStore) @ http://127.0.0.1:8088/insider-3d96350ed546b786ace7de5ff1d13ab7433073f6/static/out/vs/code/browser/workbench/workbench.js:413
