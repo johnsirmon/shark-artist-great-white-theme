@@ -34,7 +34,7 @@ __export(extension_exports, {
   deactivate: () => deactivate
 });
 module.exports = __toCommonJS(extension_exports);
-var vscode2 = __toESM(require("vscode"));
+var vscode3 = __toESM(require("vscode"));
 
 // src/tracker.ts
 var GenerationTracker = class {
@@ -121,17 +121,141 @@ var ThemeSwitcher = class {
   }
 };
 
+// src/decorationProvider.ts
+var vscode2 = __toESM(require("vscode"));
+var path = __toESM(require("path"));
+var ENTRY_FILENAMES = /* @__PURE__ */ new Set([
+  "index.ts",
+  "index.js",
+  "main.ts",
+  "app.ts",
+  "server.ts",
+  "cli.ts"
+]);
+var CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*)$/i;
+var EntryPointDecorationProvider = class {
+  _onDidChangeFileDecorations = new vscode2.EventEmitter();
+  onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
+  /** Keyed by workspace folder URI string → resolved absolute entry-point paths */
+  _entryPointCache = /* @__PURE__ */ new Map();
+  async provideFileDecoration(uri, _token) {
+    const config = vscode2.workspace.getConfiguration("greatWhite");
+    if (!config.get("showEntryPointDecorations", true)) {
+      return void 0;
+    }
+    const folder = vscode2.workspace.getWorkspaceFolder(uri);
+    if (!folder) {
+      return void 0;
+    }
+    const entryPoints = await this._getEntryPoints(folder);
+    const basename2 = path.basename(uri.fsPath);
+    if (entryPoints.has(uri.fsPath)) {
+      return {
+        badge: "E",
+        tooltip: "Entry Point",
+        color: new vscode2.ThemeColor("greatWhite.entryPointForeground"),
+        propagate: true
+      };
+    }
+    if (ENTRY_FILENAMES.has(basename2)) {
+      const relative2 = path.relative(folder.uri.fsPath, uri.fsPath);
+      const depth = relative2.split(path.sep).length - 1;
+      if (depth <= 2) {
+        return {
+          badge: "E",
+          tooltip: "Entry Point",
+          color: new vscode2.ThemeColor("greatWhite.entryPointForeground"),
+          propagate: true
+        };
+      }
+    }
+    if (CONFIG_PATTERN.test(basename2)) {
+      return {
+        badge: "C",
+        tooltip: "Config / Build File",
+        color: new vscode2.ThemeColor("greatWhite.configFileForeground"),
+        propagate: false
+      };
+    }
+    return void 0;
+  }
+  async _getEntryPoints(folder) {
+    const key = folder.uri.toString();
+    const cached = this._entryPointCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    const set = /* @__PURE__ */ new Set();
+    const found = await vscode2.workspace.findFiles(
+      new vscode2.RelativePattern(folder, "package.json"),
+      "**/node_modules/**",
+      1
+    );
+    if (found.length > 0) {
+      try {
+        const raw = await vscode2.workspace.fs.readFile(found[0]);
+        const pkg = JSON.parse(Buffer.from(raw).toString("utf-8"));
+        const root = folder.uri.fsPath;
+        if (pkg.main) {
+          this._extractPath(pkg.main, root, set);
+        }
+        if (pkg.module) {
+          this._extractPath(pkg.module, root, set);
+        }
+        if (pkg.exports) {
+          this._extractAllValues(pkg.exports, root, set);
+        }
+        if (pkg.bin) {
+          this._extractAllValues(pkg.bin, root, set);
+        }
+      } catch {
+      }
+    }
+    this._entryPointCache.set(key, set);
+    return set;
+  }
+  _extractPath(value, root, out) {
+    if (typeof value === "string") {
+      out.add(path.resolve(root, value));
+    }
+  }
+  _extractAllValues(obj, root, out) {
+    if (typeof obj === "string") {
+      this._extractPath(obj, root, out);
+    } else if (obj !== null && typeof obj === "object") {
+      for (const v of Object.values(obj)) {
+        this._extractAllValues(v, root, out);
+      }
+    }
+  }
+  /** Invalidate cache for one folder (by its URI string) or all if omitted */
+  invalidateCache(folderUri) {
+    if (folderUri) {
+      this._entryPointCache.delete(folderUri);
+    } else {
+      this._entryPointCache.clear();
+    }
+  }
+  /** Fire a broad refresh so VS Code re-queries all visible file decorations */
+  fireAll() {
+    this._onDidChangeFileDecorations.fire(void 0);
+  }
+  dispose() {
+    this._onDidChangeFileDecorations.dispose();
+  }
+};
+
 // src/extension.ts
 var tracker;
 var switcher;
 function activate(context) {
   tracker = new GenerationTracker();
   switcher = new ThemeSwitcher();
-  let changeDisposable = vscode2.workspace.onDidChangeTextDocument((event) => {
+  let changeDisposable = vscode3.workspace.onDidChangeTextDocument((event) => {
     const severity = tracker.trackChange(event);
     evaluateSeverity(severity);
   });
-  let editorDisposable = vscode2.window.onDidChangeActiveTextEditor((editor) => {
+  let editorDisposable = vscode3.window.onDidChangeActiveTextEditor((editor) => {
     if (editor) {
       const severity = tracker.trackChange({
         document: editor.document,
@@ -143,12 +267,36 @@ function activate(context) {
       switcher.restoreOriginalTheme();
     }
   });
-  let cleanseCommand = vscode2.commands.registerCommand("greatWhite.cleanseBloodloss", () => {
+  let cleanseCommand = vscode3.commands.registerCommand("greatWhite.cleanseBloodloss", () => {
     tracker.reset();
     switcher.restoreOriginalTheme();
-    vscode2.window.showInformationMessage("Bloodloss cleansed. The theme has been restored.");
+    vscode3.window.showInformationMessage("Bloodloss cleansed. The theme has been restored.");
   });
-  context.subscriptions.push(changeDisposable, editorDisposable, cleanseCommand);
+  const decorationProvider = new EntryPointDecorationProvider();
+  const decorationRegistration = vscode3.window.registerFileDecorationProvider(decorationProvider);
+  const pkgWatcher = vscode3.workspace.createFileSystemWatcher("**/package.json");
+  const invalidateAndRefresh = (uri) => {
+    const folder = vscode3.workspace.getWorkspaceFolder(uri);
+    decorationProvider.invalidateCache(folder?.uri.toString());
+    decorationProvider.fireAll();
+  };
+  pkgWatcher.onDidChange(invalidateAndRefresh);
+  pkgWatcher.onDidCreate(invalidateAndRefresh);
+  pkgWatcher.onDidDelete(invalidateAndRefresh);
+  const configChangeDisposable = vscode3.workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration("greatWhite.showEntryPointDecorations")) {
+      decorationProvider.fireAll();
+    }
+  });
+  context.subscriptions.push(
+    changeDisposable,
+    editorDisposable,
+    cleanseCommand,
+    decorationRegistration,
+    decorationProvider,
+    pkgWatcher,
+    configChangeDisposable
+  );
 }
 function evaluateSeverity(severity) {
   if (severity > 50) {

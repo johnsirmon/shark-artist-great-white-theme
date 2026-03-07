@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { GenerationTracker } from './tracker';
 import { ThemeSwitcher } from './themeSwitcher';
+import { EntryPointDecorationProvider } from './decorationProvider';
 
 let tracker: GenerationTracker;
 let switcher: ThemeSwitcher;
@@ -36,7 +37,31 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage("Bloodloss cleansed. The theme has been restored.");
     });
 
-    context.subscriptions.push(changeDisposable, editorDisposable, cleanseCommand);
+    // --- Entry Point Decoration Provider ---
+    const decorationProvider = new EntryPointDecorationProvider();
+    const decorationRegistration = vscode.window.registerFileDecorationProvider(decorationProvider);
+
+    const pkgWatcher = vscode.workspace.createFileSystemWatcher('**/package.json');
+    const invalidateAndRefresh = (uri: vscode.Uri) => {
+        const folder = vscode.workspace.getWorkspaceFolder(uri);
+        decorationProvider.invalidateCache(folder?.uri.toString());
+        decorationProvider.fireAll();
+    };
+    pkgWatcher.onDidChange(invalidateAndRefresh);
+    pkgWatcher.onDidCreate(invalidateAndRefresh);
+    pkgWatcher.onDidDelete(invalidateAndRefresh);
+
+    const configChangeDisposable = vscode.workspace.onDidChangeConfiguration(e => {
+        if (e.affectsConfiguration('greatWhite.showEntryPointDecorations')) {
+            decorationProvider.fireAll();
+        }
+    });
+
+    context.subscriptions.push(
+        changeDisposable, editorDisposable, cleanseCommand,
+        decorationRegistration, decorationProvider,
+        pkgWatcher, configChangeDisposable
+    );
 }
 
 function evaluateSeverity(severity: number) {

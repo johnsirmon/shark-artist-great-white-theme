@@ -124,7 +124,50 @@
         ],
         "embeddedLanguages": {}
       }
-    ]
+    ],
+    "colors": [
+      {
+        "id": "greatWhite.entryPointForeground",
+        "defaults": {
+          "dark": "#FFB347",
+          "light": "#CC7700",
+          "highContrast": "#FFB347",
+          "highContrastLight": "#CC7700"
+        },
+        "description": "Color for entry point files in the Explorer"
+      },
+      {
+        "id": "greatWhite.configFileForeground",
+        "defaults": {
+          "dark": "#87CEEB",
+          "light": "#2980B9",
+          "highContrast": "#87CEEB",
+          "highContrastLight": "#2980B9"
+        },
+        "description": "Color for config/build files in the Explorer"
+      }
+    ],
+    "configuration": {
+      "title": "Great White Theme",
+      "properties": {
+        "greatWhite.showEntryPointDecorations": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight entry points and config files in the Explorer"
+        }
+      }
+    },
+    "configurationDefaults": {
+      "explorer.fileNesting.enabled": true,
+      "explorer.fileNesting.patterns": {
+        "package.json": "yarn.lock, package-lock.json, pnpm-lock.yaml, .npmrc, .nvmrc, .node-version",
+        "tsconfig.json": "tsconfig.*.json, jsconfig.json",
+        "*.ts": "${capture}.test.ts, ${capture}.spec.ts, ${capture}.d.ts",
+        "vite.config.*": "vite.config.*.ts, vitest.config.*",
+        ".env": ".env.*, .env.local, .env.production, .env.development",
+        "README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE, LICENSE.txt, SECURITY.md"
+      }
+    }
   },
   "devDependencies": {
     "@types/vscode": "^1.109.0",
