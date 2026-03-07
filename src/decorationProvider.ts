@@ -2,10 +2,15 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 const ENTRY_FILENAMES = new Set([
-    'index.ts', 'index.js', 'main.ts', 'app.ts', 'server.ts', 'cli.ts'
+    // JavaScript / TypeScript
+    'index.ts', 'index.js', 'main.ts', 'app.ts', 'server.ts', 'cli.ts',
+    // C / C++
+    'main.c', 'main.cc', 'main.cpp',
+    // PowerShell
+    'setup.ps1', 'activate.ps1', 'install.ps1', 'main.ps1'
 ]);
 
-const CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*)$/i;
+const CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props)$/i;
 
 export class EntryPointDecorationProvider implements vscode.FileDecorationProvider, vscode.Disposable {
     private readonly _onDidChangeFileDecorations =

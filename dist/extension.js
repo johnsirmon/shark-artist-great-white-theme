@@ -125,14 +125,24 @@ var ThemeSwitcher = class {
 var vscode2 = __toESM(require("vscode"));
 var path = __toESM(require("path"));
 var ENTRY_FILENAMES = /* @__PURE__ */ new Set([
+  // JavaScript / TypeScript
   "index.ts",
   "index.js",
   "main.ts",
   "app.ts",
   "server.ts",
-  "cli.ts"
+  "cli.ts",
+  // C / C++
+  "main.c",
+  "main.cc",
+  "main.cpp",
+  // PowerShell
+  "setup.ps1",
+  "activate.ps1",
+  "install.ps1",
+  "main.ps1"
 ]);
-var CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*)$/i;
+var CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props)$/i;
 var EntryPointDecorationProvider = class {
   _onDidChangeFileDecorations = new vscode2.EventEmitter();
   onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;

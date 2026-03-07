@@ -165,7 +165,12 @@
         "*.ts": "${capture}.test.ts, ${capture}.spec.ts, ${capture}.d.ts",
         "vite.config.*": "vite.config.*.ts, vitest.config.*",
         ".env": ".env.*, .env.local, .env.production, .env.development",
-        "README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE, LICENSE.txt, SECURITY.md"
+        "README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE, LICENSE.txt, SECURITY.md, AGENTS.md, CLAUDE.md, GEMINI.md, KNOWN-ISSUES.md",
+        "*.cc": "${capture}.hh",
+        "*.c": "${capture}.h",
+        "CMakeLists.txt": "CMakePresets.json, CMakeUserPresets.json",
+        "requirements.txt": "requirements-dev.txt, requirements-test.txt, Pipfile, Pipfile.lock, pyproject.toml",
+        "setup.ps1": "validate.ps1, verify.ps1, requirements.txt, .gitmessage"
       }
     }
   },
