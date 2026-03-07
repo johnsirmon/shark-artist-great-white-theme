@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.2] - 2026-03-07
+
+### Maintenance
+
+**ThemeSwitcher cleanup**
+- Refined `restoreOriginalTheme` logic: when the saved theme is unknown or was already Bloodloss, the workspace color-theme override is removed entirely so user settings take precedence cleanly
+- Removed stale comments; code now matches the behaviour described in the README
+
+**Documentation**
+- README and CHANGELOG fully synchronized with v0.6.1 implementation; all threshold defaults, status-bar behaviour, and example config blocks verified accurate
+
 ## [0.6.1] - 2026-03-07
 
 ### Bloodloss Threshold Tuning & UX Redesign
