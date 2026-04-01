@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.9.0] - 2026-04-01
+
+### Documentation & Release Process Improvements
+
+- **Release Checklist** (`docs/release-checklist.md`): Corrected PAT creation URL from the stale `marketplace.visualstudio.com/manage` link to the correct `https://aex.dev.azure.com/me` portal; added explicit step-by-step guidance for Organization (must be **All accessible organizations**, not a specific org) and Scopes (**Marketplace → Manage** via **Show all scopes**); added a clear NOTE that PATs are managed at dev.azure.com — the Marketplace management page controls extension listings only
+- **Error Log** (`.learnings/ERRORS.md`): Updated PAT troubleshooting block with the corrected portal URL, correct org setting, and scope selection path; added a callout note to prevent the `marketplace.visualstudio.com` confusion
+- **Learnings** (`.learnings/LEARNINGS.md`): Added two bullet points reinforcing the correct PAT portal (`aex.dev.azure.com/me`) and the "All accessible organizations" requirement
+
+No functional theme or extension changes.
+
 ## [0.8.1] - 2026-04-01
 
 ### Documentation & Correctness Fixes

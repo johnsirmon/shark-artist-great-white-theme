@@ -52,6 +52,8 @@ Suggested Action: >
   Update `docs/release-checklist.md` Publish section to note:
   - Use `vsce login shark-labs` with a Marketplace-scoped PAT (not AZDO_PAT)
   - PAT scope required: Marketplace → Manage
+  - PAT is created at https://aex.dev.azure.com/me (profile avatar → Personal access tokens) — NOT at marketplace.visualstudio.com or the Azure Portal
+  - Organization must be set to 'All accessible organizations' (not a specific org)
   - Recommended expiry: 1 year, calendar reminder to renew
   - Fallback: `vsce publish --pat <token>` with a fresh token pasted inline
 

@@ -24,9 +24,12 @@
 
 - [ ] Authenticate: `vsce login shark-labs`
   - PAT scope required: **Marketplace → Manage** (NOT the general `AZDO_PAT` env var, which is unrelated)
+  - **Create a new PAT at: https://aex.dev.azure.com/me → profile avatar → Personal access tokens → New Token**
+  - Organization: **All accessible organizations** (not a specific org — this is a common mistake)
+  - Scopes: click **Show all scopes** → scroll to **Marketplace** → check **Manage**
+  - NOTE: PATs are at dev.azure.com — the marketplace.visualstudio.com/manage page manages extension listings only, not PATs
   - Recommended PAT expiry: 1 year; set a calendar reminder to renew
   - Fallback if login credential is expired: `vsce publish --pat <fresh-token>`
-  - Get a new PAT at: https://marketplace.visualstudio.com/manage/publishers/shark-labs → avatar → Personal access tokens
 - [ ] Publish: `vsce publish`
 - [ ] Verify Marketplace page renders README and metadata correctly
 - [ ] Verify all six variants appear in Theme Picker

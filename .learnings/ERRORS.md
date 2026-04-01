@@ -90,11 +90,14 @@ Context:          >
   same day via unknown path), but the workflow confusion led to failed re-publish attempts.
 Suggested Fix:    >
   The Marketplace PAT is separate from general AZDO_PAT. To refresh:
-  1. Go to https://marketplace.visualstudio.com/manage/publishers/shark-labs
-  2. Click avatar → Personal access tokens → New Token
-  3. Scope: Marketplace → Manage, set a long expiry (1 year)
-  4. Run: vsce login shark-labs  (updates vscode-vsce/shark-labs Windows credential)
-  5. Optionally set $env:VSCE_PAT (not AZDO_PAT) for non-interactive use
+  1. Go to https://aex.dev.azure.com/me (NOT dev.azure.com or the Azure Portal)
+  2. Click your profile avatar (top right) → Personal access tokens → New Token
+  3. Organization: All accessible organizations; Scopes: click 'Show all scopes' → Marketplace → Manage
+  4. Set a long expiry (1 year), copy the token
+  5. Run: vsce login shark-labs  (updates vscode-vsce/shark-labs Windows credential)
+  6. Optionally set $env:VSCE_PAT (not AZDO_PAT) for non-interactive use
+  NOTE: PATs are created at dev.azure.com — NOT at marketplace.visualstudio.com/manage.
+  The Marketplace management page is only for managing extension listings.
   Note: `vsce publish --azure-credential` exists in vsce 3.7.1 but requires the Entra identity
   to have Marketplace Manage permissions — not guaranteed for standard work accounts.
 
