@@ -8,8 +8,13 @@ export interface SessionInfo {
     summary: string;
     model: string;
     contextPercent: number;
+    isEstimated: boolean;           // true = heuristic, false = authoritative from shutdown
     outputTokens: number;
-    inputTokensEstimate: number;
+    currentTokens: number;          // from session.shutdown.data.currentTokens (0 if active)
+    systemTokens: number;           // from session.shutdown.data.systemTokens
+    conversationTokens: number;     // from session.shutdown.data.conversationTokens
+    toolDefinitionsTokens: number;  // from session.shutdown.data.toolDefinitionsTokens
+    inputTokensEstimate: number;    // heuristic estimate for active sessions
     turnCount: number;
     isActive: boolean;
     startTime: string;
@@ -31,12 +36,18 @@ interface SessionCache {
     info: SessionInfo;
 }
 
+/** Estimated base tokens consumed by system prompt and tool definitions in a CLI session.
+ *  Derived from real session.shutdown data: ~12K system + ~34K tool definitions. */
+const SYSTEM_OVERHEAD_TOKENS = 46_000;
+
 function getContextWindowSize(model: string): number {
     if (!model) { return 200_000; }
     const m = model.toLowerCase();
     if (m.includes('claude')) { return 200_000; }
+    if (m.startsWith('gpt-4.1')) { return 1_000_000; }
     if (m.startsWith('gpt-5')) { return 200_000; }
     if (m.startsWith('gpt-4')) { return 128_000; }
+    if (m.includes('o1') || m.includes('o3')) { return 200_000; }
     return 200_000;
 }
 
@@ -197,8 +208,14 @@ export class SessionWatcher extends vscode.Disposable {
         let model = '';
         let branch = '';
         let outputTokens = 0;
-        let inputTokensEstimate = 0;
+        let conversationInputEstimate = 0;
+        let toolResultTokensEstimate = 0;
         let turnCount = 0;
+        let currentTokens = 0;
+        let systemTokens = 0;
+        let conversationTokens = 0;
+        let toolDefinitionsTokens = 0;
+        let isEstimated = true;
 
         try {
             const evText = fs.readFileSync(eventsPath, 'utf-8');
@@ -218,7 +235,6 @@ export class SessionWatcher extends vscode.Disposable {
 
                 switch (type) {
                     case 'session.start':
-                        if (data.selectedModel) { model = data.selectedModel; }
                         if (data.context?.branch) { branch = data.context.branch; }
                         break;
                     case 'assistant.message':
@@ -231,13 +247,24 @@ export class SessionWatcher extends vscode.Disposable {
                         break;
                     case 'user.message':
                         if (typeof data.content === 'string') {
-                            inputTokensEstimate += Math.ceil(data.content.length / 4);
+                            conversationInputEstimate += Math.ceil(data.content.length / 4);
                         }
                         break;
                     case 'tool.execution_complete':
-                        if (typeof data.content === 'string') {
-                            inputTokensEstimate += Math.ceil(data.content.length / 4);
+                        if (data.model && typeof data.model === 'string' && !model) { model = data.model; }
+                        if (data.result != null) {
+                            const text = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
+                            toolResultTokensEstimate += Math.ceil(text.length / 4);
                         }
+                        break;
+                    case 'session.shutdown':
+                        if (typeof data.currentModel === 'string') {
+                            model = data.currentModel;
+                        }
+                        if (typeof data.currentTokens === 'number') { currentTokens = data.currentTokens; }
+                        if (typeof data.systemTokens === 'number') { systemTokens = data.systemTokens; }
+                        if (typeof data.conversationTokens === 'number') { conversationTokens = data.conversationTokens; }
+                        if (typeof data.toolDefinitionsTokens === 'number') { toolDefinitionsTokens = data.toolDefinitionsTokens; }
                         break;
                 }
             }
@@ -245,16 +272,36 @@ export class SessionWatcher extends vscode.Disposable {
             // events.jsonl may not exist yet
         }
 
-        const contextPercent = Math.min(100, Math.round(
-            (outputTokens + inputTokensEstimate) / getContextWindowSize(model) * 100
-        ));
+        const inputTokensEstimate = conversationInputEstimate + toolResultTokensEstimate;
+
+        let contextPercent: number;
+        if (currentTokens > 0) {
+            // Completed session: use authoritative token count from session.shutdown
+            contextPercent = Math.min(100, Math.round(
+                currentTokens / getContextWindowSize(model) * 100
+            ));
+            isEstimated = false;  // derive from track taken, not from event order
+        } else {
+            // Active session: heuristic — system overhead + conversation + tool results
+            // outputTokens are NOT included; they are completion tokens, not prompt fill
+            const estimatedPromptTokens = SYSTEM_OVERHEAD_TOKENS + inputTokensEstimate;
+            contextPercent = Math.min(100, Math.round(
+                estimatedPromptTokens / getContextWindowSize(model) * 100
+            ));
+            isEstimated = true;  // always heuristic when currentTokens=0
+        }
 
         const info: SessionInfo = {
             id: yaml['id'] || id,
             summary: yaml['summary'] || '',
             model,
             contextPercent,
+            isEstimated,
             outputTokens,
+            currentTokens,
+            systemTokens,
+            conversationTokens,
+            toolDefinitionsTokens,
             inputTokensEstimate,
             turnCount,
             isActive: this._isActive(dirPath),
@@ -289,7 +336,9 @@ export class SessionWatcher extends vscode.Disposable {
                 a.turnCount !== b.turnCount ||
                 a.isActive !== b.isActive ||
                 a.summary !== b.summary ||
-                a.model !== b.model
+                a.model !== b.model ||
+                a.isEstimated !== b.isEstimated ||
+                a.currentTokens !== b.currentTokens
             ) {
                 return true;
             }
