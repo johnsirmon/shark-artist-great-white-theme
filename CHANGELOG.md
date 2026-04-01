@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.8.1] - 2026-04-01
+
+### Documentation & Correctness Fixes
+
+- **README**: Removed stale claim that the Context Gauge "auto-applies Bloodloss" — auto-switching was removed in v0.7.0; Bloodloss is manual-only
+- **Copilot instructions** (`.github/copilot-instructions.md`): Updated architecture section to accurately reflect the current runtime layer (`ThemeSwitcher`, `SessionWatcher`, `ContextGauge`, `EntryPointDecorationProvider`); corrected command list; clarified Bloodloss is manual selection only
+- **Source** (`src/themeSwitcher.ts`): Corrected Bloodloss detail string from "auto-applied at high context usage" to "manual selection only" — aligns the Quick Pick detail text with v0.7.0 behaviour
+
+No functional changes; no new features.
+
 ## [0.8.0] - 2026-04-01
 
 ### Theme Switcher — Always-visible status bar button
