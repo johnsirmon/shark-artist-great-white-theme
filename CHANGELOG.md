@@ -2,6 +2,27 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.8.0] - 2026-04-01
+
+### Theme Switcher — Always-visible status bar button
+
+A new persistent status bar button makes switching between Great White variants instant without leaving the editor.
+
+**Status bar button (left side, always visible)**
+- Displays the active variant's emoji + short name at a glance: `🌊 Dark`, `🌩️ Storm`, `❄️ Frost`, `☀️ Light`, `🌑 HC Dark`, `🌕 HC Light`, `🩸 Bloodloss`
+- Shows `🦈 Theme` when a non-Great-White theme is active — acts as an invitation to switch back
+- Reacts automatically when the active theme changes (including Bloodloss auto-apply from the context gauge)
+
+**Quick Pick theme switcher**
+- Click the status bar button or run `Great White: Switch Theme` from the Command Palette
+- Shows all 7 Great White variants; the currently active one is pre-selected and marked `✓ active`
+- Bloodloss listed with a detail note explaining it is the overflow/alarm theme
+- `Browse all VS Code themes…` escape hatch at the bottom drops through to VS Code's built-in picker
+- Applies the selected theme instantly (writes `workbench.colorTheme` globally)
+
+**New command**
+- `Great White: Switch Theme` (`greatWhite.switchTheme`)
+
 ## [0.7.0] - 2026-04-01
 
 ### Context Gauge — Real Copilot Session Data (replaces Bloodloss heuristic)

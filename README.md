@@ -83,6 +83,7 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **Six variants** -- Dark and Light foundations, plus Storm, Frost, High Contrast Dark, and High Contrast Light.
 - **Extended family** -- Storm and Frost provide gray-red-white-blue alternatives while keeping Great White identity.
 - **High-contrast options** -- dedicated dark and light high-contrast themes for accessibility-first sessions.
+- **Theme Switcher** -- a persistent `🦈` status bar button (always visible, left side) that opens a focused Quick Pick for instant switching between all Great White variants. No hunting through hundreds of themes.
 - **Semantic highlighting** -- semantic token rules take priority over TextMate for TypeScript, Python, Rust, Go, and other language-server-supported files.
 - **Bracket pair colorization** -- six distinct ocean-derived colors for nested brackets.
 - **Full workbench coverage** -- 173 color keys: editor, sidebar, activity bar, tabs, status bar, title bar, input fields, buttons, lists, breadcrumbs, diff, peek view, minimap, git decorations, scrollbar, notifications, terminal.
@@ -208,9 +209,42 @@ All commands are available via the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+
 
 | Command | Description |
 |---|---|
+| `Great White: Switch Theme` | Opens a focused Quick Pick listing all Great White variants for instant switching |
 | `Great White: Show Context Gauge Details` | Opens the Context Gauge detail panel showing CLI sessions, context %, trend, and chat usage |
 | `Great White: Reset Explorer Decorations to Defaults` | Clears all three `greatWhite.show*` settings back to their defaults |
 | `Great White: Reset File Nesting Patterns to Defaults` | Removes workspace-level `explorer.fileNesting.*` overrides, restoring contributed defaults |
+
+---
+
+## Theme Switcher
+
+Starting in `v0.8.0`, a persistent status bar button lets you switch between Great White variants instantly — no `Ctrl+K Ctrl+T` required, no scrolling through every installed theme.
+
+### Status bar button
+
+The button lives on the **left side of the status bar** and is always visible regardless of which theme is active:
+
+| Button | Meaning |
+|---|---|
+| `🌊 Dark` | Great White (Dark) is active |
+| `🌩️ Storm` | Great White (Storm) is active |
+| `❄️ Frost` | Great White (Frost) is active |
+| `☀️ Light` | Great White (Light) is active |
+| `🌑 HC Dark` | Great White (High Contrast Dark) is active |
+| `🌕 HC Light` | Great White (High Contrast Light) is active |
+| `🩸 Bloodloss` | Great White (Bloodloss) is active |
+| `🦈 Theme` | A non-Great-White theme is active — click to switch into the family |
+
+The label updates automatically whenever the active theme changes, including when the Context Gauge auto-applies Bloodloss.
+
+### Switching variants
+
+Click the button (or run `Great White: Switch Theme` from the Command Palette) to open the switcher:
+
+- All 7 variants are listed with the currently active one pre-selected and marked `$(check) active`
+- Select any variant to apply it instantly — no confirmation, no reload
+- **Bloodloss** is included with a note that it is the overflow/alarm theme
+- **Browse all VS Code themes…** at the bottom opens VS Code's built-in full theme picker
 
 ---
 

@@ -2,12 +2,18 @@ import * as vscode from 'vscode';
 import { SessionWatcher } from './sessionWatcher';
 import { ContextGauge, showContextDetails } from './contextGauge';
 import { EntryPointDecorationProvider } from './decorationProvider';
+import { ThemeSwitcher } from './themeSwitcher';
 
 let watcher: SessionWatcher;
 let gauge: ContextGauge;
+let switcher: ThemeSwitcher;
 
 export function activate(context: vscode.ExtensionContext) {
     const cfg = vscode.workspace.getConfiguration('greatWhite');
+
+    // --- Theme Switcher status bar button ---
+    switcher = new ThemeSwitcher();
+    switcher.start();
 
     // --- Context Gauge (replaces old Bloodloss system) ---
     watcher = new SessionWatcher();
@@ -65,6 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(
+        switcher,
         watcher, gauge,
         openDetailsCmd,
         decorationRegistration, decorationProvider,
