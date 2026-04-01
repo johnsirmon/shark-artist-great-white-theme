@@ -8,8 +8,13 @@ export interface SessionInfo {
     summary: string;
     model: string;
     contextPercent: number;
+    isEstimated: boolean;           // true = heuristic, false = authoritative from shutdown
     outputTokens: number;
-    inputTokensEstimate: number;
+    currentTokens: number;          // from session.shutdown.data.currentTokens (0 if active)
+    systemTokens: number;           // from session.shutdown.data.systemTokens
+    conversationTokens: number;     // from session.shutdown.data.conversationTokens
+    toolDefinitionsTokens: number;  // from session.shutdown.data.toolDefinitionsTokens
+    inputTokensEstimate: number;    // heuristic estimate for active sessions
     turnCount: number;
     isActive: boolean;
     startTime: string;
@@ -197,8 +202,14 @@ export class SessionWatcher extends vscode.Disposable {
         let model = '';
         let branch = '';
         let outputTokens = 0;
-        let inputTokensEstimate = 0;
+        let conversationInputEstimate = 0;
+        let toolResultTokensEstimate = 0;
         let turnCount = 0;
+        let currentTokens = 0;
+        let systemTokens = 0;
+        let conversationTokens = 0;
+        let toolDefinitionsTokens = 0;
+        let isEstimated = true;
 
         try {
             const evText = fs.readFileSync(eventsPath, 'utf-8');
@@ -218,7 +229,6 @@ export class SessionWatcher extends vscode.Disposable {
 
                 switch (type) {
                     case 'session.start':
-                        if (data.selectedModel) { model = data.selectedModel; }
                         if (data.context?.branch) { branch = data.context.branch; }
                         break;
                     case 'assistant.message':
@@ -231,12 +241,14 @@ export class SessionWatcher extends vscode.Disposable {
                         break;
                     case 'user.message':
                         if (typeof data.content === 'string') {
-                            inputTokensEstimate += Math.ceil(data.content.length / 4);
+                            conversationInputEstimate += Math.ceil(data.content.length / 4);
                         }
                         break;
                     case 'tool.execution_complete':
-                        if (typeof data.content === 'string') {
-                            inputTokensEstimate += Math.ceil(data.content.length / 4);
+                        if (data.model && typeof data.model === 'string' && !model) { model = data.model; }
+                        if (data.result != null) {
+                            const text = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
+                            toolResultTokensEstimate += Math.ceil(text.length / 4);
                         }
                         break;
                 }
@@ -245,6 +257,7 @@ export class SessionWatcher extends vscode.Disposable {
             // events.jsonl may not exist yet
         }
 
+        const inputTokensEstimate = conversationInputEstimate + toolResultTokensEstimate;
         const contextPercent = Math.min(100, Math.round(
             (outputTokens + inputTokensEstimate) / getContextWindowSize(model) * 100
         ));
@@ -254,7 +267,12 @@ export class SessionWatcher extends vscode.Disposable {
             summary: yaml['summary'] || '',
             model,
             contextPercent,
+            isEstimated,
             outputTokens,
+            currentTokens,
+            systemTokens,
+            conversationTokens,
+            toolDefinitionsTokens,
             inputTokensEstimate,
             turnCount,
             isActive: this._isActive(dirPath),
