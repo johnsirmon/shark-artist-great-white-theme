@@ -3,7 +3,7 @@
   "displayName": "Shark Artist: Great White Theme",
   "description": "A contrast-verified, ocean-inspired VS Code theme with six Great White variants including Storm, Frost, and high-contrast dark/light. WCAG AA compliant syntax colors, full workbench coverage, semantic highlighting.",
   "icon": "icon.png",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "publisher": "shark-labs",
   "author": {
     "name": "The Shark Artist",
@@ -200,6 +200,17 @@
           "minimum": 3,
           "maximum": 120,
           "description": "How often (in seconds) to re-scan Copilot CLI session files for updated context data. Lower values are more responsive but use more I/O. Default: 10 seconds."
+        },
+        "greatWhite.themeSwitcher.scope": {
+          "type": "string",
+          "enum": ["auto", "workspace", "global"],
+          "enumDescriptions": [
+            "Apply to the current workspace when a folder is open, otherwise fall back to global user settings.",
+            "Always apply to the current workspace (.vscode/settings.json). Falls back to global if no workspace is open.",
+            "Always apply to global user settings, affecting all VS Code windows."
+          ],
+          "default": "auto",
+          "description": "Controls where the Great White theme selection is saved. 'auto' (default) targets the workspace when a folder is open so different windows can use different themes."
         }
       }
     },

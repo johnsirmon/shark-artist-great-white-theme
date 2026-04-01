@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.10.0] - 2026-04-01
+
+### Theme Switcher — Workspace-scoped switching + consistent shark icon
+
+- **Workspace-scoped by default**: Theme selection now writes to `.vscode/settings.json` when a workspace folder is open, so different VS Code windows can run different Great White variants simultaneously. Falls back to global user settings in loose-file windows.
+- **New setting `greatWhite.themeSwitcher.scope`**: Three options — `"auto"` (default, workspace when folder open), `"workspace"` (always workspace, warns if no folder open), `"global"` (old behaviour, affects all windows). Change takes effect immediately without restarting VS Code.
+- **Scope indicator in the theme picker**: The Quick Pick now shows `$(info) Applying to: workspace (.vscode/settings.json)` or `global user settings` as a footer item so the active scope is always visible before selecting a variant.
+- **Consistent 🦈 shark icon**: Replaced the heterogeneous per-variant emojis (🌊☀️🌩️❄️🌑🌕🩸) with a single shark icon tinted in each theme's primary keyword-accent color, giving the status bar a cohesive look across all variants.
+
 ## [0.9.0] - 2026-04-01
 
 ### Documentation & Release Process Improvements
