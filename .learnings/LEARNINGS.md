@@ -35,6 +35,41 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               LRN-20260401-002
+Logged:           2026-04-01
+Priority:         high
+Status:           resolved
+Area:             conventions
+Summary:          CLI events.jsonl field map — session.shutdown is the authoritative token source; session.start has no selectedModel; tool results are in data.result not data.content.
+Details:          >
+  Deep review of real events.jsonl files revealed three bugs in the original SessionWatcher:
+  1. session.start has NO selectedModel field — model must come from tool.execution_complete.data.model
+     or session.shutdown.data.currentModel.
+  2. tool.execution_complete carries data.result (object), NOT data.content (string).
+  3. session.shutdown is the only event with authoritative token data: currentTokens, systemTokens,
+     conversationTokens, toolDefinitionsTokens, currentModel. All fields are camelCase.
+  Additionally: outputTokens (completion tokens) must NOT be included in the contextPercent
+  numerator — they do not consume input context window space. The correct formula is
+  promptTokens / maxInputTokens. For active sessions, SYSTEM_OVERHEAD_TOKENS = 46_000
+  (12K system prompt + 34K tool definitions) is a realistic base overhead constant.
+Suggested Action: >
+  When reading events.jsonl, always check session.shutdown for authoritative data first.
+  Never add outputTokens to context fill calculations. When session.shutdown is absent
+  (active session), use SYSTEM_OVERHEAD_TOKENS + conversationInputEstimate + toolResultTokensEstimate
+  as the heuristic, divided by getContextWindowSize(model).
+  Derive isEstimated AFTER the two-track branch (not from the shutdown event directly) to
+  prevent flag/track mismatch when shutdown fires but currentTokens=0.
+
+Metadata:
+  Source:           Session 2026-04-01 context gauge accuracy fix
+  Related Files:    [src/sessionWatcher.ts, docs/context_calculation_reviewed.md]
+  Tags:             [context-gauge, events-jsonl, token-calculation]
+  See Also:         []
+  Pattern-Key:      cli-events-jsonl-field-map
+  Recurrence-Count: 1
+-->
+
+<!--
 ID:               LRN-20260401-001
 Logged:           2026-04-01
 Priority:         high
