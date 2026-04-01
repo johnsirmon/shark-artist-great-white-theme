@@ -235,7 +235,7 @@ The button lives on the **left side of the status bar** and is always visible re
 | `🩸 Bloodloss` | Great White (Bloodloss) is active |
 | `🦈 Theme` | A non-Great-White theme is active — click to switch into the family |
 
-The label updates automatically whenever the active theme changes, including when the Context Gauge auto-applies Bloodloss.
+The label updates automatically whenever the active theme changes.
 
 ### Switching variants
 

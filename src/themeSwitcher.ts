@@ -15,7 +15,7 @@ const GW_THEMES: ThemeEntry[] = [
     { label: 'Great White (Frost)',              themeId: 'Great White (Frost)',              shortName: 'Frost',     icon: '❄️' },
     { label: 'Great White (High Contrast Dark)', themeId: 'Great White (High Contrast Dark)', shortName: 'HC Dark',   icon: '🌑' },
     { label: 'Great White (High Contrast Light)',themeId: 'Great White (High Contrast Light)',shortName: 'HC Light',  icon: '🌕' },
-    { label: 'Great White (Bloodloss)',          themeId: 'Great White (Bloodloss)',          shortName: 'Bloodloss', icon: '🩸', detail: 'Overflow / context-alarm theme — auto-applied at high context usage' },
+    { label: 'Great White (Bloodloss)',          themeId: 'Great White (Bloodloss)',          shortName: 'Bloodloss', icon: '🩸', detail: 'Overflow / context-alarm theme — manual selection only' },
 ];
 
 function getActiveThemeId(): string {
