@@ -2,6 +2,32 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.11.0] - 2026-07-15
+
+### Context Gauge — Accuracy Fix & Two-Track Calculation
+
+A major accuracy overhaul to the Copilot Context Gauge. Prior to this release, the gauge produced incorrect percentages due to formula errors and mis-parsed event fields. All issues are now resolved and the gauge reports authoritative token data for completed sessions and a well-bounded estimate for active sessions.
+
+**Bug fixes**
+- Fixed 4 formula errors and 2 pre-existing event-parsing bugs in `src/sessionWatcher.ts`
+- `tool.execution_complete` now reads `data.result` (object) instead of `data.content` (string) — prior code always silently returned nothing
+- Model extraction corrected: `session.start` carries no `selectedModel`; model is now sourced from `tool.execution_complete` events with `session.shutdown` as authoritative fallback
+- `outputTokens` removed from the context-% numerator — completion tokens do not fill the prompt context window
+
+**New two-track calculation**
+- **Completed sessions** (post-`session.shutdown`): use `currentTokens` from the shutdown event as the authoritative prompt fill — no estimation
+- **Active sessions** (no shutdown yet): use `SYSTEM_OVERHEAD_TOKENS` (46 K constant) + per-turn heuristic — clearly flagged as an estimate
+- Status bar shows `~` prefix for estimated percentages and no prefix (plain `%`) for authoritative values
+- Tooltip for completed sessions shows an inline token breakdown: system, conversation, tool definitions, and current totals
+
+**New fields on `SessionInfo`**
+- `isEstimated` — `true` when the active-session heuristic is used, `false` when `currentTokens` is authoritative
+- `currentTokens`, `systemTokens`, `conversationTokens`, `toolDefinitionsTokens` — raw token counts from `session.shutdown`
+
+**`_hasChanged` tracking extended** to include `isEstimated` and `currentTokens` so status-bar transitions from estimated → actual trigger a UI refresh without waiting for the next poll
+
+**`getContextWindowSize` expanded** with `gpt-4.1` (1 M tokens) and `o1`/`o3` (200 K tokens)
+
 ## [0.10.0] - 2026-04-01
 
 ### Theme Switcher — Workspace-scoped switching + consistent shark icon
