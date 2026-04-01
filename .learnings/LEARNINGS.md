@@ -35,6 +35,37 @@ Metadata:
 <!-- Add new entries below this line, newest first. -->
 
 <!--
+ID:               LRN-20260401-001
+Logged:           2026-04-01
+Priority:         high
+Status:           open
+Area:             release
+Summary:          Never paste a PAT into chat; store with Read-Host + User-scope env var instead.
+Details:          >
+  A Marketplace PAT was accidentally pasted into the Copilot chat window. The token was immediately
+  revoked. Chat input is transmitted to remote servers, written to local debug log files
+  (VSCODE_TARGET_SESSION_LOG), and visible in conversation history — any of these can be
+  compromised. The safe pattern is: use Read-Host to capture the token interactively (not
+  visible in terminal buffer or history), then persist via [System.Environment]::SetEnvironmentVariable
+  at User scope so it loads in all future terminal sessions without re-entry. vsce reads VSCE_PAT
+  automatically. Never pass a raw token string to commands typed in chat.
+Suggested Action: >
+  Use this pattern to store and use the PAT:
+    $token = Read-Host "Paste PAT"
+    [System.Environment]::SetEnvironmentVariable("VSCE_PAT", $token, "User")
+  Open a new terminal, then run: vsce publish
+  Revoke and regenerate any PAT that was exposed in chat, logs, or docs immediately.
+
+Metadata:
+  Source:           Session 2026-04-01
+  Related Files:    ["docs/release-checklist.md"]
+  Tags:             ["release", "publish", "PAT", "security", "vsce"]
+  See Also:         [LRN-20260307-001]
+  Pattern-Key:      pat-never-paste-in-chat
+  Recurrence-Count: 1
+-->
+
+<!--
 ID:               LRN-20260307-001
 Logged:           2026-03-07
 Priority:         medium
