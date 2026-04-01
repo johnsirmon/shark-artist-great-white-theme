@@ -259,6 +259,7 @@ export class SessionWatcher extends vscode.Disposable {
                         if (typeof data.systemTokens === 'number') { systemTokens = data.systemTokens; }
                         if (typeof data.conversationTokens === 'number') { conversationTokens = data.conversationTokens; }
                         if (typeof data.toolDefinitionsTokens === 'number') { toolDefinitionsTokens = data.toolDefinitionsTokens; }
+                        isEstimated = false;
                         break;
                 }
             }
@@ -316,7 +317,9 @@ export class SessionWatcher extends vscode.Disposable {
                 a.turnCount !== b.turnCount ||
                 a.isActive !== b.isActive ||
                 a.summary !== b.summary ||
-                a.model !== b.model
+                a.model !== b.model ||
+                a.isEstimated !== b.isEstimated ||
+                a.currentTokens !== b.currentTokens
             ) {
                 return true;
             }
