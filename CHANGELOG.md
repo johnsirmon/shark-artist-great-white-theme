@@ -2,6 +2,47 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.7.0] - 2026-04-01
+
+### Context Gauge — Real Copilot Session Data (replaces Bloodloss heuristic)
+
+**BREAKING:** The Bloodloss severity system (file-size + typing-velocity heuristic, auto theme switching, warning toasts, snooze/disable buttons) has been fully replaced by a real-data context gauge that reads actual Copilot CLI session files.
+
+**New split status bar gauge** (single item, right-aligned)
+- Format: `🦈 CLI 38% │ 💬 Chat 12%` — shows CLI and Chat context usage side by side
+- Context % is calculated from real token data in `~/.copilot/session-state/` event logs
+- Three severity zones: healthy (0–49%, default), warning (50–74%, amber background), critical (75–100%, red background with 🩸 icon)
+- Trend arrows (`↑`/`↓`/`→`) track CLI context direction between polls
+- Workspace-scoped: only shows sessions whose working directory matches the open folder
+
+**Click for details** — QuickPick panel showing:
+- Each CLI session: name, model, context %, turn count, duration, output tokens, branch
+- Active sessions marked with `●`, idle with `○`
+- Copilot Chat status (best-effort estimation, `—` when unavailable)
+- Quick actions: Refresh, open Context Gauge Settings
+
+**Data sourced from real session files:**
+- `workspace.yaml` → session name, CWD (for workspace filtering), timestamps
+- `events.jsonl` → model name, output token counts, turn counts, user message sizes
+- `inuse.*.lock` → active/idle detection via PID lock files
+- Model → context window lookup (Claude: 200K, GPT-5: 200K, GPT-4: 128K)
+
+**New configuration keys**
+- `greatWhite.contextGauge.enabled` (boolean, default `true`) — show/hide the gauge
+- `greatWhite.contextGauge.pollInterval` (number, default `10`) — seconds between session file re-scans
+
+**New command**
+- `Great White: Show Context Gauge Details` (`greatWhite.openContextDetails`)
+
+**Removed**
+- `src/tracker.ts` (GenerationTracker) — replaced by `src/sessionWatcher.ts`
+- `src/themeSwitcher.ts` (ThemeSwitcher) — no more automatic theme switching
+- Commands: `cleanseBloodloss`, `dismissStatusBar`, `disableBloodloss`, `enableBloodloss`
+- Settings: `bloodloss.sizeThreshold`, `bloodloss.velocityThreshold`, `bloodloss.triggerSeverity`, `bloodloss.warningSeverity`, `statusBar.alwaysShow`, `statusBar.enabled`
+- Warning toast notifications, snooze/dismiss buttons, automatic Bloodloss theme activation
+
+**Note:** The Bloodloss theme itself remains available as a manual theme choice — only the automatic switching is removed.
+
 ## [0.6.3] - 2026-03-07
 
 ### Status Bar — Persistent Context Indicator

@@ -3,7 +3,7 @@
   "displayName": "Shark Artist: Great White Theme",
   "description": "A contrast-verified, ocean-inspired VS Code theme with six Great White variants including Storm, Frost, and high-contrast dark/light. WCAG AA compliant syntax colors, full workbench coverage, semantic highlighting.",
   "icon": "icon.png",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "publisher": "shark-labs",
   "author": {
     "name": "The Shark Artist",
@@ -58,8 +58,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "greatWhite.cleanseBloodloss",
-        "title": "Great White: Cleanse Bloodloss (Reset Context Bloat)",
+        "command": "greatWhite.openContextDetails",
+        "title": "Great White: Show Context Gauge Details",
         "category": "Theme"
       },
       {
@@ -70,21 +70,6 @@
       {
         "command": "greatWhite.resetFileNesting",
         "title": "Great White: Reset File Nesting Patterns to Defaults",
-        "category": "Theme"
-      },
-      {
-        "command": "greatWhite.dismissStatusBar",
-        "title": "Great White: Snooze Context Alert",
-        "category": "Theme"
-      },
-      {
-        "command": "greatWhite.disableBloodloss",
-        "title": "Great White: Disable Context Tracking",
-        "category": "Theme"
-      },
-      {
-        "command": "greatWhite.enableBloodloss",
-        "title": "Great White: Enable Context Tracking",
         "category": "Theme"
       }
     ],
@@ -190,41 +175,17 @@
           "default": true,
           "description": "Show 'C' badge on config/build files in the Explorer (requires showEntryPointDecorations to be enabled)."
         },
-        "greatWhite.bloodloss.sizeThreshold": {
-          "type": "number",
-          "default": 500000,
-          "minimum": 10000,
-          "description": "File size (in characters) that contributes maximum bloat score (50 pts). Files below this size contribute proportionally less. Default: 500 000 chars (~500 KB)."
-        },
-        "greatWhite.bloodloss.velocityThreshold": {
-          "type": "number",
-          "default": 5000,
-          "minimum": 100,
-          "description": "Typing velocity (characters per second) that contributes maximum velocity score (50 pts). Human typing peaks around 100 chars/sec; AI streaming typically reaches 1 000–10 000 chars/sec. Default: 5 000 chars/sec."
-        },
-        "greatWhite.bloodloss.triggerSeverity": {
-          "type": "number",
-          "default": 75,
-          "minimum": 10,
-          "maximum": 99,
-          "description": "Combined severity score (0–100) at which the Bloodloss alarm activates. The alarm clears when severity drops below (triggerSeverity − 20). Default: 75."
-        },
-        "greatWhite.bloodloss.warningSeverity": {
-          "type": "number",
-          "default": 50,
-          "minimum": 0,
-          "maximum": 98,
-          "description": "Severity score at which a one-time warning toast fires before the Bloodloss alarm activates. Set to 0 to disable the early warning. Default: 50."
-        },
-        "greatWhite.statusBar.alwaysShow": {
+        "greatWhite.contextGauge.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Always show the Great White context indicator in the status bar. When enabled, shows a green score (🦈 0 →) when healthy and changes color as context complexity grows. When disabled, the bar only appears once severity crosses 10."
+          "description": "Show the Copilot context usage gauge in the status bar. Displays real-time context window consumption for CLI and Chat sessions scoped to the current workspace."
         },
-        "greatWhite.statusBar.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Master toggle for the context tracking status bar indicator. Disable to hide all Great White status bar items. Re-enable via the command palette ('Great White: Enable Context Tracking')."
+        "greatWhite.contextGauge.pollInterval": {
+          "type": "number",
+          "default": 10,
+          "minimum": 3,
+          "maximum": 120,
+          "description": "How often (in seconds) to re-scan Copilot CLI session files for updated context data. Lower values are more responsive but use more I/O. Default: 10 seconds."
         }
       }
     },
