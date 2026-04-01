@@ -265,7 +265,6 @@ export class SessionWatcher extends vscode.Disposable {
                         if (typeof data.systemTokens === 'number') { systemTokens = data.systemTokens; }
                         if (typeof data.conversationTokens === 'number') { conversationTokens = data.conversationTokens; }
                         if (typeof data.toolDefinitionsTokens === 'number') { toolDefinitionsTokens = data.toolDefinitionsTokens; }
-                        isEstimated = false;
                         break;
                 }
             }
@@ -281,6 +280,7 @@ export class SessionWatcher extends vscode.Disposable {
             contextPercent = Math.min(100, Math.round(
                 currentTokens / getContextWindowSize(model) * 100
             ));
+            isEstimated = false;  // derive from track taken, not from event order
         } else {
             // Active session: heuristic — system overhead + conversation + tool results
             // outputTokens are NOT included; they are completion tokens, not prompt fill
@@ -288,6 +288,7 @@ export class SessionWatcher extends vscode.Disposable {
             contextPercent = Math.min(100, Math.round(
                 estimatedPromptTokens / getContextWindowSize(model) * 100
             ));
+            isEstimated = true;  // always heuristic when currentTokens=0
         }
 
         const info: SessionInfo = {
