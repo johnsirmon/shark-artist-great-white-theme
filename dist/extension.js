@@ -1,5 +1,818 @@
-"use strict";var J=Object.create;var P=Object.defineProperty;var q=Object.getOwnPropertyDescriptor;var X=Object.getOwnPropertyNames;var Z=Object.getPrototypeOf,ee=Object.prototype.hasOwnProperty;var te=(n,e)=>{for(var s in e)P(n,s,{get:e[s],enumerable:!0})},A=(n,e,s,t)=>{if(e&&typeof e=="object"||typeof e=="function")for(let i of X(e))!ee.call(n,i)&&i!==s&&P(n,i,{get:()=>e[i],enumerable:!(t=q(e,i))||t.enumerable});return n};var w=(n,e,s)=>(s=n!=null?J(Z(n)):{},A(e||!n||!n.__esModule?P(s,"default",{value:n,enumerable:!0}):s,n)),se=n=>A(P({},"__esModule",{value:!0}),n);var le={};te(le,{activate:()=>he,deactivate:()=>de});module.exports=se(le);var h=w(require("vscode"));var g=w(require("vscode")),C=w(require("fs")),v=w(require("path")),R=w(require("os"));function ie(n){if(!n)return 2e5;let e=n.toLowerCase();return e.includes("claude")||e.startsWith("gpt-5")?2e5:e.startsWith("gpt-4")?128e3:2e5}function ne(n){let e={};for(let s of n.split(`
-`)){let t=s.indexOf(":");if(t<0)continue;let i=s.slice(0,t).trim(),o=s.slice(t+1).trim();i&&(e[i]=o)}return e}function N(n){let e=v.resolve(n);return process.platform==="win32"&&(e=e.toLowerCase()),e.endsWith(v.sep)&&(e=e.slice(0,-1)),e}function L(n){try{return C.statSync(n).mtimeMs}catch{return 0}}var S=class extends g.Disposable{_onDidChange=new g.EventEmitter;onDidChange=this._onDidChange.event;_sessionDir;_cache=new Map;_sessions=[];_pollTimer;_watchers=[];_disposed=!1;constructor(){super(()=>this._dispose()),this._sessionDir=v.join(R.homedir(),".copilot","session-state")}start(e=1e4){this._scan();let s=new g.RelativePattern(g.Uri.file(this._sessionDir),"**/*"),t=g.workspace.createFileSystemWatcher(s);t.onDidChange(()=>this._scan()),t.onDidCreate(()=>this._scan()),t.onDidDelete(()=>this._scan()),this._watchers.push(t),this._pollTimer=setInterval(()=>this._scan(),e)}getWorkspaceSessions(){return this._sessions}getPeakCliPercent(){return this._sessions.length===0?0:Math.max(...this._sessions.map(e=>e.contextPercent))}_scan(){if(this._disposed)return;let e=g.workspace.workspaceFolders;if(!e||e.length===0){this._sessions.length>0&&(this._sessions=[],this._onDidChange.fire());return}let s=e.map(r=>N(r.uri.fsPath)),t;try{t=C.readdirSync(this._sessionDir,{withFileTypes:!0}).filter(r=>r.isDirectory()).map(r=>r.name)}catch{this._sessions.length>0&&(this._sessions=[],this._onDidChange.fire());return}let i=[],o=new Set;for(let r of t){let a=v.join(this._sessionDir,r),l=this._parseSession(r,a);if(!l)continue;let m=N(l.cwd);s.some(k=>m===k||m.startsWith(k+v.sep))&&(i.push(l),o.add(r))}for(let r of this._cache.keys())o.has(r)||this._cache.delete(r);this._hasChanged(i)&&(this._sessions=i,this._onDidChange.fire())}_parseSession(e,s){let t=v.join(s,"workspace.yaml"),i=v.join(s,"events.jsonl"),o=L(t);if(o===0)return;let r=L(i),a=this._cache.get(e);if(a&&a.workspaceMtime===o&&a.eventsMtime===r)return a.info.isActive=this._isActive(s),a.info;let l;try{l=C.readFileSync(t,"utf-8")}catch{return}let m=ne(l),d=m.cwd||"";if(!d)return;let k="",E="",T=0,_=0,M=0;try{let V=C.readFileSync(i,"utf-8").split(`
-`);for(let z of V){let G=z.trim();if(!G)continue;let B;try{B=JSON.parse(G)}catch{continue}let Y=B.type||"",f=B.data;if(f)switch(Y){case"session.start":f.selectedModel&&(k=f.selectedModel),f.context?.branch&&(E=f.context.branch);break;case"assistant.message":typeof f.outputTokens=="number"&&(T+=f.outputTokens);break;case"assistant.turn_end":M++;break;case"user.message":typeof f.content=="string"&&(_+=Math.ceil(f.content.length/4));break;case"tool.execution_complete":typeof f.content=="string"&&(_+=Math.ceil(f.content.length/4));break}}}catch{}let U=Math.min(100,Math.round((T+_)/ie(k)*100)),$={id:m.id||e,summary:m.summary||"",model:k,contextPercent:U,outputTokens:T,inputTokensEstimate:_,turnCount:M,isActive:this._isActive(s),startTime:m.created_at||"",cwd:d,branch:E};return this._cache.set(e,{workspaceMtime:o,eventsMtime:r,info:$}),$}_isActive(e){try{return C.readdirSync(e).some(t=>t.startsWith("inuse.")&&t.endsWith(".lock"))}catch{return!1}}_hasChanged(e){if(e.length!==this._sessions.length)return!0;for(let s=0;s<e.length;s++){let t=e[s],i=this._sessions[s];if(t.id!==i.id||t.contextPercent!==i.contextPercent||t.outputTokens!==i.outputTokens||t.inputTokensEstimate!==i.inputTokensEstimate||t.turnCount!==i.turnCount||t.isActive!==i.isActive||t.summary!==i.summary||t.model!==i.model)return!0}return!1}_dispose(){this._disposed=!0,this._pollTimer&&(clearInterval(this._pollTimer),this._pollTimer=void 0);for(let e of this._watchers)e.dispose();this._watchers=[],this._onDidChange.dispose(),this._cache.clear()}};var c=w(require("vscode"));function j(n){let e=Date.now()-new Date(n).getTime(),s=Math.floor(e/6e4);if(s<60)return`${s}m`;let t=Math.floor(s/60),i=s%60;return i>0?`${t}h ${i}m`:`${t}h`}function oe(n){return n>=75?"critical":n>=50?"warning":"healthy"}function re(n,e){let s=e-n;return s>3?" \u2191":s<-3?" \u2193":" \u2192"}var x=class{watcher;statusBar;previousCliPercent=0;chatPercent;disposables=[];constructor(e){this.watcher=e}start(e){this.statusBar=c.window.createStatusBarItem(c.StatusBarAlignment.Right,200),this.statusBar.command="greatWhite.openContextDetails",this.disposables.push(this.statusBar);let s=this.watcher.onDidChange(()=>this.refresh());this.disposables.push(s),this.refresh(),this.statusBar.show()}refresh(){let e=this.watcher.getWorkspaceSessions(),s=e.length>0?Math.max(...e.map(m=>m.contextPercent)):0;this.pollChat();let t=re(this.previousCliPercent,s);this.previousCliPercent=s;let i=Math.max(s,this.chatPercent??0),o=oe(i),r=o==="critical"?"\u{1FA78}":"\u{1F988}",a=e.length>0?`${s}%${t}`:"\u2014",l=this.chatPercent!==void 0?`${this.chatPercent}%`:"\u2014";switch(this.statusBar.text=`${r} CLI ${a} \u2502 \u{1F4AC} Chat ${l}`,o){case"warning":this.statusBar.backgroundColor=new c.ThemeColor("statusBarItem.warningBackground");break;case"critical":this.statusBar.backgroundColor=new c.ThemeColor("statusBarItem.errorBackground");break;default:this.statusBar.backgroundColor=void 0;break}this.statusBar.tooltip=this.buildTooltip(e)}getSessions(){return this.watcher.getWorkspaceSessions()}getChatPercent(){return this.chatPercent}dispose(){for(let e of this.disposables)e.dispose();this.disposables=[]}buildTooltip(e){let s=new c.MarkdownString;s.supportThemeIcons=!0;let t=["**Copilot Context Usage**",""];if(e.length>0){t.push("CLI Sessions (this workspace):");for(let i of e){let o=j(i.startTime);t.push(`\u2022 ${i.summary} \u2014 ${i.model} \xB7 ${i.contextPercent}% \xB7 ${i.turnCount} turns \xB7 ${o}`)}}else t.push("CLI Sessions: none");return t.push(""),this.chatPercent!==void 0?t.push(`Chat: ~${this.chatPercent}% estimated`):t.push("Chat: \u2014"),t.push("","Click for details"),s.appendMarkdown(t.join(`
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-`)),s}pollChat(){try{let e=c.lm;if(!e?.selectChatModels){this.chatPercent=void 0;return}Promise.resolve(e.selectChatModels({family:"gpt-4o"})).then(()=>{this.chatPercent=void 0}).catch(()=>{this.chatPercent=void 0})}catch{this.chatPercent=void 0}}};async function H(n,e){let s=c.workspace.workspaceFolders?.[0]?.name??"Workspace",t=[];t.push({label:`CLI Sessions \u2014 ${s}`,kind:c.QuickPickItemKind.Separator});for(let o of n){let r=o.isActive?"\u25CF":"\u25CB",a=j(o.startTime);t.push({label:`${r} ${o.summary}  \u2014  ${o.model} \xB7 ${o.contextPercent}% \xB7 ${o.turnCount} turns \xB7 ${a}`,detail:`${o.outputTokens} output tokens \xB7 branch: ${o.branch}`})}n.length===0&&t.push({label:"\u25CB No CLI sessions"}),t.push({label:"Copilot Chat",kind:c.QuickPickItemKind.Separator}),e!==void 0?t.push({label:`\u25CF Active Chat Session  \u2014  ~${e}%`}):t.push({label:"\u25CB No chat data"}),t.push({label:"",kind:c.QuickPickItemKind.Separator}),t.push({label:"$(refresh) Refresh",_action:"refresh"}),t.push({label:"$(gear) Context Gauge Settings",_action:"settings"});let i=await c.window.showQuickPick(t,{title:"Copilot Context Gauge",placeHolder:"Select an action"});i&&(i._action==="refresh"?await c.commands.executeCommand("greatWhite.openContextDetails"):i._action==="settings"&&await c.commands.executeCommand("workbench.action.openSettings","greatWhite.contextGauge"))}var p=w(require("vscode")),b=w(require("path")),ae=new Set(["index.ts","index.js","main.ts","app.ts","server.ts","cli.ts","main.c","main.cc","main.cpp","setup.ps1","activate.ps1","install.ps1","main.ps1","install.sh","setup.sh","bootstrap.sh","entrypoint.sh","run.sh","start.sh","main.sh","main.py","__main__.py"]),ce=/^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props|.*\.spec|.*\.ini|.*\.conf|.*\.service|.*\.timer|.*\.logrotate|.*\.init|.*\.default)$/i,I=class{_onDidChangeFileDecorations=new p.EventEmitter;onDidChangeFileDecorations=this._onDidChangeFileDecorations.event;_entryPointCache=new Map;async provideFileDecoration(e,s){let t=p.workspace.getConfiguration("greatWhite");if(!t.get("showEntryPointDecorations",!0))return;let i=t.get("showEntryPointBadges",!0),o=t.get("showConfigFileBadges",!0);if(!i&&!o)return;let r=p.workspace.getWorkspaceFolder(e);if(!r)return;let a=await this._getEntryPoints(r),l=b.basename(e.fsPath);if(i&&a.has(e.fsPath))return{badge:"E",tooltip:"Entry Point",color:new p.ThemeColor("greatWhite.entryPointForeground"),propagate:!0};if(i&&ae.has(l)&&b.relative(r.uri.fsPath,e.fsPath).split(b.sep).length-1<=2)return{badge:"E",tooltip:"Entry Point",color:new p.ThemeColor("greatWhite.entryPointForeground"),propagate:!0};if(o&&ce.test(l))return{badge:"C",tooltip:"Config / Build File",color:new p.ThemeColor("greatWhite.configFileForeground"),propagate:!1}}async _getEntryPoints(e){let s=e.uri.toString(),t=this._entryPointCache.get(s);if(t)return t;let i=new Set,o=await p.workspace.findFiles(new p.RelativePattern(e,"package.json"),"**/node_modules/**",1);if(o.length>0)try{let r=await p.workspace.fs.readFile(o[0]),a=JSON.parse(Buffer.from(r).toString("utf-8")),l=e.uri.fsPath;a.main&&this._extractPath(a.main,l,i),a.module&&this._extractPath(a.module,l,i),a.exports&&this._extractAllValues(a.exports,l,i),a.bin&&this._extractAllValues(a.bin,l,i)}catch{}return this._entryPointCache.set(s,i),i}_extractPath(e,s,t){typeof e=="string"&&t.add(b.resolve(s,e))}_extractAllValues(e,s,t){if(typeof e=="string")this._extractPath(e,s,t);else if(e!==null&&typeof e=="object")for(let i of Object.values(e))this._extractAllValues(i,s,t)}invalidateCache(e){e?this._entryPointCache.delete(e):this._entryPointCache.clear()}fireAll(){this._onDidChangeFileDecorations.fire(void 0)}dispose(){this._onDidChangeFileDecorations.dispose()}};var u=w(require("vscode")),K=[{label:"Great White (Dark)",themeId:"Great White (Dark)",shortName:"Dark",icon:"\u{1F30A}"},{label:"Great White (Light)",themeId:"Great White (Light)",shortName:"Light",icon:"\u2600\uFE0F"},{label:"Great White (Storm)",themeId:"Great White (Storm)",shortName:"Storm",icon:"\u{1F329}\uFE0F"},{label:"Great White (Frost)",themeId:"Great White (Frost)",shortName:"Frost",icon:"\u2744\uFE0F"},{label:"Great White (High Contrast Dark)",themeId:"Great White (High Contrast Dark)",shortName:"HC Dark",icon:"\u{1F311}"},{label:"Great White (High Contrast Light)",themeId:"Great White (High Contrast Light)",shortName:"HC Light",icon:"\u{1F315}"},{label:"Great White (Bloodloss)",themeId:"Great White (Bloodloss)",shortName:"Bloodloss",icon:"\u{1FA78}",detail:"Overflow / context-alarm theme \u2014 manual selection only"}];function Q(){return u.workspace.getConfiguration().get("workbench.colorTheme","")}function O(n){return K.find(e=>e.themeId===n)}var D=class{statusBar;disposables=[];start(){this.statusBar=u.window.createStatusBarItem(u.StatusBarAlignment.Left,10),this.statusBar.command="greatWhite.switchTheme",this.statusBar.tooltip="Switch Great White theme variant",this.disposables.push(this.statusBar);let e=u.workspace.onDidChangeConfiguration(t=>{t.affectsConfiguration("workbench.colorTheme")&&this.refresh()});this.disposables.push(e);let s=u.commands.registerCommand("greatWhite.switchTheme",()=>{this.showPicker()});this.disposables.push(s),this.refresh(),this.statusBar.show()}refresh(){let e=Q(),s=O(e);s?this.statusBar.text=`${s.icon} ${s.shortName}`:this.statusBar.text="\u{1F988} Theme"}async showPicker(){let e=Q(),s=O(e),t=[{label:"Great White Variants",kind:u.QuickPickItemKind.Separator}];for(let a of K)t.push({label:`${a.icon}  ${a.label}`,description:a.themeId===e?"$(check) active":void 0,detail:a.detail,themeId:a.themeId});t.push({label:"",kind:u.QuickPickItemKind.Separator},{label:"$(color-mode)  Browse all VS Code themes\u2026",isBrowse:!0});let i=s?t.find(a=>a.themeId===s.themeId):void 0,o=await u.window.showQuickPick(t,{title:"Great White: Switch Theme",placeHolder:"Select a variant to apply instantly",matchOnDescription:!0,activeItems:i?[i]:[]});if(!o)return;if(o.isBrowse){await u.commands.executeCommand("workbench.action.selectTheme");return}let r=o.themeId;r&&await u.workspace.getConfiguration().update("workbench.colorTheme",r,u.ConfigurationTarget.Global)}dispose(){for(let e of this.disposables)e.dispose();this.disposables=[]}};var W,y,F;function he(n){let e=h.workspace.getConfiguration("greatWhite");if(F=new D,F.start(),W=new S,y=new x(W),e.get("contextGauge.enabled",!0)){let d=e.get("contextGauge.pollInterval",10)*1e3;W.start(d),y.start(n)}let s=h.commands.registerCommand("greatWhite.openContextDetails",async()=>{y.refresh(),await H(y.getSessions(),y.getChatPercent())}),t=new I,i=h.window.registerFileDecorationProvider(t),o=h.workspace.createFileSystemWatcher("**/package.json"),r=d=>{let k=h.workspace.getWorkspaceFolder(d);t.invalidateCache(k?.uri.toString()),t.fireAll()};o.onDidChange(r),o.onDidCreate(r),o.onDidDelete(r);let a=h.workspace.onDidChangeConfiguration(d=>{(d.affectsConfiguration("greatWhite.showEntryPointDecorations")||d.affectsConfiguration("greatWhite.showEntryPointBadges")||d.affectsConfiguration("greatWhite.showConfigFileBadges"))&&t.fireAll()}),l=h.commands.registerCommand("greatWhite.resetDecorations",async()=>{let d=h.workspace.getConfiguration("greatWhite");await d.update("showEntryPointDecorations",void 0,h.ConfigurationTarget.Global),await d.update("showEntryPointBadges",void 0,h.ConfigurationTarget.Global),await d.update("showConfigFileBadges",void 0,h.ConfigurationTarget.Global),t.fireAll(),h.window.showInformationMessage("Great White: Explorer decorations reset to defaults.")}),m=h.commands.registerCommand("greatWhite.resetFileNesting",async()=>{let d=h.workspace.getConfiguration();await d.update("explorer.fileNesting.enabled",void 0,h.ConfigurationTarget.Workspace),await d.update("explorer.fileNesting.patterns",void 0,h.ConfigurationTarget.Workspace),h.window.showInformationMessage("Great White: File nesting patterns reset to defaults.")});n.subscriptions.push(F,W,y,s,i,t,o,a,l,m)}function de(){}0&&(module.exports={activate,deactivate});
+// src/extension.ts
+var extension_exports = {};
+__export(extension_exports, {
+  activate: () => activate,
+  deactivate: () => deactivate
+});
+module.exports = __toCommonJS(extension_exports);
+var vscode5 = __toESM(require("vscode"));
+
+// src/sessionWatcher.ts
+var vscode = __toESM(require("vscode"));
+var fs = __toESM(require("fs"));
+var path = __toESM(require("path"));
+var os = __toESM(require("os"));
+function getContextWindowSize(model) {
+  if (!model) {
+    return 2e5;
+  }
+  const m = model.toLowerCase();
+  if (m.includes("claude")) {
+    return 2e5;
+  }
+  if (m.startsWith("gpt-5")) {
+    return 2e5;
+  }
+  if (m.startsWith("gpt-4")) {
+    return 128e3;
+  }
+  return 2e5;
+}
+function parseSimpleYaml(text) {
+  const result = {};
+  for (const line of text.split("\n")) {
+    const idx = line.indexOf(":");
+    if (idx < 0) {
+      continue;
+    }
+    const key = line.slice(0, idx).trim();
+    const value = line.slice(idx + 1).trim();
+    if (key) {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+function normalizePath(p) {
+  let normalized = path.resolve(p);
+  if (process.platform === "win32") {
+    normalized = normalized.toLowerCase();
+  }
+  if (normalized.endsWith(path.sep)) {
+    normalized = normalized.slice(0, -1);
+  }
+  return normalized;
+}
+function fileMtime(filePath) {
+  try {
+    return fs.statSync(filePath).mtimeMs;
+  } catch {
+    return 0;
+  }
+}
+var SessionWatcher = class extends vscode.Disposable {
+  _onDidChange = new vscode.EventEmitter();
+  onDidChange = this._onDidChange.event;
+  _sessionDir;
+  _cache = /* @__PURE__ */ new Map();
+  _sessions = [];
+  _pollTimer;
+  _watchers = [];
+  _disposed = false;
+  constructor() {
+    super(() => this._dispose());
+    this._sessionDir = path.join(os.homedir(), ".copilot", "session-state");
+  }
+  start(pollIntervalMs = 1e4) {
+    this._scan();
+    const pattern = new vscode.RelativePattern(
+      vscode.Uri.file(this._sessionDir),
+      "**/*"
+    );
+    const watcher2 = vscode.workspace.createFileSystemWatcher(pattern);
+    watcher2.onDidChange(() => this._scan());
+    watcher2.onDidCreate(() => this._scan());
+    watcher2.onDidDelete(() => this._scan());
+    this._watchers.push(watcher2);
+    this._pollTimer = setInterval(() => this._scan(), pollIntervalMs);
+  }
+  getWorkspaceSessions() {
+    return this._sessions;
+  }
+  getPeakCliPercent() {
+    if (this._sessions.length === 0) {
+      return 0;
+    }
+    return Math.max(...this._sessions.map((s) => s.contextPercent));
+  }
+  _scan() {
+    if (this._disposed) {
+      return;
+    }
+    const folders = vscode.workspace.workspaceFolders;
+    if (!folders || folders.length === 0) {
+      if (this._sessions.length > 0) {
+        this._sessions = [];
+        this._onDidChange.fire();
+      }
+      return;
+    }
+    const normalizedFolders = folders.map((f) => normalizePath(f.uri.fsPath));
+    let sessionDirs;
+    try {
+      sessionDirs = fs.readdirSync(this._sessionDir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+    } catch {
+      if (this._sessions.length > 0) {
+        this._sessions = [];
+        this._onDidChange.fire();
+      }
+      return;
+    }
+    const newSessions = [];
+    const activeCacheKeys = /* @__PURE__ */ new Set();
+    for (const dirName of sessionDirs) {
+      const dirPath = path.join(this._sessionDir, dirName);
+      const info = this._parseSession(dirName, dirPath);
+      if (!info) {
+        continue;
+      }
+      const normalizedCwd = normalizePath(info.cwd);
+      const matches = normalizedFolders.some(
+        (folder) => normalizedCwd === folder || normalizedCwd.startsWith(folder + path.sep)
+      );
+      if (matches) {
+        newSessions.push(info);
+        activeCacheKeys.add(dirName);
+      }
+    }
+    for (const key of this._cache.keys()) {
+      if (!activeCacheKeys.has(key)) {
+        this._cache.delete(key);
+      }
+    }
+    if (this._hasChanged(newSessions)) {
+      this._sessions = newSessions;
+      this._onDidChange.fire();
+    }
+  }
+  _parseSession(id, dirPath) {
+    const workspacePath = path.join(dirPath, "workspace.yaml");
+    const eventsPath = path.join(dirPath, "events.jsonl");
+    const wsMtime = fileMtime(workspacePath);
+    if (wsMtime === 0) {
+      return void 0;
+    }
+    const evMtime = fileMtime(eventsPath);
+    const cached = this._cache.get(id);
+    if (cached && cached.workspaceMtime === wsMtime && cached.eventsMtime === evMtime) {
+      cached.info.isActive = this._isActive(dirPath);
+      return cached.info;
+    }
+    let wsText;
+    try {
+      wsText = fs.readFileSync(workspacePath, "utf-8");
+    } catch {
+      return void 0;
+    }
+    const yaml = parseSimpleYaml(wsText);
+    const cwd = yaml["cwd"] || "";
+    if (!cwd) {
+      return void 0;
+    }
+    let model = "";
+    let branch = "";
+    let outputTokens = 0;
+    let inputTokensEstimate = 0;
+    let turnCount = 0;
+    try {
+      const evText = fs.readFileSync(eventsPath, "utf-8");
+      const lines = evText.split("\n");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          continue;
+        }
+        let event;
+        try {
+          event = JSON.parse(trimmed);
+        } catch {
+          continue;
+        }
+        const type = event.type || "";
+        const data = event.data;
+        if (!data) {
+          continue;
+        }
+        switch (type) {
+          case "session.start":
+            if (data.selectedModel) {
+              model = data.selectedModel;
+            }
+            if (data.context?.branch) {
+              branch = data.context.branch;
+            }
+            break;
+          case "assistant.message":
+            if (typeof data.outputTokens === "number") {
+              outputTokens += data.outputTokens;
+            }
+            break;
+          case "assistant.turn_end":
+            turnCount++;
+            break;
+          case "user.message":
+            if (typeof data.content === "string") {
+              inputTokensEstimate += Math.ceil(data.content.length / 4);
+            }
+            break;
+          case "tool.execution_complete":
+            if (typeof data.content === "string") {
+              inputTokensEstimate += Math.ceil(data.content.length / 4);
+            }
+            break;
+        }
+      }
+    } catch {
+    }
+    const contextPercent = Math.min(100, Math.round(
+      (outputTokens + inputTokensEstimate) / getContextWindowSize(model) * 100
+    ));
+    const info = {
+      id: yaml["id"] || id,
+      summary: yaml["summary"] || "",
+      model,
+      contextPercent,
+      outputTokens,
+      inputTokensEstimate,
+      turnCount,
+      isActive: this._isActive(dirPath),
+      startTime: yaml["created_at"] || "",
+      cwd,
+      branch
+    };
+    this._cache.set(id, { workspaceMtime: wsMtime, eventsMtime: evMtime, info });
+    return info;
+  }
+  _isActive(dirPath) {
+    try {
+      const entries = fs.readdirSync(dirPath);
+      return entries.some((e) => e.startsWith("inuse.") && e.endsWith(".lock"));
+    } catch {
+      return false;
+    }
+  }
+  _hasChanged(newSessions) {
+    if (newSessions.length !== this._sessions.length) {
+      return true;
+    }
+    for (let i = 0; i < newSessions.length; i++) {
+      const a = newSessions[i];
+      const b = this._sessions[i];
+      if (a.id !== b.id || a.contextPercent !== b.contextPercent || a.outputTokens !== b.outputTokens || a.inputTokensEstimate !== b.inputTokensEstimate || a.turnCount !== b.turnCount || a.isActive !== b.isActive || a.summary !== b.summary || a.model !== b.model) {
+        return true;
+      }
+    }
+    return false;
+  }
+  _dispose() {
+    this._disposed = true;
+    if (this._pollTimer) {
+      clearInterval(this._pollTimer);
+      this._pollTimer = void 0;
+    }
+    for (const w of this._watchers) {
+      w.dispose();
+    }
+    this._watchers = [];
+    this._onDidChange.dispose();
+    this._cache.clear();
+  }
+};
+
+// src/contextGauge.ts
+var vscode2 = __toESM(require("vscode"));
+function formatDuration(isoStart) {
+  const ms = Date.now() - new Date(isoStart).getTime();
+  const minutes = Math.floor(ms / 6e4);
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+function getSeverity(percent) {
+  if (percent >= 75) {
+    return "critical";
+  }
+  if (percent >= 50) {
+    return "warning";
+  }
+  return "healthy";
+}
+function trendArrow(prev, curr) {
+  const delta = curr - prev;
+  if (delta > 3) {
+    return " \u2191";
+  }
+  if (delta < -3) {
+    return " \u2193";
+  }
+  return " \u2192";
+}
+var ContextGauge = class {
+  watcher;
+  statusBar;
+  previousCliPercent = 0;
+  chatPercent;
+  disposables = [];
+  constructor(sessionWatcher) {
+    this.watcher = sessionWatcher;
+  }
+  start(context) {
+    this.statusBar = vscode2.window.createStatusBarItem(
+      vscode2.StatusBarAlignment.Right,
+      200
+    );
+    this.statusBar.command = "greatWhite.openContextDetails";
+    this.disposables.push(this.statusBar);
+    const sub = this.watcher.onDidChange(() => this.refresh());
+    this.disposables.push(sub);
+    this.refresh();
+    this.statusBar.show();
+  }
+  refresh() {
+    const sessions = this.watcher.getWorkspaceSessions();
+    const cliPercent = sessions.length > 0 ? Math.max(...sessions.map((s) => s.contextPercent)) : 0;
+    this.pollChat();
+    const trend = trendArrow(this.previousCliPercent, cliPercent);
+    this.previousCliPercent = cliPercent;
+    const peak = Math.max(cliPercent, this.chatPercent ?? 0);
+    const severity = getSeverity(peak);
+    const icon = severity === "critical" ? "\u{1FA78}" : "\u{1F988}";
+    const cliLabel = sessions.length > 0 ? `${cliPercent}%${trend}` : "\u2014";
+    const chatLabel = this.chatPercent !== void 0 ? `${this.chatPercent}%` : "\u2014";
+    this.statusBar.text = `${icon} CLI ${cliLabel} \u2502 \u{1F4AC} Chat ${chatLabel}`;
+    switch (severity) {
+      case "warning":
+        this.statusBar.backgroundColor = new vscode2.ThemeColor(
+          "statusBarItem.warningBackground"
+        );
+        break;
+      case "critical":
+        this.statusBar.backgroundColor = new vscode2.ThemeColor(
+          "statusBarItem.errorBackground"
+        );
+        break;
+      default:
+        this.statusBar.backgroundColor = void 0;
+        break;
+    }
+    this.statusBar.tooltip = this.buildTooltip(sessions);
+  }
+  getSessions() {
+    return this.watcher.getWorkspaceSessions();
+  }
+  getChatPercent() {
+    return this.chatPercent;
+  }
+  dispose() {
+    for (const d of this.disposables) {
+      d.dispose();
+    }
+    this.disposables = [];
+  }
+  buildTooltip(sessions) {
+    const md = new vscode2.MarkdownString();
+    md.supportThemeIcons = true;
+    const lines = ["**Copilot Context Usage**", ""];
+    if (sessions.length > 0) {
+      lines.push("CLI Sessions (this workspace):");
+      for (const s of sessions) {
+        const dur = formatDuration(s.startTime);
+        lines.push(
+          `\u2022 ${s.summary} \u2014 ${s.model} \xB7 ${s.contextPercent}% \xB7 ${s.turnCount} turns \xB7 ${dur}`
+        );
+      }
+    } else {
+      lines.push("CLI Sessions: none");
+    }
+    lines.push("");
+    if (this.chatPercent !== void 0) {
+      lines.push(`Chat: ~${this.chatPercent}% estimated`);
+    } else {
+      lines.push("Chat: \u2014");
+    }
+    lines.push("", "Click for details");
+    md.appendMarkdown(lines.join("\n\n"));
+    return md;
+  }
+  pollChat() {
+    try {
+      const lm2 = vscode2.lm;
+      if (!lm2?.selectChatModels) {
+        this.chatPercent = void 0;
+        return;
+      }
+      Promise.resolve(lm2.selectChatModels({ family: "gpt-4o" })).then(() => {
+        this.chatPercent = void 0;
+      }).catch(() => {
+        this.chatPercent = void 0;
+      });
+    } catch {
+      this.chatPercent = void 0;
+    }
+  }
+};
+async function showContextDetails(sessions, chatPercent) {
+  const folderName = vscode2.workspace.workspaceFolders?.[0]?.name ?? "Workspace";
+  const items = [];
+  items.push({
+    label: `CLI Sessions \u2014 ${folderName}`,
+    kind: vscode2.QuickPickItemKind.Separator
+  });
+  for (const s of sessions) {
+    const marker = s.isActive ? "\u25CF" : "\u25CB";
+    const dur = formatDuration(s.startTime);
+    items.push({
+      label: `${marker} ${s.summary}  \u2014  ${s.model} \xB7 ${s.contextPercent}% \xB7 ${s.turnCount} turns \xB7 ${dur}`,
+      detail: `${s.outputTokens} output tokens \xB7 branch: ${s.branch}`
+    });
+  }
+  if (sessions.length === 0) {
+    items.push({ label: "\u25CB No CLI sessions" });
+  }
+  items.push({
+    label: "Copilot Chat",
+    kind: vscode2.QuickPickItemKind.Separator
+  });
+  if (chatPercent !== void 0) {
+    items.push({ label: `\u25CF Active Chat Session  \u2014  ~${chatPercent}%` });
+  } else {
+    items.push({ label: "\u25CB No chat data" });
+  }
+  items.push({
+    label: "",
+    kind: vscode2.QuickPickItemKind.Separator
+  });
+  items.push({
+    label: "$(refresh) Refresh",
+    _action: "refresh"
+  });
+  items.push({
+    label: "$(gear) Context Gauge Settings",
+    _action: "settings"
+  });
+  const picked = await vscode2.window.showQuickPick(items, {
+    title: "Copilot Context Gauge",
+    placeHolder: "Select an action"
+  });
+  if (!picked) {
+    return;
+  }
+  if (picked._action === "refresh") {
+    await vscode2.commands.executeCommand("greatWhite.openContextDetails");
+  } else if (picked._action === "settings") {
+    await vscode2.commands.executeCommand(
+      "workbench.action.openSettings",
+      "greatWhite.contextGauge"
+    );
+  }
+}
+
+// src/decorationProvider.ts
+var vscode3 = __toESM(require("vscode"));
+var path2 = __toESM(require("path"));
+var ENTRY_FILENAMES = /* @__PURE__ */ new Set([
+  // JavaScript / TypeScript
+  "index.ts",
+  "index.js",
+  "main.ts",
+  "app.ts",
+  "server.ts",
+  "cli.ts",
+  // C / C++
+  "main.c",
+  "main.cc",
+  "main.cpp",
+  // PowerShell
+  "setup.ps1",
+  "activate.ps1",
+  "install.ps1",
+  "main.ps1",
+  // Shell
+  "install.sh",
+  "setup.sh",
+  "bootstrap.sh",
+  "entrypoint.sh",
+  "run.sh",
+  "start.sh",
+  "main.sh",
+  // Python
+  "main.py",
+  "__main__.py"
+]);
+var CONFIG_PATTERN = /^(.*\.config\.(ts|js|mjs)|.*\.rc\.js|\.eslintrc.*|jest\.config.*|vitest\.config.*|next\.config.*|vite\.config.*|CMakeLists\.txt|vcpkg\.json|Makefile|GNUmakefile|requirements\.txt|.*\.props|.*\.cmake|Directory\..+\.props|.*\.spec|.*\.ini|.*\.conf|.*\.service|.*\.timer|.*\.logrotate|.*\.init|.*\.default)$/i;
+var EntryPointDecorationProvider = class {
+  _onDidChangeFileDecorations = new vscode3.EventEmitter();
+  onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
+  /** Keyed by workspace folder URI string → resolved absolute entry-point paths */
+  _entryPointCache = /* @__PURE__ */ new Map();
+  async provideFileDecoration(uri, _token) {
+    const config = vscode3.workspace.getConfiguration("greatWhite");
+    if (!config.get("showEntryPointDecorations", true)) {
+      return void 0;
+    }
+    const showEntryBadges = config.get("showEntryPointBadges", true);
+    const showConfigBadges = config.get("showConfigFileBadges", true);
+    if (!showEntryBadges && !showConfigBadges) {
+      return void 0;
+    }
+    const folder = vscode3.workspace.getWorkspaceFolder(uri);
+    if (!folder) {
+      return void 0;
+    }
+    const entryPoints = await this._getEntryPoints(folder);
+    const basename2 = path2.basename(uri.fsPath);
+    if (showEntryBadges && entryPoints.has(uri.fsPath)) {
+      return {
+        badge: "E",
+        tooltip: "Entry Point",
+        color: new vscode3.ThemeColor("greatWhite.entryPointForeground"),
+        propagate: true
+      };
+    }
+    if (showEntryBadges && ENTRY_FILENAMES.has(basename2)) {
+      const relative2 = path2.relative(folder.uri.fsPath, uri.fsPath);
+      const depth = relative2.split(path2.sep).length - 1;
+      if (depth <= 2) {
+        return {
+          badge: "E",
+          tooltip: "Entry Point",
+          color: new vscode3.ThemeColor("greatWhite.entryPointForeground"),
+          propagate: true
+        };
+      }
+    }
+    if (showConfigBadges && CONFIG_PATTERN.test(basename2)) {
+      return {
+        badge: "C",
+        tooltip: "Config / Build File",
+        color: new vscode3.ThemeColor("greatWhite.configFileForeground"),
+        propagate: false
+      };
+    }
+    return void 0;
+  }
+  async _getEntryPoints(folder) {
+    const key = folder.uri.toString();
+    const cached = this._entryPointCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    const set = /* @__PURE__ */ new Set();
+    const found = await vscode3.workspace.findFiles(
+      new vscode3.RelativePattern(folder, "package.json"),
+      "**/node_modules/**",
+      1
+    );
+    if (found.length > 0) {
+      try {
+        const raw = await vscode3.workspace.fs.readFile(found[0]);
+        const pkg = JSON.parse(Buffer.from(raw).toString("utf-8"));
+        const root = folder.uri.fsPath;
+        if (pkg.main) {
+          this._extractPath(pkg.main, root, set);
+        }
+        if (pkg.module) {
+          this._extractPath(pkg.module, root, set);
+        }
+        if (pkg.exports) {
+          this._extractAllValues(pkg.exports, root, set);
+        }
+        if (pkg.bin) {
+          this._extractAllValues(pkg.bin, root, set);
+        }
+      } catch {
+      }
+    }
+    this._entryPointCache.set(key, set);
+    return set;
+  }
+  _extractPath(value, root, out) {
+    if (typeof value === "string") {
+      out.add(path2.resolve(root, value));
+    }
+  }
+  _extractAllValues(obj, root, out) {
+    if (typeof obj === "string") {
+      this._extractPath(obj, root, out);
+    } else if (obj !== null && typeof obj === "object") {
+      for (const v of Object.values(obj)) {
+        this._extractAllValues(v, root, out);
+      }
+    }
+  }
+  /** Invalidate cache for one folder (by its URI string) or all if omitted */
+  invalidateCache(folderUri) {
+    if (folderUri) {
+      this._entryPointCache.delete(folderUri);
+    } else {
+      this._entryPointCache.clear();
+    }
+  }
+  /** Fire a broad refresh so VS Code re-queries all visible file decorations */
+  fireAll() {
+    this._onDidChangeFileDecorations.fire(void 0);
+  }
+  dispose() {
+    this._onDidChangeFileDecorations.dispose();
+  }
+};
+
+// src/themeSwitcher.ts
+var vscode4 = __toESM(require("vscode"));
+var GW_THEMES = [
+  { label: "Great White (Dark)", themeId: "Great White (Dark)", shortName: "Dark", icon: "\u{1F30A}" },
+  { label: "Great White (Light)", themeId: "Great White (Light)", shortName: "Light", icon: "\u2600\uFE0F" },
+  { label: "Great White (Storm)", themeId: "Great White (Storm)", shortName: "Storm", icon: "\u{1F329}\uFE0F" },
+  { label: "Great White (Frost)", themeId: "Great White (Frost)", shortName: "Frost", icon: "\u2744\uFE0F" },
+  { label: "Great White (High Contrast Dark)", themeId: "Great White (High Contrast Dark)", shortName: "HC Dark", icon: "\u{1F311}" },
+  { label: "Great White (High Contrast Light)", themeId: "Great White (High Contrast Light)", shortName: "HC Light", icon: "\u{1F315}" },
+  { label: "Great White (Bloodloss)", themeId: "Great White (Bloodloss)", shortName: "Bloodloss", icon: "\u{1FA78}", detail: "Overflow / context-alarm theme \u2014 manual selection only" }
+];
+function getActiveThemeId() {
+  return vscode4.workspace.getConfiguration().get("workbench.colorTheme", "");
+}
+function findEntry(themeId) {
+  return GW_THEMES.find((t) => t.themeId === themeId);
+}
+var ThemeSwitcher = class {
+  disposables = [];
+  statusBar;
+  start() {
+    this.statusBar = vscode4.window.createStatusBarItem(
+      vscode4.StatusBarAlignment.Right,
+      200
+    );
+    this.statusBar.command = "greatWhite.switchTheme";
+    this.statusBar.tooltip = "Great White: Switch Theme";
+    this.disposables.push(this.statusBar);
+    const configSub = vscode4.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("workbench.colorTheme")) {
+        this.refresh();
+      }
+    });
+    this.disposables.push(configSub);
+    const switchCmd = vscode4.commands.registerCommand("greatWhite.switchTheme", () => {
+      this.showPicker();
+    });
+    this.disposables.push(switchCmd);
+    this.refresh();
+  }
+  refresh() {
+    const entry = findEntry(getActiveThemeId());
+    if (entry) {
+      this.statusBar.text = `${entry.icon} ${entry.shortName}`;
+      this.statusBar.show();
+    } else {
+      this.statusBar.hide();
+    }
+  }
+  async showPicker() {
+    const currentThemeId = getActiveThemeId();
+    const currentEntry = findEntry(currentThemeId);
+    const items = [
+      { label: "Great White Variants", kind: vscode4.QuickPickItemKind.Separator }
+    ];
+    for (const t of GW_THEMES) {
+      items.push({
+        label: `${t.icon}  ${t.label}`,
+        description: t.themeId === currentThemeId ? "$(check) active" : void 0,
+        detail: t.detail,
+        themeId: t.themeId
+      });
+    }
+    items.push(
+      { label: "", kind: vscode4.QuickPickItemKind.Separator },
+      {
+        label: "$(color-mode)  Browse all VS Code themes\u2026",
+        isBrowse: true
+      }
+    );
+    const activeItem = currentEntry ? items.find((i) => i.themeId === currentEntry.themeId) : void 0;
+    const picked = await vscode4.window.showQuickPick(items, {
+      title: "Great White: Switch Theme",
+      placeHolder: "Select a variant to apply instantly",
+      matchOnDescription: true,
+      activeItems: activeItem ? [activeItem] : []
+    });
+    if (!picked) {
+      return;
+    }
+    if (picked.isBrowse) {
+      await vscode4.commands.executeCommand("workbench.action.selectTheme");
+      return;
+    }
+    const themeId = picked.themeId;
+    if (themeId) {
+      await vscode4.workspace.getConfiguration().update("workbench.colorTheme", themeId, vscode4.ConfigurationTarget.Global);
+    }
+  }
+  dispose() {
+    for (const d of this.disposables) {
+      d.dispose();
+    }
+    this.disposables = [];
+  }
+};
+
+// src/extension.ts
+var watcher;
+var gauge;
+var switcher;
+function activate(context) {
+  const cfg = vscode5.workspace.getConfiguration("greatWhite");
+  switcher = new ThemeSwitcher();
+  switcher.start();
+  watcher = new SessionWatcher();
+  gauge = new ContextGauge(watcher);
+  if (cfg.get("contextGauge.enabled", true)) {
+    const pollMs = cfg.get("contextGauge.pollInterval", 10) * 1e3;
+    watcher.start(pollMs);
+    gauge.start(context);
+  }
+  const openDetailsCmd = vscode5.commands.registerCommand("greatWhite.openContextDetails", async () => {
+    gauge.refresh();
+    await showContextDetails(gauge.getSessions(), gauge.getChatPercent());
+  });
+  const decorationProvider = new EntryPointDecorationProvider();
+  const decorationRegistration = vscode5.window.registerFileDecorationProvider(decorationProvider);
+  const pkgWatcher = vscode5.workspace.createFileSystemWatcher("**/package.json");
+  const invalidateAndRefresh = (uri) => {
+    const folder = vscode5.workspace.getWorkspaceFolder(uri);
+    decorationProvider.invalidateCache(folder?.uri.toString());
+    decorationProvider.fireAll();
+  };
+  pkgWatcher.onDidChange(invalidateAndRefresh);
+  pkgWatcher.onDidCreate(invalidateAndRefresh);
+  pkgWatcher.onDidDelete(invalidateAndRefresh);
+  const configChangeDisposable = vscode5.workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration("greatWhite.showEntryPointDecorations") || e.affectsConfiguration("greatWhite.showEntryPointBadges") || e.affectsConfiguration("greatWhite.showConfigFileBadges")) {
+      decorationProvider.fireAll();
+    }
+  });
+  const resetDecorationsCmd = vscode5.commands.registerCommand("greatWhite.resetDecorations", async () => {
+    const config = vscode5.workspace.getConfiguration("greatWhite");
+    await config.update("showEntryPointDecorations", void 0, vscode5.ConfigurationTarget.Global);
+    await config.update("showEntryPointBadges", void 0, vscode5.ConfigurationTarget.Global);
+    await config.update("showConfigFileBadges", void 0, vscode5.ConfigurationTarget.Global);
+    decorationProvider.fireAll();
+    vscode5.window.showInformationMessage("Great White: Explorer decorations reset to defaults.");
+  });
+  const resetFileNestingCmd = vscode5.commands.registerCommand("greatWhite.resetFileNesting", async () => {
+    const config = vscode5.workspace.getConfiguration();
+    await config.update("explorer.fileNesting.enabled", void 0, vscode5.ConfigurationTarget.Workspace);
+    await config.update("explorer.fileNesting.patterns", void 0, vscode5.ConfigurationTarget.Workspace);
+    vscode5.window.showInformationMessage("Great White: File nesting patterns reset to defaults.");
+  });
+  context.subscriptions.push(
+    switcher,
+    watcher,
+    gauge,
+    openDetailsCmd,
+    decorationRegistration,
+    decorationProvider,
+    pkgWatcher,
+    configChangeDisposable,
+    resetDecorationsCmd,
+    resetFileNestingCmd
+  );
+}
+function deactivate() {
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  activate,
+  deactivate
+});
+//# sourceMappingURL=extension.js.map

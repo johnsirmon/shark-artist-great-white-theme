@@ -60,7 +60,8 @@
       {
         "command": "greatWhite.switchTheme",
         "title": "Great White: Switch Theme",
-        "category": "Theme"
+        "category": "Theme",
+        "icon": "$(color-mode)"
       },
       {
         "command": "greatWhite.openContextDetails",
@@ -78,6 +79,14 @@
         "category": "Theme"
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "greatWhite.switchTheme",
+          "group": "navigation"
+        }
+      ]
+    },
     "themes": [
       {
         "label": "Great White (Dark)",

@@ -27,16 +27,16 @@ function findEntry(themeId: string): ThemeEntry | undefined {
 }
 
 export class ThemeSwitcher implements vscode.Disposable {
-    private statusBar!: vscode.StatusBarItem;
     private disposables: vscode.Disposable[] = [];
+    private statusBar!: vscode.StatusBarItem;
 
     public start(): void {
         this.statusBar = vscode.window.createStatusBarItem(
-            vscode.StatusBarAlignment.Left,
-            10,
+            vscode.StatusBarAlignment.Right,
+            200
         );
         this.statusBar.command = 'greatWhite.switchTheme';
-        this.statusBar.tooltip = 'Switch Great White theme variant';
+        this.statusBar.tooltip = 'Great White: Switch Theme';
         this.disposables.push(this.statusBar);
 
         const configSub = vscode.workspace.onDidChangeConfiguration(e => {
@@ -52,17 +52,15 @@ export class ThemeSwitcher implements vscode.Disposable {
         this.disposables.push(switchCmd);
 
         this.refresh();
-        this.statusBar.show();
     }
 
     public refresh(): void {
-        const themeId = getActiveThemeId();
-        const entry = findEntry(themeId);
-
+        const entry = findEntry(getActiveThemeId());
         if (entry) {
             this.statusBar.text = `${entry.icon} ${entry.shortName}`;
+            this.statusBar.show();
         } else {
-            this.statusBar.text = `🦈 Theme`;
+            this.statusBar.hide();
         }
     }
 
