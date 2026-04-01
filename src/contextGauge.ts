@@ -116,18 +116,12 @@ export class ContextGauge implements vscode.Disposable {
             for (const s of sessions) {
                 const dur = formatDuration(s.startTime);
                 const pct = `${s.isEstimated ? '~' : ''}${s.contextPercent}%`;
-                lines.push(
-                    `• ${s.summary} — ${s.model} · ${pct} · ${s.turnCount} turns · ${dur}`,
-                );
+                let bulletLine = `• ${s.summary} — ${s.model} · ${pct} · ${s.turnCount} turns · ${dur}`;
                 if (!s.isEstimated && (s.systemTokens > 0 || s.conversationTokens > 0)) {
-                    const sys = Math.round(s.systemTokens / 1000);
-                    const conv = Math.round(s.conversationTokens / 1000);
-                    const tools = Math.round(s.toolDefinitionsTokens / 1000);
-                    const out = Math.round(s.outputTokens / 1000);
-                    lines.push(
-                        `  ↳ system ${sys}K · conversation ${conv}K · tools ${tools}K · output ${out}K`,
-                    );
+                    const fmt = (n: number) => n < 1000 ? `${n}` : `${Math.round(n / 1000)}K`;
+                    bulletLine += `  \n  ↳ system ${fmt(s.systemTokens)} · conversation ${fmt(s.conversationTokens)} · tools ${fmt(s.toolDefinitionsTokens)} · output ${fmt(s.outputTokens)}`;
                 }
+                lines.push(bulletLine);
             }
         } else {
             lines.push('CLI Sessions: none');
