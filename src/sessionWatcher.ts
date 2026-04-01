@@ -36,12 +36,18 @@ interface SessionCache {
     info: SessionInfo;
 }
 
+/** Estimated base tokens consumed by system prompt and tool definitions in a CLI session.
+ *  Derived from real session.shutdown data: ~12K system + ~34K tool definitions. */
+const SYSTEM_OVERHEAD_TOKENS = 46_000;
+
 function getContextWindowSize(model: string): number {
     if (!model) { return 200_000; }
     const m = model.toLowerCase();
     if (m.includes('claude')) { return 200_000; }
+    if (m.startsWith('gpt-4.1')) { return 1_000_000; }
     if (m.startsWith('gpt-5')) { return 200_000; }
     if (m.startsWith('gpt-4')) { return 128_000; }
+    if (m.includes('o1') || m.includes('o3')) { return 200_000; }
     return 200_000;
 }
 
@@ -268,9 +274,21 @@ export class SessionWatcher extends vscode.Disposable {
         }
 
         const inputTokensEstimate = conversationInputEstimate + toolResultTokensEstimate;
-        const contextPercent = Math.min(100, Math.round(
-            (outputTokens + inputTokensEstimate) / getContextWindowSize(model) * 100
-        ));
+
+        let contextPercent: number;
+        if (currentTokens > 0) {
+            // Completed session: use authoritative token count from session.shutdown
+            contextPercent = Math.min(100, Math.round(
+                currentTokens / getContextWindowSize(model) * 100
+            ));
+        } else {
+            // Active session: heuristic — system overhead + conversation + tool results
+            // outputTokens are NOT included; they are completion tokens, not prompt fill
+            const estimatedPromptTokens = SYSTEM_OVERHEAD_TOKENS + inputTokensEstimate;
+            contextPercent = Math.min(100, Math.round(
+                estimatedPromptTokens / getContextWindowSize(model) * 100
+            ));
+        }
 
         const info: SessionInfo = {
             id: yaml['id'] || id,
