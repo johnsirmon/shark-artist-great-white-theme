@@ -53,20 +53,23 @@ export class ContextGauge implements vscode.Disposable {
 
     public refresh(): void {
         const sessions = this.watcher.getWorkspaceSessions();
-        const cliPercent = sessions.length > 0
-            ? Math.max(...sessions.map(s => s.contextPercent))
-            : 0;
-
-        this.pollChat();
-
+        const peakSession = sessions.length > 0
+            ? sessions.reduce((a, b) => a.contextPercent >= b.contextPercent ? a : b)
+            : null;
+        const cliPercent = peakSession?.contextPercent ?? 0;
+        const cliEstimated = peakSession?.isEstimated ?? true;
         const trend = trendArrow(this.previousCliPercent, cliPercent);
         this.previousCliPercent = cliPercent;
+
+        this.pollChat();
 
         const peak = Math.max(cliPercent, this.chatPercent ?? 0);
         const severity = getSeverity(peak);
 
         const icon = severity === 'critical' ? '🩸' : '🦈';
-        const cliLabel = sessions.length > 0 ? `${cliPercent}%${trend}` : '—';
+        const cliLabel = peakSession
+            ? `${cliEstimated ? '~' : ''}${cliPercent}%${trend}`
+            : '—';
         const chatLabel = this.chatPercent !== undefined ? `${this.chatPercent}%` : '—';
         this.statusBar.text = `${icon} CLI ${cliLabel} │ 💬 Chat ${chatLabel}`;
 
@@ -112,9 +115,19 @@ export class ContextGauge implements vscode.Disposable {
             lines.push('CLI Sessions (this workspace):');
             for (const s of sessions) {
                 const dur = formatDuration(s.startTime);
+                const pct = `${s.isEstimated ? '~' : ''}${s.contextPercent}%`;
                 lines.push(
-                    `• ${s.summary} — ${s.model} · ${s.contextPercent}% · ${s.turnCount} turns · ${dur}`,
+                    `• ${s.summary} — ${s.model} · ${pct} · ${s.turnCount} turns · ${dur}`,
                 );
+                if (!s.isEstimated && (s.systemTokens > 0 || s.conversationTokens > 0)) {
+                    const sys = Math.round(s.systemTokens / 1000);
+                    const conv = Math.round(s.conversationTokens / 1000);
+                    const tools = Math.round(s.toolDefinitionsTokens / 1000);
+                    const out = Math.round(s.outputTokens / 1000);
+                    lines.push(
+                        `  ↳ system ${sys}K · conversation ${conv}K · tools ${tools}K · output ${out}K`,
+                    );
+                }
             }
         } else {
             lines.push('CLI Sessions: none');
@@ -139,10 +152,11 @@ export class ContextGauge implements vscode.Disposable {
                 this.chatPercent = undefined;
                 return;
             }
-            // Best-effort: fire-and-forget; update on next cycle if resolved
+            // VS Code's Copilot Chat extension reports token usage via stream.usage() to an
+            // internal VS Code widget. No public API exists to read another extension's token
+            // usage data. Chat context % remains unavailable until such an API ships.
             Promise.resolve(lm.selectChatModels({ family: 'gpt-4o' }))
                 .then(() => {
-                    // Chat model API exists; real estimation deferred to future work
                     this.chatPercent = undefined;
                 })
                 .catch(() => {
@@ -173,9 +187,10 @@ export async function showContextDetails(
     for (const s of sessions) {
         const marker = s.isActive ? '●' : '○';
         const dur = formatDuration(s.startTime);
+        const pct = `${s.isEstimated ? '~' : ''}${s.contextPercent}%`;
         items.push({
-            label: `${marker} ${s.summary}  —  ${s.model} · ${s.contextPercent}% · ${s.turnCount} turns · ${dur}`,
-            detail: `${s.outputTokens} output tokens · branch: ${s.branch}`,
+            label: `${marker} ${s.summary}  —  ${s.model} · ${pct} · ${s.turnCount} turns · ${dur}`,
+            detail: `${s.outputTokens} output tokens · branch: ${s.branch}${s.isEstimated ? ' · estimated' : ' · actual'}`,
         });
     }
     if (sessions.length === 0) {
