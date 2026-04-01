@@ -91,7 +91,7 @@ The new variants extend the gray-red-white-blue design space while preserving to
 - **Terminal ANSI** -- consistent 16-color ANSI palette shared across all variants.
 - **Explorer file nesting** -- smart nesting patterns that group `package.json`, `tsconfig.json`, `.env`, `README.md`, `vite.config.*`, `*.ts`, C/C++ headers, Python lockfiles, CMake presets, PowerShell scripts, and systemd units under their logical parent nodes automatically.
 - **Entry point + config decorations** -- the Explorer badges entry point files with `E` (amber) and config/build files with `C` (sky blue); parent folders tint amber when they contain an entry point. Individual badge types can be toggled independently.
-- **Bloodloss alarm** -- a runtime alarm mode that auto-switches to `Great White (Bloodloss)` when file size and AI typing velocity cross a complexity threshold; restores your previous theme when severity drops or on manual reset.
+- **Copilot Context Gauge** -- a real-data status bar gauge showing actual context window consumption from Copilot CLI sessions and Chat, scoped to the open workspace. Three severity zones (healthy/warning/critical) with trend arrows and a click-through detail panel. No popups, no automatic theme switches.
 - **AI-aware colors** -- `editorGhostText`, `editor.inlineSuggest`, `inlineChat`, `inlineChatDiff`, `chat`, and `terminalCommandDecoration` color groups tuned for Copilot ghost text, the Ctrl+I inline chat panel, AI-generated diffs, and terminal command decorations.
 - **Agent file icons (opt-in)** -- `Great White: Agent File Icons` icon theme provides custom SVG icons for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `COPILOT.md`, `plan.md`, `.learnings/`, and `.copilot/` in the ocean-blue palette.
 - **Agent product icons (opt-in, foundation)** -- `Great White: Agent Product Icons` product icon theme stub; full custom icon font planned for a future release.
@@ -208,65 +208,76 @@ All commands are available via the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+
 
 | Command | Description |
 |---|---|
-| `Great White: Cleanse Bloodloss (Reset Context Bloat)` | Clears the context-bloat severity counter and restores your previous color theme |
+| `Great White: Show Context Gauge Details` | Opens the Context Gauge detail panel showing CLI sessions, context %, trend, and chat usage |
 | `Great White: Reset Explorer Decorations to Defaults` | Clears all three `greatWhite.show*` settings back to their defaults |
 | `Great White: Reset File Nesting Patterns to Defaults` | Removes workspace-level `explorer.fileNesting.*` overrides, restoring contributed defaults |
 
 ---
 
-## Bloodloss — Context Bloat Alarm
+## Copilot Context Gauge
 
-Great White ships a passive runtime monitor that watches document size and AI typing velocity. When a file grows large and content is arriving fast (as happens during unconstrained AI generation), the severity score climbs. Once it crosses the threshold the theme switches to `Great White (Bloodloss)` — a high-saturation dark red variant that acts as a visual alarm.
+Starting in `v0.7.0`, Great White ships a passive, always-visible status bar gauge that shows actual Copilot context window consumption — sourced directly from CLI session files and Chat. There are **no popups and no automatic theme switches**.
 
-There are **no popups**. The theme switch is the alarm. A small status bar item at the bottom right provides a live readout:
+### Status bar
+
+The gauge sits at the bottom right and updates every 10 seconds (configurable):
 
 | Status bar | Meaning |
 |---|---|
-| _(hidden)_ | Severity < 10 — idle, nothing to report |
-| `🦈 42` | Complexity climbing — watching |
-| `🩸 82` _(amber background)_ | Bloodloss active — context bloat threshold crossed |
+| `🦈 CLI 38% → │ 💬 Chat —` | CLI context at 38%, stable; no chat session data |
+| `🦈 CLI 58% ↑ │ 💬 Chat —` _(amber background)_ | CLI context at 58% and rising — warning zone |
+| `🩸 CLI 82% ↑ │ 💬 Chat —` _(red background)_ | CLI context critical (≥ 75%) |
 
-Click the status bar item at any time to run **Cleanse Bloodloss** immediately.
+Trend arrows reflect the direction of change between polls: `↑` rising · `↓` falling · `→` steady.
 
-### How severity is calculated
+### Severity zones
 
-Each keystroke updates two sub-scores (both 0–50):
-
-| Factor | Max score | Default threshold for max | Real-world equivalent |
-|---|---|---|---|
-| **File size** | 50 | 500 000 chars | ~500 KB · ~12 500 lines · roughly 375 000 tokens (GPT-4 context window is ~768 000 tokens / 1M) |
-| **Typing velocity** | 50 | 5 000 chars/sec | Sustained AI streaming — human typing peaks around 100 chars/sec; Copilot inline generation typically runs 500–3 000 chars/sec |
-
-The two scores are summed (max 100). Once the combined score exceeds `triggerSeverity` (default **75**), Bloodloss activates. Velocity decays when output slows or content is deleted, and the theme restores automatically when severity drops below `triggerSeverity − 20` (default **55**).
-
-At the defaults a file has to be simultaneously large **and** arriving fast to trip the alarm. Human typing (~100 chars/sec) in even a 500 KB file scores only ~10/50 on velocity — not enough on its own.
-
-To give a sense of scale: a typical large source file is 500–2 000 lines (~5–20 KB). The 500 KB default threshold is roughly **250× a typical source file** or about the size of a full GPT-4 context dump written to disk.
-
-### Configuring the thresholds
-
-Three settings let you tune sensitivity:
-
-| Setting | Default | Equivalent |
+| Range | Zone | Status bar style |
 |---|---|---|
-| `greatWhite.bloodloss.sizeThreshold` | `500000` | ~500 KB / ~12 500 lines — size at which size score maxes out |
-| `greatWhite.bloodloss.velocityThreshold` | `5000` | ~5 000 chars/sec sustained — velocity at which velocity score maxes out |
-| `greatWhite.bloodloss.triggerSeverity` | `75` | Combined score (0–100) that activates alarm; auto-clears at this value minus 20 |
+| 0–49% | Healthy | Default background, `🦈` icon |
+| 50–74% | Warning | Amber background, `🦈` icon |
+| 75–100% | Critical | Red background, `🩸` icon |
+
+### Click for details
+
+Click the status bar item to open the **Context Gauge detail panel** — a QuickPick listing:
+
+- Each CLI session scoped to the current workspace: name, model, context %, turn count, duration, output tokens, git branch
+- Active sessions marked `●`, idle sessions `○`
+- Copilot Chat context status (best-effort estimation, `—` when unavailable)
+- Quick actions: **Refresh**, **Context Gauge Settings**
+
+### Data sources
+
+The gauge reads from `~/.copilot/session-state/`:
+
+| File | Used for |
+|---|---|
+| `workspace.yaml` | Session name, working directory (workspace scoping), timestamps |
+| `events.jsonl` | Model name, output token counts, turn counts, input message sizes |
+| `inuse.*.lock` | Active/idle detection via PID lock files |
+
+Context % is calculated as `outputTokens ÷ contextWindowSize` where the window size is looked up by model family (Claude: 200 K · GPT-5: 200 K · GPT-4: 128 K). Only sessions whose working directory matches the open workspace are shown.
+
+### Configuration
+
+Two settings are available:
+
+| Setting | Default | Description |
+|---|---|---|
+| `greatWhite.contextGauge.enabled` | `true` | Show/hide the gauge in the status bar |
+| `greatWhite.contextGauge.pollInterval` | `10` | Seconds between session file re-scans (min 3, max 120) |
 
 ```jsonc
-// Example: only alarm on truly massive AI dumps (1 MB / very fast generation)
+// Example: poll every 30 seconds and reduce I/O
 {
-  "greatWhite.bloodloss.sizeThreshold": 1000000,
-  "greatWhite.bloodloss.velocityThreshold": 8000,
-  "greatWhite.bloodloss.triggerSeverity": 85
+  "greatWhite.contextGauge.pollInterval": 30
 }
 ```
 
-### Resetting manually
+### Bloodloss theme
 
-Run **Great White: Cleanse Bloodloss** from the Command Palette, or use the keyboard shortcut if you've bound it. This zeroes the severity counter and restores whatever theme you had active before.
-
-> **Note:** `Great White (Bloodloss)` is listed in the theme picker but is intended as an alarm state, not a daily theme. Selecting it manually works, but the extension will still monitor severity and potentially switch away from it when severity drops.
+`Great White (Bloodloss)` remains available as a **manual theme choice** in the theme picker — only the automatic switching is removed. Select it yourself for any reason; the gauge will continue to display context data regardless of which theme is active.
 
 ---
 
