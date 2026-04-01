@@ -13,6 +13,9 @@ yarn-error.log*
 Thumbs.db
 .vscode-test/
 
+# Git worktrees — local-only, must NOT be committed
+.worktrees/
+
 # Midjourney workspace — experimental, local-only, must NOT be merged to main
 # The entire folder is intentionally excluded from version control on main.
 # It lives only on feature/agentic-icon-workflow as a local working area.
