@@ -38,22 +38,22 @@ Metadata:
 ID:               LRN-20260401-001
 Logged:           2026-04-01
 Priority:         high
-Status:           open
+Status:           resolved
 Area:             release
-Summary:          Never paste a PAT into chat; store with Read-Host + User-scope env var instead.
+Summary:          Never paste a PAT into chat; env var is named VSCE (not VSCE_PAT); pull from User scope before publishing.
 Details:          >
   A Marketplace PAT was accidentally pasted into the Copilot chat window. The token was immediately
   revoked. Chat input is transmitted to remote servers, written to local debug log files
   (VSCODE_TARGET_SESSION_LOG), and visible in conversation history — any of these can be
-  compromised. The safe pattern is: use Read-Host to capture the token interactively (not
-  visible in terminal buffer or history), then persist via [System.Environment]::SetEnvironmentVariable
-  at User scope so it loads in all future terminal sessions without re-entry. vsce reads VSCE_PAT
-  automatically. Never pass a raw token string to commands typed in chat.
+  compromised.
+  The User-scope env var holding the Marketplace PAT is named VSCE (not VSCE_PAT).
+  User-scope env vars are NOT automatically loaded into already-open terminal sessions —
+  you must pull them in manually with GetEnvironmentVariable before use.
 Suggested Action: >
-  Use this pattern to store and use the PAT:
-    $token = Read-Host "Paste PAT"
-    [System.Environment]::SetEnvironmentVariable("VSCE_PAT", $token, "User")
-  Open a new terminal, then run: vsce publish
+  Exact publish command (one-liner, works in any terminal session):
+    $env:VSCE_PAT = [System.Environment]::GetEnvironmentVariable("VSCE","User"); vsce publish --pat $env:VSCE_PAT
+  To save a new token to the User env var:
+    [System.Environment]::SetEnvironmentVariable("VSCE", (Read-Host "Paste PAT"), "User")
   Revoke and regenerate any PAT that was exposed in chat, logs, or docs immediately.
 
 Metadata:
