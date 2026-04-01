@@ -251,6 +251,15 @@ export class SessionWatcher extends vscode.Disposable {
                             toolResultTokensEstimate += Math.ceil(text.length / 4);
                         }
                         break;
+                    case 'session.shutdown':
+                        if (typeof data.currentModel === 'string') {
+                            model = data.currentModel;
+                        }
+                        if (typeof data.currentTokens === 'number') { currentTokens = data.currentTokens; }
+                        if (typeof data.systemTokens === 'number') { systemTokens = data.systemTokens; }
+                        if (typeof data.conversationTokens === 'number') { conversationTokens = data.conversationTokens; }
+                        if (typeof data.toolDefinitionsTokens === 'number') { toolDefinitionsTokens = data.toolDefinitionsTokens; }
+                        break;
                 }
             }
         } catch {
