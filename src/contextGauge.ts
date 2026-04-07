@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import type { SessionWatcher, SessionInfo } from './sessionWatcher';
+import { ChatLogReader } from './chatLogReader';
 
 function formatDuration(isoStart: string): string {
     const ms = Date.now() - new Date(isoStart).getTime();
@@ -27,6 +28,7 @@ function trendArrow(prev: number, curr: number): string {
 
 export class ContextGauge implements vscode.Disposable {
     private readonly watcher: SessionWatcher;
+    private readonly chatReader: ChatLogReader = new ChatLogReader();
     private statusBar!: vscode.StatusBarItem;
     private previousCliPercent: number = 0;
     private chatPercent: number | undefined;
@@ -37,6 +39,8 @@ export class ContextGauge implements vscode.Disposable {
     }
 
     public start(context: vscode.ExtensionContext): void {
+        this.chatReader.configure(context);
+
         this.statusBar = vscode.window.createStatusBarItem(
             vscode.StatusBarAlignment.Right,
             200,
@@ -53,8 +57,13 @@ export class ContextGauge implements vscode.Disposable {
 
     public refresh(): void {
         const sessions = this.watcher.getWorkspaceSessions();
-        const peakSession = sessions.length > 0
-            ? sessions.reduce((a, b) => a.contextPercent >= b.contextPercent ? a : b)
+        // Only trust active sessions (heuristic is current) or completed
+        // sessions with authoritative shutdown data. Completed sessions
+        // without shutdown over-count because the heuristic sums ALL tool
+        // results even though the CLI truncates older turns.
+        const reliable = sessions.filter(s => s.isActive || !s.isEstimated);
+        const peakSession = reliable.length > 0
+            ? reliable.reduce((a, b) => a.contextPercent >= b.contextPercent ? a : b)
             : null;
         const cliPercent = peakSession?.contextPercent ?? 0;
         const cliEstimated = peakSession?.isEstimated ?? true;
@@ -141,21 +150,8 @@ export class ContextGauge implements vscode.Disposable {
 
     private pollChat(): void {
         try {
-            const lm = (vscode as any).lm;
-            if (!lm?.selectChatModels) {
-                this.chatPercent = undefined;
-                return;
-            }
-            // VS Code's Copilot Chat extension reports token usage via stream.usage() to an
-            // internal VS Code widget. No public API exists to read another extension's token
-            // usage data. Chat context % remains unavailable until such an API ships.
-            Promise.resolve(lm.selectChatModels({ family: 'gpt-4o' }))
-                .then(() => {
-                    this.chatPercent = undefined;
-                })
-                .catch(() => {
-                    this.chatPercent = undefined;
-                });
+            const usage = this.chatReader.read();
+            this.chatPercent = usage?.contextPercent;
         } catch {
             this.chatPercent = undefined;
         }

@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.12.0] - 2026-04-07
+
+### Context Gauge — CLI Accuracy & Chat Context Tracking
+
+Two fixes to the Copilot Context Gauge status bar: the CLI percentage now filters out stale over-counted sessions, and Chat context usage is now read from Copilot Chat debug logs.
+
+**CLI: Filter stale heuristic sessions**
+- The peak-session selector now only considers **active** sessions (lock file present) or **completed** sessions with authoritative `session.shutdown` data
+- Completed sessions without shutdown data used a heuristic that naively summed all tool-result text across the entire session history, dramatically over-counting because the CLI truncates older turns from context
+- This fix resolves the persistent `~99%` / `~100%` readings from old finished sessions
+
+**Chat: Real context tracking via debug logs**
+- New `ChatLogReader` class (`src/chatLogReader.ts`) reads Copilot Chat's `debug-logs/` JSONL files from workspace storage
+- Parses `llm_request` events for peak `inputTokens` per session
+- Reads `models.json` for the model's actual `max_prompt_tokens` (with fallback heuristic)
+- Replaces the previous `pollChat()` stub that always returned `undefined` / "—"
+- Chat percentage now appears in the status bar, tooltip, and context details Quick Pick
+
 ## [0.11.0] - 2026-07-15
 
 ### Context Gauge — Accuracy Fix & Two-Track Calculation
